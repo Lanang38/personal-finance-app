@@ -1,0 +1,18 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-purple: #6D28D9;
+  --color-brand-purpleLight: #8B5CF6;
+  --color-brand-red: #EF4444;
+  --color-brand-blue: #2563EB;
+  --color-brand-orange: #F97316;
+  --color-brand-lime: #C6F135;
+
+  --background-image-sidebar-gradient: linear-gradient(180deg, #7C3AED 0%, #4C1D95 100%);
+
+  --radius-xl2: 1.5rem;
+}
+
+body {
+  @apply bg-[#EFEAFB] text-slate-800;
+}
