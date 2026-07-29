@@ -1,0 +1,60 @@
+import { Request, Response } from "express";
+import { CategoryModel, CategoryKind } from "../models/Category";
+import { asyncHandler } from "../utils/asyncHandler";
+import { AppError } from "../utils/AppError";
+
+interface CreateCategoryBody {
+  name: string;
+  kind: CategoryKind;
+  color?: string;
+}
+
+export const listCategories = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?.userId;
+  const categories = await CategoryModel.find({ userId }).sort({ createdAt: 1 });
+  res.json({
+    categories: categories.map((c) => ({
+      id: String(c._id),
+      name: c.name,
+      kind: c.kind,
+      color: c.color,
+    })),
+  });
+});
+
+export const createCategory = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?.userId;
+  const { name, kind, color } = req.body as Partial<CreateCategoryBody>;
+
+  if (!name || !kind) {
+    throw new AppError("Nama dan jenis kategori wajib diisi", 400);
+  }
+
+  const category = await CategoryModel.create({
+    userId,
+    name,
+    kind,
+    color: color ?? "#5B21B6",
+  });
+
+  res.status(201).json({
+    category: {
+      id: String(category._id),
+      name: category.name,
+      kind: category.kind,
+      color: category.color,
+    },
+  });
+});
+
+export const deleteCategory = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?.userId;
+  const { id } = req.params;
+
+  const category = await CategoryModel.findOneAndDelete({ _id: id, userId });
+  if (!category) {
+    throw new AppError("Kategori tidak ditemukan", 404);
+  }
+
+  res.status(204).send();
+});
