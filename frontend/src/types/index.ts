@@ -1,4 +1,4 @@
-export type AuthProvider = "local" | "google";
+export type AuthProvider = 'local' | 'google';
 
 export interface User {
   id: string;
@@ -8,7 +8,7 @@ export interface User {
   authProvider: AuthProvider;
 }
 
-export type AccountType = "cash" | "bank" | "e-wallet" | "other";
+export type AccountType = 'cash' | 'bank' | 'e-wallet' | 'other';
 
 export interface Account {
   id: string;
@@ -19,7 +19,7 @@ export interface Account {
   balance: number;
 }
 
-export type CategoryKind = "income" | "expense";
+export type CategoryKind = 'income' | 'expense';
 
 export interface Category {
   id: string;
@@ -28,7 +28,7 @@ export interface Category {
   color: string;
 }
 
-export type TransactionType = "income" | "expense";
+export type TransactionType = 'income' | 'expense';
 
 export interface PopulatedRef {
   _id: string;
@@ -76,4 +76,5 @@ export interface DashboardSummary {
   monthExpense: number;
   dailySeries: DailyPoint[];
   expenseByCategory: CategoryBreakdownPoint[];
+  incomeByCategory: CategoryBreakdownPoint[];
 }

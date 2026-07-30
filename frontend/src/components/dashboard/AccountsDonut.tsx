@@ -1,27 +1,46 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
-import { CategoryBreakdownPoint } from '../../types';
+import { Account } from '../../types';
 import type { JSX } from 'react';
 
-interface CategoryDonutProps {
-  data: CategoryBreakdownPoint[];
-  title?: string;
-  emptyLabel?: string;
+interface AccountsDonutProps {
+  accounts: Account[];
+  isLoading: boolean;
 }
 
-export function CategoryDonut({
-  data,
-  title = 'Kategori Pengeluaran',
-  emptyLabel = 'Belum ada data pengeluaran',
-}: CategoryDonutProps): JSX.Element {
-  const total = data.reduce((sum, point) => sum + point.total, 0);
+const ACCOUNT_COLORS = [
+  '#7C3AED',
+  '#2563EB',
+  '#F97316',
+  '#EF4444',
+  '#22C55E',
+  '#EC4899',
+  '#0EA5E9',
+  '#A855F7',
+];
+
+export function AccountsDonut({
+  accounts,
+  isLoading,
+}: AccountsDonutProps): JSX.Element {
+  const total = accounts.reduce((sum, account) => sum + account.balance, 0);
+  const data = accounts.map((account, index) => ({
+    id: account.id,
+    name: account.name,
+    balance: account.balance,
+    color: ACCOUNT_COLORS[index % ACCOUNT_COLORS.length],
+  }));
 
   return (
     <div className="bg-white rounded-3xl p-6 shadow-sm h-full flex flex-col">
-      <h2 className="font-bold text-lg text-slate-800 mb-4">{title}</h2>
+      <h2 className="font-bold text-lg text-slate-800 mb-4">Akun</h2>
 
-      {data.length === 0 ? (
+      {isLoading ? (
         <div className="flex-1 flex items-center justify-center text-slate-400 text-sm">
-          {emptyLabel}
+          Memuat akun...
+        </div>
+      ) : data.length === 0 ? (
+        <div className="flex-1 flex items-center justify-center text-slate-400 text-sm">
+          Belum ada akun
         </div>
       ) : (
         <>
@@ -29,18 +48,14 @@ export function CategoryDonut({
             <PieChart>
               <Pie
                 data={data}
-                dataKey="total"
-                nameKey="categoryName"
+                dataKey="balance"
+                nameKey="name"
                 innerRadius={65}
                 outerRadius={95}
                 paddingAngle={3}
               >
                 {data.map((entry) => (
-                  <Cell
-                    key={entry.categoryId}
-                    fill={entry.color}
-                    stroke="none"
-                  />
+                  <Cell key={entry.id} fill={entry.color} stroke="none" />
                 ))}
               </Pie>
               <Tooltip
@@ -53,19 +68,14 @@ export function CategoryDonut({
 
           <div className="grid grid-cols-2 gap-3 mt-4">
             {data.map((entry) => (
-              <div
-                key={entry.categoryId}
-                className="flex items-center gap-2 text-sm"
-              >
+              <div key={entry.id} className="flex items-center gap-2 text-sm">
                 <span
                   className="w-3 h-3 rounded-full shrink-0"
                   style={{ backgroundColor: entry.color }}
                 />
-                <span className="text-slate-600 truncate">
-                  {entry.categoryName}
-                </span>
+                <span className="text-slate-600 truncate">{entry.name}</span>
                 <span className="ml-auto font-semibold text-slate-800">
-                  {total > 0 ? Math.round((entry.total / total) * 100) : 0}%
+                  {total > 0 ? Math.round((entry.balance / total) * 100) : 0}%
                 </span>
               </div>
             ))}
