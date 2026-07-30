@@ -9,6 +9,7 @@ import {
 import { Account } from "../types";
 import { fetchAccounts } from "../api/accounts";
 import { useAuth } from "./AuthContext";
+import type { JSX } from 'react';
 
 interface AccountContextValue {
   accounts: Account[];

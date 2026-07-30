@@ -8,6 +8,7 @@ import {
   CartesianGrid,
 } from "recharts";
 import { DailyPoint } from "../../types";
+import type { JSX } from 'react';
 
 interface WalletChartProps {
   data: DailyPoint[];
@@ -53,7 +54,7 @@ export function WalletChart({ data }: WalletChartProps): JSX.Element {
             <XAxis dataKey="label" tick={{ fontSize: 12, fill: "#94A3B8" }} axisLine={false} tickLine={false} />
             <YAxis tick={{ fontSize: 12, fill: "#94A3B8" }} axisLine={false} tickLine={false} />
             <Tooltip
-              formatter={(value: number) => `Rp ${value.toLocaleString("id-ID")}`}
+              formatter={(value) => `Rp ${Number(value ?? 0).toLocaleString("id-ID")}`}
               contentStyle={{ borderRadius: 12, border: "none", boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }}
             />
             <Area

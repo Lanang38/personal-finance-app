@@ -7,6 +7,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { useAuth } from "../../context/AuthContext";
+import type { JSX } from 'react';
 
 interface MenuItem {
   label: string;

@@ -7,6 +7,7 @@ import { fetchDashboardSummary } from "../api/dashboard";
 import { downloadTransactionsCsv } from "../api/export";
 import { DashboardSummary } from "../types";
 import { Download } from "lucide-react";
+import type { JSX } from 'react';
 
 function formatCurrency(amount: number): string {
   return `Rp ${amount.toLocaleString("id-ID")}`;

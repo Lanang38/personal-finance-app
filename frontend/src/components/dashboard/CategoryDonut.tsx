@@ -1,5 +1,6 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts";
 import { CategoryBreakdownPoint } from "../../types";
+import type { JSX } from 'react';
 
 interface CategoryDonutProps {
   data: CategoryBreakdownPoint[];
@@ -32,7 +33,7 @@ export function CategoryDonut({ data }: CategoryDonutProps): JSX.Element {
                   <Cell key={entry.categoryId} fill={entry.color} stroke="none" />
                 ))}
               </Pie>
-              <Tooltip formatter={(value: number) => `Rp ${value.toLocaleString("id-ID")}`} />
+              <Tooltip formatter={(value) => `Rp ${Number(value ?? 0).toLocaleString("id-ID")}`} />
             </PieChart>
           </ResponsiveContainer>
 

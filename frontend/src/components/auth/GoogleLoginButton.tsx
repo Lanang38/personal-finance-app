@@ -1,5 +1,6 @@
 import { useEffect, useRef } from "react";
 import { GoogleCredentialResponse } from "../../types/google";
+import type { JSX } from 'react';
 
 interface GoogleLoginButtonProps {
   onCredential: (credential: string) => void;

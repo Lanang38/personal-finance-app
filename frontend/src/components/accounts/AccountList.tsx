@@ -1,5 +1,6 @@
 import { Trash2, Wallet } from "lucide-react";
 import { Account } from "../../types";
+import type { JSX } from 'react';
 
 interface AccountListProps {
   accounts: Account[];

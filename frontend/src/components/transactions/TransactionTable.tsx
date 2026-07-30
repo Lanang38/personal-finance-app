@@ -1,5 +1,6 @@
 import { Trash2 } from "lucide-react";
 import { Transaction, PopulatedRef } from "../../types";
+import type { JSX } from 'react';
 
 interface TransactionTableProps {
   transactions: Transaction[];
@@ -34,7 +35,7 @@ export function TransactionTable({ transactions, onDelete }: TransactionTablePro
       {transactions.length === 0 ? (
         <p className="text-sm text-slate-400 py-8 text-center">Belum ada transaksi</p>
       ) : (
-        <table className="w-full text-sm min-w-[600px]">
+        <table className="w-full text-sm min-w-150">
           <thead>
             <tr className="text-left text-xs uppercase text-slate-400 border-b border-slate-100">
               <th className="py-3 font-semibold">Tanggal</th>

@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { GoogleLoginButton } from "../components/auth/GoogleLoginButton";
 import { getErrorMessage } from "../api/client";
+import type { JSX } from 'react';
 
 export function LoginPage(): JSX.Element {
   const { login, loginWithGoogle } = useAuth();

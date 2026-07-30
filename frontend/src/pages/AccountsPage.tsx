@@ -4,6 +4,7 @@ import { AccountList } from "../components/accounts/AccountList";
 import { useAccounts } from "../context/AccountContext";
 import { createAccountRequest, deleteAccountRequest } from "../api/accounts";
 import { AccountType } from "../types";
+import type { JSX } from 'react';
 
 export function AccountsPage(): JSX.Element {
   const { accounts, activeAccountId, setActiveAccountId, refreshAccounts, isLoading } =

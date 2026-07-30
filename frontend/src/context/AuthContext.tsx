@@ -8,6 +8,7 @@ import {
 } from "react";
 import { User } from "../types";
 import { fetchProfile, loginRequest, registerRequest, googleLoginRequest } from "../api/auth";
+import type { JSX } from 'react';
 
 interface AuthContextValue {
   user: User | null;

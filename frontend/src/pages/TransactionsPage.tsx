@@ -10,6 +10,7 @@ import {
   deleteTransactionRequest,
 } from "../api/transactions";
 import { Category, Transaction, CategoryKind, Pagination } from "../types";
+import type { JSX } from 'react';
 
 export function TransactionsPage(): JSX.Element {
   const { accounts, refreshAccounts } = useAccounts();

@@ -5,6 +5,7 @@ import { DashboardPage } from "./pages/DashboardPage";
 import { TransactionsPage } from "./pages/TransactionsPage";
 import { AccountsPage } from "./pages/AccountsPage";
 import { PrivateLayout } from "./components/PrivateLayout";
+import type { JSX } from 'react';
 
 export default function App(): JSX.Element {
   return (

@@ -1,5 +1,6 @@
 import { FormEvent, useState } from "react";
 import { AccountType } from "../../types";
+import type { JSX } from 'react';
 
 interface AccountFormProps {
   onSubmit: (payload: {

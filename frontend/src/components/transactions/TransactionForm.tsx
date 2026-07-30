@@ -1,5 +1,6 @@
 import { FormEvent, useState } from "react";
 import { Account, Category, TransactionType } from "../../types";
+import type { JSX } from 'react';
 
 interface TransactionFormProps {
   accounts: Account[];
