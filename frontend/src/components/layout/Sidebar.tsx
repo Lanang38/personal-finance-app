@@ -1,12 +1,15 @@
-import { NavLink } from "react-router-dom";
+import { NavLink } from 'react-router-dom';
 import {
   LayoutGrid,
-  PieChart,
   Wallet,
   Receipt,
+  PiggyBank,
+  FileBarChart,
+  ScanLine,
+  Settings,
   LogOut,
-} from "lucide-react";
-import { useAuth } from "../../context/AuthContext";
+} from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 import type { JSX } from 'react';
 
 interface MenuItem {
@@ -15,11 +18,20 @@ interface MenuItem {
   icon: JSX.Element;
 }
 
+// Menu yang sudah berfungsi penuh
 const menuItems: MenuItem[] = [
-  { label: "Dashboard", to: "/dashboard", icon: <LayoutGrid size={20} /> },
-  { label: "Transaksi", to: "/transactions", icon: <Receipt size={20} /> },
-  { label: "Akun", to: "/accounts", icon: <Wallet size={20} /> },
-  { label: "Analitik", to: "/dashboard#analitik", icon: <PieChart size={20} /> },
+  { label: 'Dashboard', to: '/dashboard', icon: <LayoutGrid size={20} /> },
+  { label: 'Transaksi', to: '/transactions', icon: <Receipt size={20} /> },
+  { label: 'Akun', to: '/accounts', icon: <Wallet size={20} /> },
+];
+
+// Menu fitur yang sudah direncanakan tapi belum dikembangkan (mengarah ke halaman Coming Soon)
+const upcomingMenuItems: MenuItem[] = [
+  { label: 'Anggaran', to: '/budgets', icon: <PiggyBank size={20} /> },
+  { label: 'Target Tabungan', to: '/goals', icon: <PiggyBank size={20} /> },
+  { label: 'Laporan', to: '/reports', icon: <FileBarChart size={20} /> },
+  { label: 'Scan Struk', to: '/scan-receipt', icon: <ScanLine size={20} /> },
+  { label: 'Pengaturan', to: '/settings', icon: <Settings size={20} /> },
 ];
 
 export function Sidebar(): JSX.Element {
@@ -35,8 +47,10 @@ export function Sidebar(): JSX.Element {
           <span className="text-xl font-bold">Finance</span>
         </div>
 
-        <p className="text-xs uppercase tracking-wide text-white/60 mb-3">Menu</p>
-        <nav className="flex flex-col gap-1">
+        <p className="text-xs uppercase tracking-wide text-white/60 mb-3">
+          Menu
+        </p>
+        <nav className="flex flex-col gap-1 mb-6">
           {menuItems.map((item) => (
             <NavLink
               key={item.label}
@@ -44,8 +58,30 @@ export function Sidebar(): JSX.Element {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-4 py-3 rounded-2xl font-semibold transition-colors ${
                   isActive
-                    ? "bg-white text-brand-purple"
-                    : "text-white/85 hover:bg-white/10"
+                    ? 'bg-white text-brand-purple'
+                    : 'text-white/85 hover:bg-white/10'
+                }`
+              }
+            >
+              {item.icon}
+              {item.label}
+            </NavLink>
+          ))}
+        </nav>
+
+        <p className="text-xs uppercase tracking-wide text-white/60 mb-3">
+          Segera Hadir
+        </p>
+        <nav className="flex flex-col gap-1">
+          {upcomingMenuItems.map((item) => (
+            <NavLink
+              key={item.label}
+              to={item.to}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-4 py-3 rounded-2xl font-semibold transition-colors ${
+                  isActive
+                    ? 'bg-white text-brand-purple'
+                    : 'text-white/70 hover:bg-white/10'
                 }`
               }
             >

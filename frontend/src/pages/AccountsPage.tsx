@@ -1,14 +1,20 @@
-import { DashboardLayout } from "../components/layout/DashboardLayout";
-import { AccountForm } from "../components/accounts/AccountForm";
-import { AccountList } from "../components/accounts/AccountList";
-import { useAccounts } from "../context/AccountContext";
-import { createAccountRequest, deleteAccountRequest } from "../api/accounts";
-import { AccountType } from "../types";
+import { DashboardLayout } from '../components/layout/DashboardLayout';
+import { AccountForm } from '../components/accounts/AccountForm';
+import { AccountList } from '../components/accounts/AccountList';
+import { AccountsSkeleton } from '../components/accounts/AccountsSkeleton';
+import { useAccounts } from '../context/AccountContext';
+import { createAccountRequest, deleteAccountRequest } from '../api/accounts';
+import { AccountType } from '../types';
 import type { JSX } from 'react';
 
 export function AccountsPage(): JSX.Element {
-  const { accounts, activeAccountId, setActiveAccountId, refreshAccounts, isLoading } =
-    useAccounts();
+  const {
+    accounts,
+    activeAccountId,
+    setActiveAccountId,
+    refreshAccounts,
+    isLoading,
+  } = useAccounts();
 
   async function handleCreateAccount(payload: {
     name: string;
@@ -33,7 +39,7 @@ export function AccountsPage(): JSX.Element {
         </div>
         <div className="lg:col-span-2">
           {isLoading ? (
-            <div className="text-slate-400 text-sm">Memuat akun...</div>
+            <AccountsSkeleton />
           ) : (
             <AccountList
               accounts={accounts}

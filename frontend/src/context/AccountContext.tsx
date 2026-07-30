@@ -5,10 +5,11 @@ import {
   useEffect,
   useCallback,
   ReactNode,
-} from "react";
-import { Account } from "../types";
-import { fetchAccounts } from "../api/accounts";
-import { useAuth } from "./AuthContext";
+} from 'react';
+import { Account } from '../types';
+import { fetchAccounts } from '../api/accounts';
+import { useAuth } from './AuthContext';
+import { withMinimumDelay } from '../utils/withMinimumDelay';
 import type { JSX } from 'react';
 
 interface AccountContextValue {
@@ -19,9 +20,15 @@ interface AccountContextValue {
   refreshAccounts: () => Promise<void>;
 }
 
-const AccountContext = createContext<AccountContextValue | undefined>(undefined);
+const AccountContext = createContext<AccountContextValue | undefined>(
+  undefined,
+);
 
-export function AccountProvider({ children }: { children: ReactNode }): JSX.Element {
+export function AccountProvider({
+  children,
+}: {
+  children: ReactNode;
+}): JSX.Element {
   const { user } = useAuth();
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [activeAccountId, setActiveAccountId] = useState<string | null>(null);
@@ -34,7 +41,7 @@ export function AccountProvider({ children }: { children: ReactNode }): JSX.Elem
       return;
     }
     setIsLoading(true);
-    const list = await fetchAccounts();
+    const list = await withMinimumDelay(fetchAccounts());
     setAccounts(list);
     setActiveAccountId((current) => current ?? list[0]?.id ?? null);
     setIsLoading(false);
@@ -52,13 +59,15 @@ export function AccountProvider({ children }: { children: ReactNode }): JSX.Elem
     refreshAccounts,
   };
 
-  return <AccountContext.Provider value={value}>{children}</AccountContext.Provider>;
+  return (
+    <AccountContext.Provider value={value}>{children}</AccountContext.Provider>
+  );
 }
 
 export function useAccounts(): AccountContextValue {
   const context = useContext(AccountContext);
   if (!context) {
-    throw new Error("useAccounts harus dipakai di dalam AccountProvider");
+    throw new Error('useAccounts harus dipakai di dalam AccountProvider');
   }
   return context;
 }

@@ -1,15 +1,17 @@
-import { useEffect, useState, useCallback, FormEvent } from "react";
-import { DashboardLayout } from "../components/layout/DashboardLayout";
-import { TransactionForm } from "../components/transactions/TransactionForm";
-import { TransactionTable } from "../components/transactions/TransactionTable";
-import { useAccounts } from "../context/AccountContext";
-import { fetchCategories, createCategoryRequest } from "../api/categories";
+import { useEffect, useState, useCallback, FormEvent } from 'react';
+import { DashboardLayout } from '../components/layout/DashboardLayout';
+import { TransactionForm } from '../components/transactions/TransactionForm';
+import { TransactionTable } from '../components/transactions/TransactionTable';
+import { TransactionsTableSkeleton } from '../components/transactions/TransactionsSkeleton';
+import { useAccounts } from '../context/AccountContext';
+import { fetchCategories, createCategoryRequest } from '../api/categories';
 import {
   fetchTransactions,
   createTransactionRequest,
   deleteTransactionRequest,
-} from "../api/transactions";
-import { Category, Transaction, CategoryKind, Pagination } from "../types";
+} from '../api/transactions';
+import { withMinimumDelay } from '../utils/withMinimumDelay';
+import { Category, Transaction, CategoryKind, Pagination } from '../types';
 import type { JSX } from 'react';
 
 export function TransactionsPage(): JSX.Element {
@@ -18,15 +20,18 @@ export function TransactionsPage(): JSX.Element {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [newCategoryName, setNewCategoryName] = useState<string>("");
-  const [newCategoryKind, setNewCategoryKind] = useState<CategoryKind>("expense");
+  const [newCategoryName, setNewCategoryName] = useState<string>('');
+  const [newCategoryKind, setNewCategoryKind] =
+    useState<CategoryKind>('expense');
 
   const loadData = useCallback(async () => {
     setIsLoading(true);
-    const [categoryList, txResponse] = await Promise.all([
-      fetchCategories(),
-      fetchTransactions({ page: 1, limit: 20 }),
-    ]);
+    const [categoryList, txResponse] = await withMinimumDelay(
+      Promise.all([
+        fetchCategories(),
+        fetchTransactions({ page: 1, limit: 20 }),
+      ]),
+    );
     setCategories(categoryList);
     setTransactions(txResponse.transactions);
     setPagination(txResponse.pagination);
@@ -40,7 +45,7 @@ export function TransactionsPage(): JSX.Element {
   async function handleCreateTransaction(payload: {
     accountId: string;
     categoryId: string;
-    type: "income" | "expense";
+    type: 'income' | 'expense';
     amount: number;
     description: string;
     date: string;
@@ -54,11 +59,16 @@ export function TransactionsPage(): JSX.Element {
     await Promise.all([loadData(), refreshAccounts()]);
   }
 
-  async function handleAddCategory(event: FormEvent<HTMLFormElement>): Promise<void> {
+  async function handleAddCategory(
+    event: FormEvent<HTMLFormElement>,
+  ): Promise<void> {
     event.preventDefault();
     if (!newCategoryName.trim()) return;
-    await createCategoryRequest({ name: newCategoryName.trim(), kind: newCategoryKind });
-    setNewCategoryName("");
+    await createCategoryRequest({
+      name: newCategoryName.trim(),
+      kind: newCategoryKind,
+    });
+    setNewCategoryName('');
     await loadData();
   }
 
@@ -86,7 +96,9 @@ export function TransactionsPage(): JSX.Element {
             />
             <select
               value={newCategoryKind}
-              onChange={(e) => setNewCategoryKind(e.target.value as CategoryKind)}
+              onChange={(e) =>
+                setNewCategoryKind(e.target.value as CategoryKind)
+              }
               className="w-full bg-slate-100 rounded-xl px-4 py-2.5 outline-none text-sm"
             >
               <option value="expense">Pengeluaran</option>
@@ -103,13 +115,17 @@ export function TransactionsPage(): JSX.Element {
 
         <div className="lg:col-span-2 space-y-4">
           {isLoading ? (
-            <div className="text-slate-400 text-sm">Memuat transaksi...</div>
+            <TransactionsTableSkeleton />
           ) : (
             <>
-              <TransactionTable transactions={transactions} onDelete={handleDeleteTransaction} />
+              <TransactionTable
+                transactions={transactions}
+                onDelete={handleDeleteTransaction}
+              />
               {pagination && (
                 <p className="text-xs text-slate-400 text-center">
-                  Menampilkan {transactions.length} dari {pagination.total} transaksi
+                  Menampilkan {transactions.length} dari {pagination.total}{' '}
+                  transaksi
                 </p>
               )}
             </>

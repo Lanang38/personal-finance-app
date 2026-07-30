@@ -1,16 +1,18 @@
-import { useEffect, useState, useCallback } from "react";
-import { DashboardLayout } from "../components/layout/DashboardLayout";
-import { StatCard } from "../components/dashboard/StatCard";
-import { WalletChart } from "../components/dashboard/WalletChart";
-import { CategoryDonut } from "../components/dashboard/CategoryDonut";
-import { fetchDashboardSummary } from "../api/dashboard";
-import { downloadTransactionsCsv } from "../api/export";
-import { DashboardSummary } from "../types";
-import { Download } from "lucide-react";
+import { useEffect, useState, useCallback } from 'react';
+import { DashboardLayout } from '../components/layout/DashboardLayout';
+import { StatCard } from '../components/dashboard/StatCard';
+import { WalletChart } from '../components/dashboard/WalletChart';
+import { CategoryDonut } from '../components/dashboard/CategoryDonut';
+import { DashboardSkeleton } from '../components/dashboard/DashboardSkeleton';
+import { fetchDashboardSummary } from '../api/dashboard';
+import { downloadTransactionsCsv } from '../api/export';
+import { withMinimumDelay } from '../utils/withMinimumDelay';
+import { DashboardSummary } from '../types';
+import { Download } from 'lucide-react';
 import type { JSX } from 'react';
 
 function formatCurrency(amount: number): string {
-  return `Rp ${amount.toLocaleString("id-ID")}`;
+  return `Rp ${amount.toLocaleString('id-ID')}`;
 }
 
 export function DashboardPage(): JSX.Element {
@@ -20,7 +22,7 @@ export function DashboardPage(): JSX.Element {
 
   const loadSummary = useCallback(async () => {
     setIsLoading(true);
-    const data = await fetchDashboardSummary();
+    const data = await withMinimumDelay(fetchDashboardSummary());
     setSummary(data);
     setIsLoading(false);
   }, []);
@@ -49,12 +51,12 @@ export function DashboardPage(): JSX.Element {
           className="flex items-center gap-2 bg-white border border-slate-200 text-slate-600 font-semibold px-4 py-2 rounded-xl text-sm disabled:opacity-60"
         >
           <Download size={16} />
-          {isExporting ? "Mengekspor..." : "Ekspor CSV"}
+          {isExporting ? 'Mengekspor...' : 'Ekspor CSV'}
         </button>
       </div>
 
       {isLoading || !summary ? (
-        <div className="text-slate-400 text-sm">Memuat data...</div>
+        <DashboardSkeleton />
       ) : (
         <>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
@@ -84,7 +86,7 @@ export function DashboardPage(): JSX.Element {
             />
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6" id="analitik">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
               <WalletChart data={summary.dailySeries} />
             </div>
