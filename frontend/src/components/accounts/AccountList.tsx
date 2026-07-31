@@ -55,7 +55,7 @@ export function AccountList({
                 <button
                   type="button"
                   onClick={() => onDelete(account.id)}
-                  className="p-2 rounded-full hover:bg-slate-200 text-slate-500 transition-colors"
+                  className="p-2 text-slate-400 hover:text-brand-red transition-colors"
                   aria-label="Hapus akun"
                 >
                   <Trash2 size={16} />

@@ -86,3 +86,16 @@ export interface DashboardSummary {
   expenseByCategory: CategoryBreakdownPoint[];
   incomeByCategory: CategoryBreakdownPoint[];
 }
+
+export interface Budget {
+  id: string;
+  month: string;
+  limitAmount: number;
+  spent: number;
+  percentage: number;
+  category: {
+    id: string;
+    name: string;
+    color: string;
+  };
+}
