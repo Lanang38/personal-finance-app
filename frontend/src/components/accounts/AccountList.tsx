@@ -1,83 +1,95 @@
-import { Trash2, Wallet } from "lucide-react";
-import { Account } from "../../types";
+import { useState, useMemo } from 'react';
+import { Trash2, Wallet, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Account } from '../../types';
 import type { JSX } from 'react';
 
 interface AccountListProps {
   accounts: Account[];
-  activeAccountId: string | null;
-  onSelect: (id: string) => void;
   onDelete: (id: string) => void;
 }
 
+const PAGE_SIZE = 3;
+
 function formatCurrency(amount: number): string {
-  return `Rp ${amount.toLocaleString("id-ID")}`;
+  return `Rp ${amount.toLocaleString('id-ID')}`;
 }
 
 export function AccountList({
   accounts,
-  activeAccountId,
-  onSelect,
   onDelete,
 }: AccountListProps): JSX.Element {
+  const [page, setPage] = useState<number>(1);
+  const totalPages = Math.max(1, Math.ceil(accounts.length / PAGE_SIZE));
+  const safePage = Math.min(page, totalPages);
+
+  const paginatedAccounts = useMemo(() => {
+    const start = (safePage - 1) * PAGE_SIZE;
+    return accounts.slice(start, start + PAGE_SIZE);
+  }, [accounts, safePage]);
+
   return (
-    <div className="bg-white rounded-3xl p-6 shadow-sm">
+    <div className="bg-white rounded-3xl p-6 shadow-sm flex flex-col">
       <h2 className="font-bold text-lg text-slate-800 mb-4">Akun Saya</h2>
 
       {accounts.length === 0 ? (
-        <p className="text-sm text-slate-400 py-8 text-center">Belum ada akun</p>
+        <p className="text-sm text-slate-400 py-8 text-center">
+          Belum ada akun
+        </p>
       ) : (
-        <div className="space-y-3">
-          {accounts.map((account) => (
-            <button
-              type="button"
-              key={account.id}
-              onClick={() => onSelect(account.id)}
-              className={`w-full flex items-center gap-4 p-4 rounded-2xl text-left transition-colors ${
-                activeAccountId === account.id
-                  ? "bg-brand-purple text-white"
-                  : "bg-slate-50 text-slate-700 hover:bg-slate-100"
-              }`}
-            >
+        <>
+          <div className="space-y-3">
+            {paginatedAccounts.map((account) => (
               <div
-                className={`w-10 h-10 rounded-full flex items-center justify-center shrink-0 ${
-                  activeAccountId === account.id ? "bg-white/20" : "bg-white"
-                }`}
+                key={account.id}
+                className="w-full flex items-center gap-3 p-2 rounded-2xl bg-slate-50 text-slate-700"
               >
-                <Wallet size={18} />
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="font-semibold truncate">{account.name}</p>
-                <p
-                  className={`text-xs ${
-                    activeAccountId === account.id ? "text-white/70" : "text-slate-400"
-                  }`}
+                <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shrink-0">
+                  <Wallet size={18} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="font-semibold truncate">{account.name}</p>
+                  <p className="text-xs text-slate-400">
+                    {formatCurrency(account.balance)}
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => onDelete(account.id)}
+                  className="p-2 rounded-full hover:bg-slate-200 text-slate-500 transition-colors"
+                  aria-label="Hapus akun"
                 >
-                  {formatCurrency(account.balance)}
-                </p>
+                  <Trash2 size={16} />
+                </button>
               </div>
-              <span
-                role="button"
-                tabIndex={0}
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDelete(account.id);
-                }}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter") {
-                    e.stopPropagation();
-                    onDelete(account.id);
-                  }
-                }}
-                className={`p-2 rounded-full ${
-                  activeAccountId === account.id ? "hover:bg-white/20" : "hover:bg-slate-200"
-                }`}
-                aria-label="Hapus akun"
+            ))}
+          </div>
+
+          {totalPages > 1 && (
+            <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100">
+              <button
+                type="button"
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={safePage === 1}
+                className="flex items-center gap-1 text-sm font-semibold text-slate-500 disabled:opacity-40 disabled:cursor-not-allowed hover:text-brand-purple transition-colors"
               >
-                <Trash2 size={16} />
+                <ChevronLeft size={16} />
+                Sebelumnya
+              </button>
+              <span className="text-xs text-slate-400">
+                Halaman {safePage} dari {totalPages}
               </span>
-            </button>
-          ))}
-        </div>
+              <button
+                type="button"
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={safePage === totalPages}
+                className="flex items-center gap-1 text-sm font-semibold text-slate-500 disabled:opacity-40 disabled:cursor-not-allowed hover:text-brand-purple transition-colors"
+              >
+                Selanjutnya
+                <ChevronRight size={16} />
+              </button>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
