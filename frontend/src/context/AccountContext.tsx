@@ -17,7 +17,7 @@ interface AccountContextValue {
   activeAccountId: string | null;
   setActiveAccountId: (id: string) => void;
   isLoading: boolean;
-  refreshAccounts: () => Promise<void>;
+  refreshAccounts: (useDelay?: boolean) => Promise<void>;
 }
 
 const AccountContext = createContext<AccountContextValue | undefined>(
@@ -30,44 +30,72 @@ export function AccountProvider({
   children: ReactNode;
 }): JSX.Element {
   const { user } = useAuth();
+
   const [accounts, setAccounts] = useState<Account[]>([]);
   const [activeAccountId, setActiveAccountId] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  const refreshAccounts = useCallback(async () => {
-    if (!user) {
-      setAccounts([]);
-      setIsLoading(false);
-      return;
-    }
-    setIsLoading(true);
-    const list = await withMinimumDelay(fetchAccounts());
-    setAccounts(list);
-    setActiveAccountId((current) => current ?? list[0]?.id ?? null);
-    setIsLoading(false);
-  }, [user]);
+  const refreshAccounts = useCallback(
+    async (useDelay = false) => {
+      if (!user) {
+        setAccounts([]);
+        setActiveAccountId(null);
+        setIsLoading(false);
+        return;
+      }
 
+      // Skeleton hanya jika diminta
+      if (useDelay) {
+        setIsLoading(true);
+      }
+
+      const list = useDelay
+        ? await withMinimumDelay(fetchAccounts())
+        : await fetchAccounts();
+
+      setAccounts(list);
+
+      setActiveAccountId((current) => {
+        if (current && list.some((account) => account.id === current)) {
+          return current;
+        }
+
+        return list[0]?.id ?? null;
+      });
+
+      if (useDelay) {
+        setIsLoading(false);
+      }
+    },
+    [user],
+  );
+
+  // Initial load aplikasi
   useEffect(() => {
-    void refreshAccounts();
+    void refreshAccounts(true);
   }, [refreshAccounts]);
 
-  const value: AccountContextValue = {
-    accounts,
-    activeAccountId,
-    setActiveAccountId,
-    isLoading,
-    refreshAccounts,
-  };
-
   return (
-    <AccountContext.Provider value={value}>{children}</AccountContext.Provider>
+    <AccountContext.Provider
+      value={{
+        accounts,
+        activeAccountId,
+        setActiveAccountId,
+        isLoading,
+        refreshAccounts,
+      }}
+    >
+      {children}
+    </AccountContext.Provider>
   );
 }
 
 export function useAccounts(): AccountContextValue {
   const context = useContext(AccountContext);
+
   if (!context) {
     throw new Error('useAccounts harus dipakai di dalam AccountProvider');
   }
+
   return context;
 }

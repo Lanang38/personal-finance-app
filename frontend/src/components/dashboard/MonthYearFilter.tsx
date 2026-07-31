@@ -108,9 +108,9 @@ export function MonthYearFilter({
   if (isLoadingPeriods) {
     return (
       <div className="flex items-center gap-2">
-        <div className="h-[38px] w-28 rounded-xl bg-slate-100 animate-pulse" />
-        <div className="h-[38px] w-20 rounded-xl bg-slate-100 animate-pulse" />
-        <div className="h-[38px] w-24 rounded-xl bg-slate-100 animate-pulse" />
+        <div className="h-9.5 w-28 rounded-xl bg-slate-100 animate-pulse" />
+        <div className="h-9.5 w-20 rounded-xl bg-slate-100 animate-pulse" />
+        <div className="h-9.5 w-24 rounded-xl bg-slate-100 animate-pulse" />
       </div>
     );
   }

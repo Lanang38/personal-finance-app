@@ -1,10 +1,12 @@
 import { useEffect, useState, useCallback, FormEvent } from 'react';
+import { ChevronDown } from 'lucide-react';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { TransactionForm } from '../components/transactions/TransactionForm';
 import { TransactionTable } from '../components/transactions/TransactionTable';
 import { CategoryList } from '../components/transactions/CategoryList';
 import { CategoryEditModal } from '../components/transactions/CategoryEditModal';
 import { TransactionsTableSkeleton } from '../components/transactions/TransactionsSkeleton';
+import { CategoryListSkeleton } from '../components/transactions/CategoryListSkeleton';
 import { useAccounts } from '../context/AccountContext';
 import {
   fetchCategories,
@@ -23,29 +25,45 @@ import type { JSX } from 'react';
 
 export function TransactionsPage(): JSX.Element {
   const { accounts, refreshAccounts } = useAccounts();
+
   const [categories, setCategories] = useState<Category[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [newCategoryName, setNewCategoryName] = useState<string>('');
+
+  const [newCategoryName, setNewCategoryName] = useState('');
   const [newCategoryKind, setNewCategoryKind] =
     useState<CategoryKind>('expense');
+
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
 
-  const loadData = useCallback(async () => {
-    setIsLoading(true);
-    const [categoryList, txResponse] = await withMinimumDelay(
-      Promise.all([
+  const loadData = useCallback(async (showLoading = false) => {
+    if (showLoading) {
+      setIsLoading(true);
+
+      const [categoryList, txResponse] = await withMinimumDelay(
+        Promise.all([
+          fetchCategories(),
+          fetchTransactions({ page: 1, limit: 20 }),
+        ]),
+      );
+
+      setCategories(categoryList);
+      setTransactions(txResponse.transactions);
+
+      setIsLoading(false);
+    } else {
+      const [categoryList, txResponse] = await Promise.all([
         fetchCategories(),
         fetchTransactions({ page: 1, limit: 20 }),
-      ]),
-    );
-    setCategories(categoryList);
-    setTransactions(txResponse.transactions);
-    setIsLoading(false);
+      ]);
+
+      setCategories(categoryList);
+      setTransactions(txResponse.transactions);
+    }
   }, []);
 
   useEffect(() => {
-    void loadData();
+    void loadData(true);
   }, [loadData]);
 
   async function handleCreateTransaction(payload: {
@@ -57,11 +75,13 @@ export function TransactionsPage(): JSX.Element {
     date: string;
   }): Promise<void> {
     await createTransactionRequest(payload);
+
     await Promise.all([loadData(), refreshAccounts()]);
   }
 
   async function handleDeleteTransaction(id: string): Promise<void> {
     await deleteTransactionRequest(id);
+
     await Promise.all([loadData(), refreshAccounts()]);
   }
 
@@ -69,12 +89,17 @@ export function TransactionsPage(): JSX.Element {
     event: FormEvent<HTMLFormElement>,
   ): Promise<void> {
     event.preventDefault();
+
     if (!newCategoryName.trim()) return;
+
     await createCategoryRequest({
       name: newCategoryName.trim(),
       kind: newCategoryKind,
     });
+
     setNewCategoryName('');
+    setNewCategoryKind('expense');
+
     await loadData();
   }
 
@@ -128,16 +153,23 @@ export function TransactionsPage(): JSX.Element {
                   className="w-full bg-slate-100 rounded-xl px-4 py-2.5 outline-none text-sm"
                 />
 
-                <select
-                  value={newCategoryKind}
-                  onChange={(e) =>
-                    setNewCategoryKind(e.target.value as CategoryKind)
-                  }
-                  className="w-full bg-slate-100 rounded-xl px-4 py-2.5 outline-none text-sm"
-                >
-                  <option value="expense">Pengeluaran</option>
-                  <option value="income">Pemasukan</option>
-                </select>
+                <div className="relative">
+                  <select
+                    value={newCategoryKind}
+                    onChange={(e) =>
+                      setNewCategoryKind(e.target.value as CategoryKind)
+                    }
+                    className="w-full appearance-none bg-slate-100 rounded-xl pl-4 pr-10 py-2.5 outline-none text-sm cursor-pointer"
+                  >
+                    <option value="expense">Pengeluaran</option>
+                    <option value="income">Pemasukan</option>
+                  </select>
+
+                  <ChevronDown
+                    size={16}
+                    className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
+                  />
+                </div>
 
                 <button
                   type="submit"
@@ -147,12 +179,17 @@ export function TransactionsPage(): JSX.Element {
                 </button>
               </form>
             </div>
+
             <div className="h-56">
-              <CategoryList
-                categories={categories}
-                onEdit={setEditingCategory}
-                onDelete={handleDeleteCategory}
-              />
+              {isLoading ? (
+                <CategoryListSkeleton />
+              ) : (
+                <CategoryList
+                  categories={categories}
+                  onEdit={setEditingCategory}
+                  onDelete={handleDeleteCategory}
+                />
+              )}
             </div>
           </div>
         </div>

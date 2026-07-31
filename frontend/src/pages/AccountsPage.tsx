@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { AccountForm } from '../components/accounts/AccountForm';
 import { AccountList } from '../components/accounts/AccountList';
@@ -11,6 +12,11 @@ import type { JSX } from 'react';
 export function AccountsPage(): JSX.Element {
   const { accounts, refreshAccounts, isLoading } = useAccounts();
 
+  // Ketika halaman Accounts dibuka, tampilkan skeleton
+  useEffect(() => {
+    void refreshAccounts(true);
+  }, [refreshAccounts]);
+
   async function handleCreateAccount(payload: {
     name: string;
     type: AccountType;
@@ -18,12 +24,16 @@ export function AccountsPage(): JSX.Element {
     initialBalance: number;
   }): Promise<void> {
     await createAccountRequest(payload);
-    await refreshAccounts();
+
+    // Refresh tanpa delay (tidak menampilkan skeleton)
+    await refreshAccounts(false);
   }
 
   async function handleDeleteAccount(id: string): Promise<void> {
     await deleteAccountRequest(id);
-    await refreshAccounts();
+
+    // Refresh tanpa delay (tidak menampilkan skeleton)
+    await refreshAccounts(false);
   }
 
   return (
@@ -32,6 +42,7 @@ export function AccountsPage(): JSX.Element {
         <div>
           <AccountForm onSubmit={handleCreateAccount} />
         </div>
+
         <div className="lg:col-span-2 flex flex-col gap-6">
           {isLoading ? (
             <AccountsSkeleton />
