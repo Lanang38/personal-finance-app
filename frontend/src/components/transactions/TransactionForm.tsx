@@ -1,5 +1,6 @@
-import { FormEvent, useState } from "react";
-import { Account, Category, TransactionType } from "../../types";
+import { FormEvent, useState } from 'react';
+import { ChevronDown } from 'lucide-react';
+import { Account, Category, TransactionType } from '../../types';
 import type { JSX } from 'react';
 
 interface TransactionFormProps {
@@ -15,63 +16,89 @@ interface TransactionFormProps {
   }) => Promise<void>;
 }
 
+function getToday(): string {
+  const today = new Date();
+  const offset = today.getTimezoneOffset();
+
+  return new Date(today.getTime() - offset * 60000).toISOString().split('T')[0];
+}
+
 export function TransactionForm({
   accounts,
   categories,
   onSubmit,
 }: TransactionFormProps): JSX.Element {
-  const [type, setType] = useState<TransactionType>("expense");
-  const [accountId, setAccountId] = useState<string>(accounts[0]?.id ?? "");
-  const [categoryId, setCategoryId] = useState<string>("");
-  const [amount, setAmount] = useState<string>("");
-  const [description, setDescription] = useState<string>("");
-  const [date, setDate] = useState<string>(new Date().toISOString().slice(0, 10));
+  const [type, setType] = useState<TransactionType>('expense');
+  const [accountId, setAccountId] = useState<string>('');
+  const [categoryId, setCategoryId] = useState<string>('');
+  const [amount, setAmount] = useState<string>('');
+  const [description, setDescription] = useState<string>('');
+  const [date, setDate] = useState<string>(getToday());
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-  const [error, setError] = useState<string>("");
+  const [error, setError] = useState<string>('');
 
   const filteredCategories = categories.filter((c) => c.kind === type);
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>): Promise<void> {
+  async function handleSubmit(
+    event: FormEvent<HTMLFormElement>,
+  ): Promise<void> {
     event.preventDefault();
-    setError("");
+    setError('');
 
     const numericAmount = Number(amount);
     if (!accountId) {
-      setError("Pilih akun terlebih dahulu");
+      setError('Pilih akun terlebih dahulu');
       return;
     }
     if (!categoryId) {
-      setError("Pilih kategori terlebih dahulu");
+      setError('Pilih kategori terlebih dahulu');
       return;
     }
     if (!numericAmount || numericAmount <= 0) {
-      setError("Jumlah harus lebih besar dari 0");
+      setError('Jumlah harus lebih besar dari 0');
       return;
     }
 
     setIsSubmitting(true);
     try {
-      await onSubmit({ accountId, categoryId, type, amount: numericAmount, description, date });
-      setAmount("");
-      setDescription("");
+      await onSubmit({
+        accountId,
+        categoryId,
+        type,
+        amount: numericAmount,
+        description,
+        date,
+      });
+      setType('expense');
+      setAccountId('');
+      setCategoryId('');
+      setAmount('');
+      setDescription('');
+      setDate(getToday());
+      setError('');
     } finally {
       setIsSubmitting(false);
     }
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-3xl p-6 shadow-sm space-y-4">
+    <form
+      onSubmit={handleSubmit}
+      className="bg-white rounded-3xl p-6 shadow-sm space-y-4"
+    >
       <h2 className="font-bold text-lg text-slate-800">Tambah Transaksi</h2>
 
       <div className="flex gap-2">
         <button
           type="button"
           onClick={() => {
-            setType("expense");
-            setCategoryId("");
+            setType('expense');
+            setCategoryId('');
           }}
           className={`flex-1 py-2 rounded-xl font-semibold text-sm ${
-            type === "expense" ? "bg-brand-red text-white" : "bg-slate-100 text-slate-500"
+            type === 'expense'
+              ? 'bg-brand-red text-white'
+              : 'bg-slate-100 text-slate-500'
           }`}
         >
           Pengeluaran
@@ -79,11 +106,13 @@ export function TransactionForm({
         <button
           type="button"
           onClick={() => {
-            setType("income");
-            setCategoryId("");
+            setType('income');
+            setCategoryId('');
           }}
           className={`flex-1 py-2 rounded-xl font-semibold text-sm ${
-            type === "income" ? "bg-brand-purple text-white" : "bg-slate-100 text-slate-500"
+            type === 'income'
+              ? 'bg-brand-purple text-white'
+              : 'bg-slate-100 text-slate-500'
           }`}
         >
           Pemasukan
@@ -91,71 +120,91 @@ export function TransactionForm({
       </div>
 
       <div>
-        <label className="text-xs font-semibold text-slate-500 mb-1 block">Jumlah (Rp)</label>
+        <label className="text-xs font-semibold text-slate-500 mb-1 block">
+          Jumlah (Rp)
+        </label>
         <input
           type="number"
-          min={0}
           value={amount}
           onChange={(e) => setAmount(e.target.value)}
           placeholder="0"
-          className="w-full bg-slate-100 rounded-xl px-4 py-2.5 outline-none"
+          className="w-full bg-slate-100 rounded-xl px-4 py-2.5 outline-none appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
       </div>
 
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="text-xs font-semibold text-slate-500 mb-1 block">Akun</label>
-          <select
-            value={accountId}
-            onChange={(e) => setAccountId(e.target.value)}
-            className="w-full bg-slate-100 rounded-xl px-4 py-2.5 outline-none"
-          >
-            <option value="">Pilih akun</option>
-            {accounts.map((account) => (
-              <option key={account.id} value={account.id}>
-                {account.name}
-              </option>
-            ))}
-          </select>
+          <label className="text-xs font-semibold text-slate-500 mb-1 block">
+            Akun
+          </label>
+          <div className="relative">
+            <select
+              value={accountId}
+              onChange={(e) => setAccountId(e.target.value)}
+              className="w-full appearance-none bg-slate-100 rounded-xl pl-4 pr-9 py-2.5 outline-none"
+            >
+              <option value="">Pilih akun</option>
+              {accounts.map((account) => (
+                <option key={account.id} value={account.id}>
+                  {account.name}
+                </option>
+              ))}
+            </select>
+            <ChevronDown
+              size={16}
+              className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
+            />
+          </div>
         </div>
 
         <div>
-          <label className="text-xs font-semibold text-slate-500 mb-1 block">Kategori</label>
-          <select
-            value={categoryId}
-            onChange={(e) => setCategoryId(e.target.value)}
-            className="w-full bg-slate-100 rounded-xl px-4 py-2.5 outline-none"
-          >
-            <option value="">Pilih kategori</option>
-            {filteredCategories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
+          <label className="text-xs font-semibold text-slate-500 mb-1 block">
+            Kategori
+          </label>
+          <div className="relative">
+            <select
+              value={categoryId}
+              onChange={(e) => setCategoryId(e.target.value)}
+              className="w-full appearance-none bg-slate-100 rounded-xl pl-4 pr-9 py-2.5 outline-none"
+            >
+              <option value="">Pilih kategori</option>
+              {filteredCategories.map((category) => (
+                <option key={category.id} value={category.id}>
+                  {category.name}
+                </option>
+              ))}
+            </select>
+            <ChevronDown
+              size={16}
+              className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
+            />
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <div>
-          <label className="text-xs font-semibold text-slate-500 mb-1 block">Tanggal</label>
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="w-full bg-slate-100 rounded-xl px-4 py-2.5 outline-none"
-          />
-        </div>
-        <div>
-          <label className="text-xs font-semibold text-slate-500 mb-1 block">Catatan</label>
-          <input
-            type="text"
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder="Opsional"
-            className="w-full bg-slate-100 rounded-xl px-4 py-2.5 outline-none"
-          />
-        </div>
+      <div>
+        <label className="text-xs font-semibold text-slate-500 mb-1 block">
+          Tanggal
+        </label>
+        <input
+          type="date"
+          value={date}
+          onChange={(e) => setDate(e.target.value)}
+          className="w-full bg-slate-100 rounded-xl px-4 py-2.5 outline-none"
+        />
+      </div>
+
+      <div>
+        <label className="text-xs font-semibold text-slate-500 mb-1 block">
+          Catatan
+        </label>
+        <input
+          type="text"
+          value={description}
+          onChange={(e) => setDescription(e.target.value)}
+          placeholder="Opsional"
+          className="w-full bg-slate-100 rounded-xl px-4 py-2.5 outline-none"
+        />
       </div>
 
       {error && <p className="text-sm text-brand-red">{error}</p>}
@@ -165,7 +214,7 @@ export function TransactionForm({
         disabled={isSubmitting}
         className="w-full bg-brand-purple text-white font-semibold py-3 rounded-xl disabled:opacity-60"
       >
-        {isSubmitting ? "Menyimpan..." : "Simpan Transaksi"}
+        {isSubmitting ? 'Menyimpan...' : 'Simpan Transaksi'}
       </button>
     </form>
   );

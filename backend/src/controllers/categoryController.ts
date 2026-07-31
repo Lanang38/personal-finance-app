@@ -47,6 +47,39 @@ export const createCategory = asyncHandler(async (req: Request, res: Response) =
   });
 });
 
+export const updateCategory = asyncHandler(async (req: Request, res: Response) => {
+  const userId = req.user?.userId;
+  const { id } = req.params;
+  const { name, kind, color } = req.body as Partial<CreateCategoryBody>;
+
+  if (!name && !kind && !color) {
+    throw new AppError("Tidak ada data untuk diperbarui", 400);
+  }
+
+  const category = await CategoryModel.findOneAndUpdate(
+    { _id: id, userId },
+    {
+      ...(name !== undefined ? { name } : {}),
+      ...(kind !== undefined ? { kind } : {}),
+      ...(color !== undefined ? { color } : {}),
+    },
+    { new: true },
+  );
+
+  if (!category) {
+    throw new AppError("Kategori tidak ditemukan", 404);
+  }
+
+  res.json({
+    category: {
+      id: String(category._id),
+      name: category.name,
+      kind: category.kind,
+      color: category.color,
+    },
+  });
+});
+
 export const deleteCategory = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?.userId;
   const { id } = req.params;
