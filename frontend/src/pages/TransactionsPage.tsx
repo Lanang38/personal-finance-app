@@ -14,6 +14,8 @@ import {
   updateCategoryRequest,
   deleteCategoryRequest,
 } from '../api/categories';
+import { WarningModal } from '../components/transactions/WarningModal';
+import { getErrorMessage } from '../api/client';
 import {
   fetchTransactions,
   createTransactionRequest,
@@ -29,6 +31,7 @@ export function TransactionsPage(): JSX.Element {
   const [categories, setCategories] = useState<Category[]>([]);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [warningMessage, setWarningMessage] = useState<string | null>(null);
 
   const [newCategoryName, setNewCategoryName] = useState('');
   const [newCategoryKind, setNewCategoryKind] =
@@ -112,8 +115,12 @@ export function TransactionsPage(): JSX.Element {
   }
 
   async function handleDeleteCategory(id: string): Promise<void> {
-    await deleteCategoryRequest(id);
-    await loadData();
+    try {
+      await deleteCategoryRequest(id);
+      await loadData();
+    } catch (error) {
+      setWarningMessage(getErrorMessage(error));
+    }
   }
 
   return (
@@ -200,6 +207,12 @@ export function TransactionsPage(): JSX.Element {
           category={editingCategory}
           onClose={() => setEditingCategory(null)}
           onSave={handleUpdateCategory}
+        />
+      )}
+      {warningMessage && (
+        <WarningModal
+          message={warningMessage}
+          onClose={() => setWarningMessage(null)}
         />
       )}
     </DashboardLayout>
