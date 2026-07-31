@@ -2,9 +2,12 @@ import { useEffect, useState, useCallback } from 'react';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { StatCard } from '../components/dashboard/StatCard';
 import { WalletChart } from '../components/dashboard/WalletChart';
-import { CategoryDonut } from '../components/dashboard/CategoryDonut';
-import { AccountsDonut } from '../components/dashboard/AccountsDonut';
+import { InsightDonut } from '../components/dashboard/InsightDonut';
 import { DashboardSkeleton } from '../components/dashboard/DashboardSkeleton';
+import {
+  MonthYearFilter,
+  MONTH_NAMES,
+} from '../components/dashboard/MonthYearFilter';
 import { fetchDashboardSummary } from '../api/dashboard';
 import { downloadTransactionsCsv } from '../api/export';
 import { withMinimumDelay } from '../utils/withMinimumDelay';
@@ -12,6 +15,11 @@ import { useAccounts } from '../context/AccountContext';
 import { DashboardSummary } from '../types';
 import { Download } from 'lucide-react';
 import type { JSX } from 'react';
+
+interface ActiveFilter {
+  month: number;
+  year: number;
+}
 
 function formatCurrency(amount: number): string {
   return `Rp ${amount.toLocaleString('id-ID')}`;
@@ -21,18 +29,21 @@ export function DashboardPage(): JSX.Element {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [isExporting, setIsExporting] = useState<boolean>(false);
+  const [activeFilter, setActiveFilter] = useState<ActiveFilter | null>(null);
   const { accounts, isLoading: isAccountsLoading } = useAccounts();
 
-  const loadSummary = useCallback(async () => {
+  const loadSummary = useCallback(async (filter: ActiveFilter | null) => {
     setIsLoading(true);
-    const data = await withMinimumDelay(fetchDashboardSummary());
+    const data = await withMinimumDelay(
+      fetchDashboardSummary(filter?.month, filter?.year),
+    );
     setSummary(data);
     setIsLoading(false);
   }, []);
 
   useEffect(() => {
-    void loadSummary();
-  }, [loadSummary]);
+    void loadSummary(activeFilter);
+  }, [loadSummary, activeFilter]);
 
   async function handleExport(): Promise<void> {
     setIsExporting(true);
@@ -48,19 +59,31 @@ export function DashboardPage(): JSX.Element {
     0,
   );
 
+  const periodLabel = activeFilter
+    ? `${MONTH_NAMES[activeFilter.month - 1]} ${activeFilter.year}`
+    : 'Semua Data';
+
   return (
     <DashboardLayout>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
         <h2 className="text-lg font-bold text-slate-700">Ringkasan Keuangan</h2>
-        <button
-          type="button"
-          onClick={handleExport}
-          disabled={isExporting}
-          className="flex items-center gap-2 bg-white border border-slate-200 text-slate-600 font-semibold px-4 py-2 rounded-xl text-sm disabled:opacity-60"
-        >
-          <Download size={16} />
-          {isExporting ? 'Mengekspor...' : 'Ekspor CSV'}
-        </button>
+        <div className="flex items-center gap-3 flex-wrap">
+          <MonthYearFilter
+            activeMonth={activeFilter?.month ?? null}
+            activeYear={activeFilter?.year ?? null}
+            onApply={(month, year) => setActiveFilter({ month, year })}
+            onReset={() => setActiveFilter(null)}
+          />
+          <button
+            type="button"
+            onClick={handleExport}
+            disabled={isExporting}
+            className="flex items-center gap-2 bg-white border border-slate-200 text-slate-600 font-semibold px-4 py-2 rounded-xl text-sm disabled:opacity-60"
+          >
+            <Download size={16} />
+            {isExporting ? 'Mengekspor...' : 'Ekspor CSV'}
+          </button>
+        </div>
       </div>
 
       {isLoading || !summary ? (
@@ -89,28 +112,24 @@ export function DashboardPage(): JSX.Element {
               colorClass="bg-gradient-to-br from-brand-blue to-sky-400"
             />
             <StatCard
-              label="Pengeluaran Bulan Ini"
+              label={`Pengeluaran (${periodLabel})`}
               value={formatCurrency(summary.monthExpense)}
               colorClass="bg-gradient-to-br from-brand-orange to-amber-400"
             />
           </div>
 
-          <div className="mb-6">
-            <WalletChart data={summary.dailySeries} />
-          </div>
-
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <CategoryDonut
-              data={summary.expenseByCategory}
-              title="Kategori Pengeluaran"
-              emptyLabel="Belum ada data pengeluaran"
-            />
-            <CategoryDonut
-              data={summary.incomeByCategory}
-              title="Kategori Pemasukan"
-              emptyLabel="Belum ada data pemasukan"
-            />
-            <AccountsDonut accounts={accounts} isLoading={isAccountsLoading} />
+            <div className="lg:col-span-2">
+              <WalletChart data={summary.dailySeries} />
+            </div>
+            <div>
+              <InsightDonut
+                expenseByCategory={summary.expenseByCategory}
+                incomeByCategory={summary.incomeByCategory}
+                accounts={accounts}
+                isAccountsLoading={isAccountsLoading}
+              />
+            </div>
           </div>
         </>
       )}

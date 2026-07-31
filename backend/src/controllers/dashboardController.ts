@@ -16,24 +16,36 @@ interface CategoryBreakdownPoint {
   total: number;
 }
 
+interface SummaryQuery {
+  month?: string;
+  year?: string;
+}
+
 export const getSummary = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?.userId;
   const objectId = new Types.ObjectId(userId);
+  const { month, year } = req.query as SummaryQuery;
 
-  const now = new Date();
-  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-  const endOfMonth = new Date(
-    now.getFullYear(),
-    now.getMonth() + 1,
-    0,
-    23,
-    59,
-    59,
-  );
+  const isFiltered = Boolean(month && year);
+  let targetMonth: number | null = null;
+  let targetYear: number | null = null;
+  let dateRange: { $gte: Date; $lte: Date } | null = null;
+
+  if (isFiltered) {
+    targetYear = Number(year);
+    targetMonth = Number(month) - 1;
+    const startOfMonth = new Date(targetYear, targetMonth, 1);
+    const endOfMonth = new Date(targetYear, targetMonth + 1, 0, 23, 59, 59);
+    dateRange = { $gte: startOfMonth, $lte: endOfMonth };
+  }
+
+  const periodMatch = dateRange
+    ? { userId: objectId, date: dateRange }
+    : { userId: objectId };
 
   const [
     totals,
-    monthTotals,
+    periodTotals,
     dailySeries,
     expenseByCategory,
     incomeByCategory,
@@ -43,21 +55,11 @@ export const getSummary = asyncHandler(async (req: Request, res: Response) => {
       { $group: { _id: '$type', total: { $sum: '$amount' } } },
     ]),
     TransactionModel.aggregate<{ _id: string; total: number }>([
-      {
-        $match: {
-          userId: objectId,
-          date: { $gte: startOfMonth, $lte: endOfMonth },
-        },
-      },
+      { $match: periodMatch },
       { $group: { _id: '$type', total: { $sum: '$amount' } } },
     ]),
     TransactionModel.aggregate<DailyPoint>([
-      {
-        $match: {
-          userId: objectId,
-          date: { $gte: startOfMonth, $lte: endOfMonth },
-        },
-      },
+      { $match: periodMatch },
       {
         $group: {
           _id: { $dateToString: { format: '%Y-%m-%d', date: '$date' } },
@@ -72,7 +74,11 @@ export const getSummary = asyncHandler(async (req: Request, res: Response) => {
       { $sort: { _id: 1 } },
     ]),
     TransactionModel.aggregate<CategoryBreakdownPoint>([
-      { $match: { userId: objectId, type: 'expense' } },
+      {
+        $match: dateRange
+          ? { userId: objectId, type: 'expense', date: dateRange }
+          : { userId: objectId, type: 'expense' },
+      },
       {
         $lookup: {
           from: 'categories',
@@ -94,7 +100,11 @@ export const getSummary = asyncHandler(async (req: Request, res: Response) => {
       { $limit: 6 },
     ]),
     TransactionModel.aggregate<CategoryBreakdownPoint>([
-      { $match: { userId: objectId, type: 'income' } },
+      {
+        $match: dateRange
+          ? { userId: objectId, type: 'income', date: dateRange }
+          : { userId: objectId, type: 'income' },
+      },
       {
         $lookup: {
           from: 'categories',
@@ -119,15 +129,19 @@ export const getSummary = asyncHandler(async (req: Request, res: Response) => {
 
   const totalIncome = totals.find((t) => t._id === 'income')?.total ?? 0;
   const totalExpense = totals.find((t) => t._id === 'expense')?.total ?? 0;
-  const monthIncome = monthTotals.find((t) => t._id === 'income')?.total ?? 0;
-  const monthExpense = monthTotals.find((t) => t._id === 'expense')?.total ?? 0;
+  const periodIncome = periodTotals.find((t) => t._id === 'income')?.total ?? 0;
+  const periodExpense =
+    periodTotals.find((t) => t._id === 'expense')?.total ?? 0;
 
   res.json({
     totalIncome,
     totalExpense,
     balance: totalIncome - totalExpense,
-    monthIncome,
-    monthExpense,
+    monthIncome: periodIncome,
+    monthExpense: periodExpense,
+    isFiltered,
+    month: targetMonth !== null ? targetMonth + 1 : null,
+    year: targetYear,
     dailySeries: dailySeries.map((point) => ({
       date: point._id,
       income: point.income,

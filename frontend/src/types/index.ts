@@ -74,6 +74,9 @@ export interface DashboardSummary {
   balance: number;
   monthIncome: number;
   monthExpense: number;
+  isFiltered: boolean;
+  month: number | null;
+  year: number | null;
   dailySeries: DailyPoint[];
   expenseByCategory: CategoryBreakdownPoint[];
   incomeByCategory: CategoryBreakdownPoint[];
