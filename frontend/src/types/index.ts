@@ -68,6 +68,11 @@ export interface CategoryBreakdownPoint {
   total: number;
 }
 
+export interface AvailablePeriod {
+  year: number;
+  month: number;
+}
+
 export interface DashboardSummary {
   totalIncome: number;
   totalExpense: number;

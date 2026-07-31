@@ -1,5 +1,5 @@
 import { apiClient } from './client';
-import { DashboardSummary } from '../types';
+import { AvailablePeriod, DashboardSummary } from '../types';
 
 export async function fetchDashboardSummary(
   month?: number,
@@ -8,5 +8,12 @@ export async function fetchDashboardSummary(
   const { data } = await apiClient.get<DashboardSummary>('/dashboard/summary', {
     params: { month, year },
   });
+  return data;
+}
+
+export async function fetchAvailablePeriods(): Promise<AvailablePeriod[]> {
+  const { data } = await apiClient.get<AvailablePeriod[]>(
+    '/dashboard/available-periods',
+  );
   return data;
 }

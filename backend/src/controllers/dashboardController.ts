@@ -21,6 +21,32 @@ interface SummaryQuery {
   year?: string;
 }
 
+interface PeriodGroup {
+  _id: { year: number; month: number };
+}
+
+export const getAvailablePeriods = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user?.userId;
+    const objectId = new Types.ObjectId(userId);
+
+    const periods = await TransactionModel.aggregate<PeriodGroup>([
+      { $match: { userId: objectId } },
+      {
+        $group: {
+          _id: {
+            year: { $year: '$date' },
+            month: { $month: '$date' },
+          },
+        },
+      },
+      { $sort: { '_id.year': -1, '_id.month': -1 } },
+    ]);
+
+    res.json(periods.map((p) => ({ year: p._id.year, month: p._id.month })));
+  },
+);
+
 export const getSummary = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?.userId;
   const objectId = new Types.ObjectId(userId);
