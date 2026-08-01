@@ -16,7 +16,7 @@ export function WarningModal({
         <div className="w-12 h-12 rounded-full bg-amber-100 text-amber-500 flex items-center justify-center mx-auto mb-3">
           <AlertTriangle size={22} />
         </div>
-        <h2 className="font-bold text-slate-800 mb-2">Tidak Dapat Dihapus</h2>
+        <h2 className="font-bold text-slate-800 mb-2">Peringatan</h2>
         <p className="text-sm text-slate-500 mb-5">{message}</p>
         <button
           type="button"

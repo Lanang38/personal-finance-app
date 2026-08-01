@@ -1,6 +1,8 @@
 import { useState, FormEvent } from 'react';
 import { X } from 'lucide-react';
 import { Category, CategoryKind } from '../../types';
+import { getErrorMessage } from '../../api/client';
+import { WarningModal } from '../warning/WarningModal';
 import type { JSX } from 'react';
 
 interface CategoryEditModalProps {
@@ -20,6 +22,7 @@ export function CategoryEditModal({
   const [name, setName] = useState<string>(category.name);
   const [kind, setKind] = useState<CategoryKind>(category.kind);
   const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [warningMessage, setWarningMessage] = useState<string | null>(null);
 
   async function handleSubmit(
     event: FormEvent<HTMLFormElement>,
@@ -30,6 +33,8 @@ export function CategoryEditModal({
     try {
       await onSave(category.id, { name: name.trim(), kind });
       onClose();
+    } catch (error) {
+      setWarningMessage(getErrorMessage(error));
     } finally {
       setIsSaving(false);
     }
@@ -85,6 +90,13 @@ export function CategoryEditModal({
           </div>
         </form>
       </div>
+
+      {warningMessage && (
+        <WarningModal
+          message={warningMessage}
+          onClose={() => setWarningMessage(null)}
+        />
+      )}
     </div>
   );
 }

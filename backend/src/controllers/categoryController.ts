@@ -11,6 +11,10 @@ interface CreateCategoryBody {
   color?: string;
 }
 
+function escapeRegex(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
 export const listCategories = asyncHandler(
   async (req: Request, res: Response) => {
     const userId = req.user?.userId;
@@ -65,19 +69,30 @@ export const updateCategory = asyncHandler(
       throw new AppError('Tidak ada data untuk diperbarui', 400);
     }
 
-    const category = await CategoryModel.findOneAndUpdate(
-      { _id: id, userId },
-      {
-        ...(name !== undefined ? { name } : {}),
-        ...(kind !== undefined ? { kind } : {}),
-        ...(color !== undefined ? { color } : {}),
-      },
-      { new: true },
-    );
-
+    const category = await CategoryModel.findOne({ _id: id, userId });
     if (!category) {
       throw new AppError('Kategori tidak ditemukan', 404);
     }
+
+    if (name !== undefined) {
+      const trimmedName = name.trim();
+
+      const existingCategory = await CategoryModel.findOne({
+        userId,
+        _id: { $ne: id },
+        name: { $regex: new RegExp(`^${escapeRegex(trimmedName)}$`, 'i') },
+      });
+
+      if (existingCategory) {
+        throw new AppError('Kategori dengan nama tersebut sudah ada', 409);
+      }
+
+      category.name = trimmedName;
+    }
+    if (kind !== undefined) category.kind = kind;
+    if (color !== undefined) category.color = color;
+
+    await category.save();
 
     res.json({
       category: {
