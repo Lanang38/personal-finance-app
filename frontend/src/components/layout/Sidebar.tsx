@@ -8,6 +8,7 @@ import {
   ScanLine,
   Settings,
   LogOut,
+  NotepadText,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import type { JSX } from 'react';
@@ -23,12 +24,14 @@ const menuItems: MenuItem[] = [
   { label: 'Dashboard', to: '/dashboard', icon: <LayoutGrid size={20} /> },
   { label: 'Transaksi', to: '/transactions', icon: <Receipt size={20} /> },
   { label: 'Akun', to: '/accounts', icon: <Wallet size={20} /> },
-  { label: 'Anggaran', to: '/budgets', icon: <PiggyBank size={20} /> },
+];
+const menuItemsPlus: MenuItem[] = [
+  { label: 'Anggaran', to: '/budgets', icon: <NotepadText size={20} /> },
+  { label: 'Target Tabungan', to: '/goals', icon: <PiggyBank size={20} /> },
 ];
 
 // Menu fitur yang sudah direncanakan tapi belum dikembangkan (mengarah ke halaman Coming Soon)
 const upcomingMenuItems: MenuItem[] = [
-  { label: 'Target Tabungan', to: '/goals', icon: <PiggyBank size={20} /> },
   { label: 'Laporan', to: '/reports', icon: <FileBarChart size={20} /> },
   { label: 'Scan Struk', to: '/scan-receipt', icon: <ScanLine size={20} /> },
   { label: 'Pengaturan', to: '/settings', icon: <Settings size={20} /> },
@@ -52,6 +55,28 @@ export function Sidebar(): JSX.Element {
         </p>
         <nav className="flex flex-col gap-1 mb-6">
           {menuItems.map((item) => (
+            <NavLink
+              key={item.label}
+              to={item.to}
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-4 py-3 rounded-2xl font-semibold transition-colors ${
+                  isActive
+                    ? 'bg-white text-brand-purple'
+                    : 'text-white/85 hover:bg-white/10'
+                }`
+              }
+            >
+              {item.icon}
+              {item.label}
+            </NavLink>
+          ))}
+        </nav>
+
+        <p className="text-xs uppercase tracking-wide text-white/60 mb-3">
+          Menu Tambahan
+        </p>
+        <nav className="flex flex-col gap-1 mb-6">
+          {menuItemsPlus.map((item) => (
             <NavLink
               key={item.label}
               to={item.to}
