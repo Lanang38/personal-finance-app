@@ -1,5 +1,6 @@
 import { FormEvent, useState } from 'react';
 import { AccountType } from '../../types';
+import { getErrorMessage } from '../../api/client';
 import type { JSX } from 'react';
 import { ChevronDown } from 'lucide-react';
 
@@ -10,6 +11,7 @@ interface AccountFormProps {
     currency: string;
     initialBalance: number;
   }) => Promise<void>;
+  onError?: (message: string) => void;
 }
 
 const accountTypes: { value: AccountType; label: string }[] = [
@@ -19,7 +21,10 @@ const accountTypes: { value: AccountType; label: string }[] = [
   { value: 'other', label: 'Lainnya' },
 ];
 
-export function AccountForm({ onSubmit }: AccountFormProps): JSX.Element {
+export function AccountForm({
+  onSubmit,
+  onError,
+}: AccountFormProps): JSX.Element {
   const [name, setName] = useState<string>('');
   const [type, setType] = useState<AccountType>('cash');
   const [initialBalance, setInitialBalance] = useState<string>('');
@@ -41,6 +46,8 @@ export function AccountForm({ onSubmit }: AccountFormProps): JSX.Element {
       });
       setName('');
       setInitialBalance('');
+    } catch (error) {
+      onError?.(getErrorMessage(error));
     } finally {
       setIsSubmitting(false);
     }
