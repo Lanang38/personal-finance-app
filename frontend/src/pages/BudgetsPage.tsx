@@ -4,6 +4,7 @@ import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { BudgetForm } from '../components/budgets/BudgetForm';
 import { BudgetList } from '../components/budgets/BudgetList';
 import { fetchCategories } from '../api/categories';
+import { BudgetSkeleton } from '../components/budgets/BudgetSkeleton';
 import {
   fetchAvailableMonths,
   fetchBudgets,
@@ -138,12 +139,16 @@ export function BudgetsPage(): JSX.Element {
         </div>
 
         <div className="lg:col-span-2">
-          <BudgetList
-            budgets={budgets}
-            isLoading={isLoading}
-            onEdit={handleEdit}
-            onDelete={handleDelete}
-          />
+          {isLoading ? (
+            <BudgetSkeleton />
+          ) : (
+            <BudgetList
+              budgets={budgets}
+              isLoading={false}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
+          )}
         </div>
       </div>
     </DashboardLayout>
