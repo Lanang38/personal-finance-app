@@ -3,6 +3,7 @@ import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { GoalForm } from '../components/goals/GoalForm';
 import { GoalList } from '../components/goals/GoalList';
 import { GoalSkeleton } from '../components/goals/GoalSkeleton';
+import { useAccounts } from '../context/AccountContext';
 
 import {
   fetchGoals,
@@ -17,6 +18,7 @@ import { withMinimumDelay } from '../utils/withMinimumDelay';
 import type { JSX } from 'react';
 
 export function GoalsPage(): JSX.Element {
+  const { accounts } = useAccounts();
   const [goals, setGoals] = useState<Goal[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -53,8 +55,12 @@ export function GoalsPage(): JSX.Element {
     await refreshData();
   }
 
-  async function handleContribute(id: string, amount: number): Promise<void> {
-    await contributeGoalRequest(id, amount);
+  async function handleContribute(
+    id: string,
+    amount: number,
+    accountId: string,
+  ): Promise<void> {
+    await contributeGoalRequest(id, amount, accountId);
     await refreshData();
   }
 
@@ -76,6 +82,7 @@ export function GoalsPage(): JSX.Element {
           ) : (
             <GoalList
               goals={goals}
+              accounts={accounts}
               isLoading={false}
               onContribute={handleContribute}
               onDelete={handleDelete}

@@ -34,8 +34,9 @@ export async function updateGoalRequest(
 export async function contributeGoalRequest(
   id: string,
   amount: number,
+  accountId: string,
 ): Promise<void> {
-  await apiClient.post(`/goals/${id}/contribute`, { amount });
+  await apiClient.post(`/goals/${id}/contribute`, { amount, accountId });
 }
 
 export async function deleteGoalRequest(id: string): Promise<void> {

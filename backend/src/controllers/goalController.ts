@@ -1,5 +1,7 @@
 import { Request, Response } from 'express';
 import { GoalModel } from '../models/Goal';
+import { AccountModel } from '../models/Account';
+import { TransactionModel } from '../models/Transaction';
 import { asyncHandler } from '../utils/asyncHandler';
 import { AppError } from '../utils/AppError';
 
@@ -99,15 +101,49 @@ export const contributeGoal = asyncHandler(
   async (req: Request, res: Response) => {
     const userId = req.user?.userId;
     const { id } = req.params;
-    const { amount } = req.body as { amount?: number };
+    const { amount, accountId } = req.body as {
+      amount?: number;
+      accountId?: string;
+    };
 
     if (!amount || amount <= 0) {
       throw new AppError('Nominal kontribusi harus lebih besar dari 0', 400);
+    }
+    if (!accountId) {
+      throw new AppError('Sumber akun wajib dipilih', 400);
     }
 
     const goal = await GoalModel.findOne({ _id: id, userId });
     if (!goal) {
       throw new AppError('Target tabungan tidak ditemukan', 404);
+    }
+
+    const account = await AccountModel.findOne({ _id: accountId, userId });
+    if (!account) {
+      throw new AppError('Akun tidak ditemukan', 404);
+    }
+
+    const [incomeAgg, expenseAgg] = await Promise.all([
+      TransactionModel.aggregate<{ total: number }>([
+        { $match: { accountId: account._id, type: 'income' } },
+        { $group: { _id: null, total: { $sum: '$amount' } } },
+      ]),
+      TransactionModel.aggregate<{ total: number }>([
+        { $match: { accountId: account._id, type: 'expense' } },
+        { $group: { _id: null, total: { $sum: '$amount' } } },
+      ]),
+    ]);
+
+    const accountBalance =
+      account.initialBalance +
+      (incomeAgg[0]?.total ?? 0) -
+      (expenseAgg[0]?.total ?? 0);
+
+    if (amount > accountBalance) {
+      throw new AppError(
+        'Saldo akun tidak mencukupi untuk kontribusi ini',
+        400,
+      );
     }
 
     goal.currentAmount += amount;
