@@ -7,6 +7,7 @@ import { AccountsPage } from './pages/AccountsPage';
 import { ComingSoonPage } from './pages/ComingSoonPage';
 import { BudgetsPage } from './pages/BudgetsPage';
 import { PrivateLayout } from './components/PrivateLayout';
+import { GoalsPage } from './pages/GoalsPage';
 
 import type { JSX } from 'react';
 
@@ -22,10 +23,7 @@ export default function App(): JSX.Element {
         <Route path="/accounts" element={<AccountsPage />} />
 
         <Route path="/budgets" element={<BudgetsPage />} />
-        <Route
-          path="/goals"
-          element={<ComingSoonPage title="Target Tabungan" />}
-        />
+        <Route path="/goals" element={<GoalsPage />} />
         <Route path="/reports" element={<ComingSoonPage title="Laporan" />} />
         <Route
           path="/scan-receipt"
