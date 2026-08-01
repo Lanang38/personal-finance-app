@@ -215,12 +215,12 @@ export function DashboardPage(): JSX.Element {
 
             <div
               ref={scrollRef}
-              className="flex overflow-x-auto scroll-smooth snap-x snap-mandatory [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+              className="flex overflow-x-auto scroll-smooth snap-x snap-mandatory [scrollbar-none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
             >
               {widgetPages.map((page, pageIndex) => (
                 <div
                   key={pageIndex}
-                  className="w-full flex-shrink-0 snap-start grid grid-cols-1 sm:grid-cols-3 gap-4 pr-4 last:pr-0"
+                  className="w-full shrink-0 snap-start grid grid-cols-1 sm:grid-cols-3 gap-4 pr-4 last:pr-0"
                 >
                   {page.map((widget) => (
                     <StatCard

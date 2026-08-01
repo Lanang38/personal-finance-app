@@ -23,11 +23,11 @@ const menuItems: MenuItem[] = [
   { label: 'Dashboard', to: '/dashboard', icon: <LayoutGrid size={20} /> },
   { label: 'Transaksi', to: '/transactions', icon: <Receipt size={20} /> },
   { label: 'Akun', to: '/accounts', icon: <Wallet size={20} /> },
+  { label: 'Anggaran', to: '/budgets', icon: <PiggyBank size={20} /> },
 ];
 
 // Menu fitur yang sudah direncanakan tapi belum dikembangkan (mengarah ke halaman Coming Soon)
 const upcomingMenuItems: MenuItem[] = [
-  { label: 'Anggaran', to: '/budgets', icon: <PiggyBank size={20} /> },
   { label: 'Target Tabungan', to: '/goals', icon: <PiggyBank size={20} /> },
   { label: 'Laporan', to: '/reports', icon: <FileBarChart size={20} /> },
   { label: 'Scan Struk', to: '/scan-receipt', icon: <ScanLine size={20} /> },
