@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { CategoryModel, CategoryKind } from '../models/Category';
 import { TransactionModel } from '../models/Transaction';
+import { BudgetModel } from '../models/Budget';
 import { asyncHandler } from '../utils/asyncHandler';
 import { AppError } from '../utils/AppError';
 
@@ -107,6 +108,18 @@ export const deleteCategory = asyncHandler(
     if (usageCount > 0) {
       throw new AppError(
         'Kategori tidak dapat dihapus karena masih digunakan pada transaksi',
+        409,
+      );
+    }
+
+    const budgetUsageCount = await BudgetModel.countDocuments({
+      userId,
+      categoryId: id,
+    });
+
+    if (budgetUsageCount > 0) {
+      throw new AppError(
+        'Kategori tidak dapat dihapus karena masih digunakan pada anggaran',
         409,
       );
     }

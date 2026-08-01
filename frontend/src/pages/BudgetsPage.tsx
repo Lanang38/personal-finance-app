@@ -3,8 +3,9 @@ import { ChevronDown } from 'lucide-react';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { BudgetForm } from '../components/budgets/BudgetForm';
 import { BudgetList } from '../components/budgets/BudgetList';
-import { fetchCategories } from '../api/categories';
 import { BudgetSkeleton } from '../components/budgets/BudgetSkeleton';
+import { fetchCategories } from '../api/categories';
+import { withMinimumDelay } from '../utils/withMinimumDelay';
 import {
   fetchAvailableMonths,
   fetchBudgets,
@@ -37,21 +38,22 @@ function currentMonth(): string {
 
 function formatMonthLabel(value: string): string {
   const [year, month] = value.split('-');
-  const monthIndex = Number(month) - 1;
-  return `${MONTH_NAMES[monthIndex] ?? month} ${year}`;
+  return `${MONTH_NAMES[Number(month) - 1]} ${year}`;
 }
 
 export function BudgetsPage(): JSX.Element {
-  const [month, setMonth] = useState<string>(currentMonth());
+  const [month, setMonth] = useState(currentMonth());
   const [availableMonths, setAvailableMonths] = useState<string[]>([]);
-  const [categories, setCategories] = useState<Category[] | null>(null);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [budgets, setBudgets] = useState<Budget[]>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     void (async () => {
       const months = await fetchAvailableMonths();
+
       setAvailableMonths(months);
+
       if (months.length > 0 && !months.includes(month)) {
         setMonth(months[0]);
       }
@@ -59,45 +61,73 @@ export function BudgetsPage(): JSX.Element {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  /**
+   * Loading awal (pakai skeleton)
+   */
   const loadData = useCallback(async () => {
     setIsLoading(true);
+
+    const [categoryList, budgetResponse] = await withMinimumDelay(
+      Promise.all([fetchCategories(), fetchBudgets(month)]),
+    );
+
+    setCategories(categoryList);
+    setBudgets(budgetResponse.budgets);
+
+    setIsLoading(false);
+  }, [month]);
+
+  /**
+   * Refresh data (tanpa skeleton)
+   */
+  const refreshData = useCallback(async () => {
     const [categoryList, budgetResponse] = await Promise.all([
       fetchCategories(),
       fetchBudgets(month),
     ]);
+
     setCategories(categoryList);
     setBudgets(budgetResponse.budgets);
-    setIsLoading(false);
   }, [month]);
 
   useEffect(() => {
     void loadData();
   }, [loadData]);
 
-  const expenseCategories =
-    categories?.filter((c) => c.kind === 'expense') ?? null;
+  const expenseCategories = categories.filter(
+    (category) => category.kind === 'expense',
+  );
 
-  const budgetedCategoryIds = new Set(budgets.map((b) => b.category.id));
+  const budgetedCategoryIds = new Set(
+    budgets.map((budget) => budget.category.id),
+  );
 
-  const availableCategories =
-    expenseCategories?.filter((c) => !budgetedCategoryIds.has(c.id)) ?? null;
+  const availableCategories = expenseCategories.filter(
+    (category) => !budgetedCategoryIds.has(category.id),
+  );
 
   async function handleCreate(payload: {
     categoryId: string;
     limitAmount: number;
   }): Promise<void> {
-    await createBudgetRequest({ ...payload, month });
-    await loadData();
+    await createBudgetRequest({
+      ...payload,
+      month,
+    });
+
+    await refreshData();
   }
 
   async function handleEdit(id: string, limitAmount: number): Promise<void> {
     await updateBudgetRequest(id, limitAmount);
-    await loadData();
+
+    await refreshData();
   }
 
   async function handleDelete(id: string): Promise<void> {
     await deleteBudgetRequest(id);
-    await loadData();
+
+    await refreshData();
   }
 
   return (
@@ -107,6 +137,7 @@ export function BudgetsPage(): JSX.Element {
           <div className="bg-white rounded-3xl p-6 shadow-sm">
             <div className="flex items-center justify-between gap-3">
               <h2 className="font-bold text-lg text-slate-800">Anggaran</h2>
+
               <div className="relative">
                 <select
                   value={month}
@@ -117,13 +148,14 @@ export function BudgetsPage(): JSX.Element {
                   {availableMonths.length === 0 ? (
                     <option value={month}>{formatMonthLabel(month)}</option>
                   ) : (
-                    availableMonths.map((m) => (
-                      <option key={m} value={m}>
-                        {formatMonthLabel(m)}
+                    availableMonths.map((item) => (
+                      <option key={item} value={item}>
+                        {formatMonthLabel(item)}
                       </option>
                     ))
                   )}
                 </select>
+
                 <ChevronDown
                   size={15}
                   className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
@@ -134,6 +166,7 @@ export function BudgetsPage(): JSX.Element {
 
           <BudgetForm
             availableCategories={availableCategories}
+            isReady={!isLoading}
             onSubmit={handleCreate}
           />
         </div>

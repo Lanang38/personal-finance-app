@@ -4,7 +4,8 @@ import { Category } from '../../types';
 import type { JSX } from 'react';
 
 interface BudgetFormProps {
-  availableCategories: Category[] | null;
+  availableCategories: Category[];
+  isReady: boolean;
   onSubmit: (payload: {
     categoryId: string;
     limitAmount: number;
@@ -13,6 +14,7 @@ interface BudgetFormProps {
 
 export function BudgetForm({
   availableCategories,
+  isReady,
   onSubmit,
 }: BudgetFormProps): JSX.Element {
   const [categoryId, setCategoryId] = useState<string>('');
@@ -48,7 +50,6 @@ export function BudgetForm({
 
       setCategoryId('');
       setLimitAmount('');
-      setError('');
     } finally {
       setIsSubmitting(false);
     }
@@ -70,12 +71,11 @@ export function BudgetForm({
           <select
             value={categoryId}
             onChange={(e) => setCategoryId(e.target.value)}
-            disabled={availableCategories === null}
-            className="w-full appearance-none bg-slate-100 rounded-xl pl-4 pr-9 py-2.5 outline-none disabled:opacity-60"
+            className="w-full appearance-none bg-slate-100 rounded-xl pl-4 pr-9 py-2.5 outline-none"
           >
             <option value="">Pilih kategori</option>
 
-            {availableCategories?.map((category) => (
+            {availableCategories.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.name}
               </option>
@@ -88,7 +88,7 @@ export function BudgetForm({
           />
         </div>
 
-        {availableCategories !== null && availableCategories.length === 0 && (
+        {isReady && availableCategories.length === 0 && (
           <p className="text-xs text-slate-400 mt-1">
             Semua kategori pengeluaran sudah punya anggaran bulan ini
           </p>
@@ -114,11 +114,7 @@ export function BudgetForm({
 
       <button
         type="submit"
-        disabled={
-          isSubmitting ||
-          availableCategories === null ||
-          availableCategories.length === 0
-        }
+        disabled={isSubmitting || (!availableCategories.length && isReady)}
         className="w-full bg-brand-purple text-white font-semibold py-3 rounded-xl disabled:opacity-60"
       >
         {isSubmitting ? 'Menyimpan...' : 'Tambah Anggaran'}
