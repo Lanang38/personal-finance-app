@@ -1,6 +1,10 @@
-import { GoogleGenAI } from '@google/genai';
+// `resolution-mode` cuma valid di bentuk `import type { X } from "..."`,
+// bukan di inline `import(...)` type query — makanya dipakai bentuk ini.
+import type { GoogleGenAI } from '@google/genai' with {
+  'resolution-mode': 'import',
+};
 
-const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
+type GoogleGenAIType = InstanceType<typeof GoogleGenAI>;
 
 export interface GeminiSuggestionText {
   conditionKey: string;
@@ -32,6 +36,20 @@ const FALLBACK_WIDGET_INSIGHTS: GeminiWidgetInsights = {
   accounts: 'Belum ada cukup data akun.',
 };
 
+// Client dibuat lewat dynamic import() dan di-cache supaya package
+// cuma di-load sekali.
+let clientPromise: Promise<GoogleGenAIType> | null = null;
+
+async function getGeminiClient(): Promise<GoogleGenAIType> {
+  if (!clientPromise) {
+    clientPromise = import('@google/genai').then(
+      ({ GoogleGenAI }) =>
+        new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY }),
+    );
+  }
+  return clientPromise;
+}
+
 /**
  * Meminta Gemini menuliskan ulang fakta & kondisi (yang SUDAH diverifikasi
  * secara rule-based) menjadi kalimat Bahasa Indonesia yang natural.
@@ -40,6 +58,8 @@ const FALLBACK_WIDGET_INSIGHTS: GeminiWidgetInsights = {
 export async function generateInsightNarrative(
   input: GenerateNarrativeInput,
 ): Promise<GeminiInsightNarrative> {
+  const ai = await getGeminiClient();
+
   const conditionList =
     input.candidateSummaries.length > 0
       ? input.candidateSummaries
