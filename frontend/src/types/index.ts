@@ -109,3 +109,27 @@ export interface Goal {
   percentage: number;
   isCompleted: boolean;
 }
+
+export interface InsightAction {
+  label: string;
+  route: string;
+}
+
+export interface InsightSuggestion {
+  conditionKey: string;
+  text: string;
+  action: InsightAction | null;
+}
+
+export interface WidgetInsights {
+  expenseTrend: string;
+  expenseByCategory: string;
+  incomeByCategory: string;
+  accounts: string;
+}
+
+export interface InsightsResponse {
+  widgetInsights: WidgetInsights;
+  suggestions: InsightSuggestion[];
+  affirmation: string | null;
+}
