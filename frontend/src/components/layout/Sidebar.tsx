@@ -28,11 +28,11 @@ const menuItems: MenuItem[] = [
 const menuItemsPlus: MenuItem[] = [
   { label: 'Anggaran', to: '/budgets', icon: <NotepadText size={20} /> },
   { label: 'Target Tabungan', to: '/goals', icon: <PiggyBank size={20} /> },
+  { label: 'Laporan', to: '/reports', icon: <FileBarChart size={20} /> },
 ];
 
 // Menu fitur yang sudah direncanakan tapi belum dikembangkan (mengarah ke halaman Coming Soon)
 const upcomingMenuItems: MenuItem[] = [
-  { label: 'Laporan', to: '/reports', icon: <FileBarChart size={20} /> },
   { label: 'Scan Struk', to: '/scan-receipt', icon: <ScanLine size={20} /> },
   { label: 'Pengaturan', to: '/settings', icon: <Settings size={20} /> },
 ];
