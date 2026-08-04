@@ -19,7 +19,8 @@ interface DonutSlice {
   color: string;
 }
 
-const ACCOUNT_COLORS = [
+
+const COLORS = [
   '#7C3AED',
   '#2563EB',
   '#F97316',
@@ -52,26 +53,26 @@ export function InsightDonut({
 
   const data: DonutSlice[] = useMemo(() => {
     if (view === 'expense') {
-      return expenseByCategory.map((c) => ({
+      return expenseByCategory.map((c, index) => ({
         id: c.categoryId,
         name: c.categoryName,
         value: c.total,
-        color: c.color,
+        color: COLORS[index % COLORS.length],
       }));
     }
     if (view === 'income') {
-      return incomeByCategory.map((c) => ({
+      return incomeByCategory.map((c, index) => ({
         id: c.categoryId,
         name: c.categoryName,
         value: c.total,
-        color: c.color,
+        color: COLORS[index % COLORS.length],
       }));
     }
     return accounts.map((account, index) => ({
       id: account.id,
       name: account.name,
       value: account.balance,
-      color: ACCOUNT_COLORS[index % ACCOUNT_COLORS.length],
+      color: COLORS[index % COLORS.length],
     }));
   }, [view, expenseByCategory, incomeByCategory, accounts]);
 
