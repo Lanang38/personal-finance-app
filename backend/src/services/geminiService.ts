@@ -1,4 +1,4 @@
-// `resolution-mode` cuma valid di bentuk `import type { X } from "..."`,
+// `resolution-mode` cuma valid di bentuk `import type { X } from "...";`,
 // bukan di inline `import(...)` type query — makanya dipakai bentuk ini.
 import type { GoogleGenAI } from '@google/genai' with {
   'resolution-mode': 'import',
@@ -88,46 +88,59 @@ Instruksi output:
 Balas HANYA JSON sesuai skema, tanpa markdown, tanpa penjelasan tambahan.
 `.trim();
 
-  const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash',
-    contents: prompt,
-    config: {
-      responseMimeType: 'application/json',
-      responseSchema: {
-        type: 'object',
-        properties: {
-          widgetInsights: {
-            type: 'object',
-            properties: {
-              expenseTrend: { type: 'string' },
-              expenseByCategory: { type: 'string' },
-              incomeByCategory: { type: 'string' },
-              accounts: { type: 'string' },
-            },
-            required: [
-              'expenseTrend',
-              'expenseByCategory',
-              'incomeByCategory',
-              'accounts',
-            ],
-          },
-          suggestionTexts: {
-            type: 'array',
-            items: {
+  let response: Awaited<
+    ReturnType<GoogleGenAIType['models']['generateContent']>
+  >;
+  try {
+    response = await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents: prompt,
+      config: {
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: 'object',
+          properties: {
+            widgetInsights: {
               type: 'object',
               properties: {
-                conditionKey: { type: 'string' },
-                text: { type: 'string' },
+                expenseTrend: { type: 'string' },
+                expenseByCategory: { type: 'string' },
+                incomeByCategory: { type: 'string' },
+                accounts: { type: 'string' },
               },
-              required: ['conditionKey', 'text'],
+              required: [
+                'expenseTrend',
+                'expenseByCategory',
+                'incomeByCategory',
+                'accounts',
+              ],
             },
+            suggestionTexts: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  conditionKey: { type: 'string' },
+                  text: { type: 'string' },
+                },
+                required: ['conditionKey', 'text'],
+              },
+            },
+            affirmation: { type: 'string', nullable: true },
           },
-          affirmation: { type: 'string', nullable: true },
+          required: ['widgetInsights', 'suggestionTexts'],
         },
-        required: ['widgetInsights', 'suggestionTexts'],
       },
-    },
-  });
+    });
+  } catch {
+    // Panggilan ke Gemini gagal (API key salah, kuota habis, network,
+    // dll) — jangan sampai seluruh request /insights ikut gagal.
+    return {
+      widgetInsights: FALLBACK_WIDGET_INSIGHTS,
+      suggestionTexts: [],
+      affirmation: null,
+    };
+  }
 
   try {
     const parsed = JSON.parse(

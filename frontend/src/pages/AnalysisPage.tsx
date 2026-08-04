@@ -18,12 +18,25 @@ export function AnalysisPage(): JSX.Element {
 
   const loadData = useCallback(async () => {
     setIsLoading(true);
-    const [summaryData, insightsData] = await Promise.all([
+    // Ambil summary & insights secara independen: kalau salah satu gagal
+    // (mis. Gemini API error), yang lain tetap tampil.
+    const [summaryResult, insightsResult] = await Promise.allSettled([
       fetchDashboardSummary(),
       fetchInsights(),
     ]);
-    setSummary(summaryData);
-    setInsights(insightsData);
+
+    if (summaryResult.status === 'fulfilled') {
+      setSummary(summaryResult.value);
+    } else {
+      console.error('Gagal memuat ringkasan dashboard:', summaryResult.reason);
+    }
+
+    if (insightsResult.status === 'fulfilled') {
+      setInsights(insightsResult.value);
+    } else {
+      console.error('Gagal memuat insight AI:', insightsResult.reason);
+    }
+
     setIsLoading(false);
   }, []);
 
