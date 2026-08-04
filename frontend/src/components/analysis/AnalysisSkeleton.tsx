@@ -9,7 +9,7 @@ export function AnalysisSkeleton(): JSX.Element {
         <Skeleton className="h-5 w-52 rounded-full mb-5" />
 
         <div className="space-y-4">
-          {Array.from({ length: 3 }).map((_, index) => (
+          {Array.from({ length: 0 }).map((_, index) => (
             <div
               key={index}
               className="flex items-start gap-3 pb-4 border-b border-slate-100 last:border-0 last:pb-0"
