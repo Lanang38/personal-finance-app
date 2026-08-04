@@ -3,6 +3,7 @@ import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { WalletChart } from '../components/dashboard/WalletChart';
 import { AnalysisDonut } from '../components/analysis/AnalysisDonut';
 import { SuggestionPanel } from '../components/analysis/SuggestionPanel';
+import { AnalysisSkeleton } from '../components/analysis/AnalysisSkeleton';
 import { fetchDashboardSummary } from '../api/dashboard';
 import { fetchInsights, dismissSuggestionRequest } from '../api/insights';
 import { useAccounts } from '../context/AccountContext';
@@ -49,36 +50,41 @@ export function AnalysisPage(): JSX.Element {
 
   return (
     <DashboardLayout>
-      <div className="space-y-6">
-        <SuggestionPanel
-          suggestions={insights?.suggestions ?? []}
-          affirmation={insights?.affirmation ?? null}
-          isLoading={isLoading}
-          onDismiss={handleDismiss}
-        />
+      {isLoading ? (
+        <AnalysisSkeleton />
+      ) : (
+        <div className="space-y-6">
+          <SuggestionPanel
+            suggestions={insights?.suggestions ?? []}
+            affirmation={insights?.affirmation ?? null}
+            isLoading={false}
+            onDismiss={handleDismiss}
+          />
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
-            <WalletChart
-              data={summary?.dailySeries ?? []}
-              caption={insights?.widgetInsights.expenseTrend}
-            />
-          </div>
-          <div>
-            <AnalysisDonut
-              expenseByCategory={summary?.expenseByCategory ?? []}
-              incomeByCategory={summary?.incomeByCategory ?? []}
-              accounts={accounts}
-              isAccountsLoading={isAccountsLoading}
-              captions={{
-                expense: insights?.widgetInsights.expenseByCategory,
-                income: insights?.widgetInsights.incomeByCategory,
-                accounts: insights?.widgetInsights.accounts,
-              }}
-            />
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2">
+              <WalletChart
+                data={summary?.dailySeries ?? []}
+                caption={insights?.widgetInsights.expenseTrend}
+              />
+            </div>
+
+            <div>
+              <AnalysisDonut
+                expenseByCategory={summary?.expenseByCategory ?? []}
+                incomeByCategory={summary?.incomeByCategory ?? []}
+                accounts={accounts}
+                isAccountsLoading={isAccountsLoading}
+                captions={{
+                  expense: insights?.widgetInsights.expenseByCategory,
+                  income: insights?.widgetInsights.incomeByCategory,
+                  accounts: insights?.widgetInsights.accounts,
+                }}
+              />
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </DashboardLayout>
   );
 }
