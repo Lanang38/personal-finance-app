@@ -5,6 +5,7 @@ import type { JSX } from 'react';
 interface AccountsDonutProps {
   accounts: Account[];
   isLoading: boolean;
+  caption?: string;
 }
 
 const ACCOUNT_COLORS = [
@@ -21,6 +22,7 @@ const ACCOUNT_COLORS = [
 export function AccountsDonut({
   accounts,
   isLoading,
+  caption,
 }: AccountsDonutProps): JSX.Element {
   const total = accounts.reduce((sum, account) => sum + account.balance, 0);
   const data = accounts.map((account, index) => ({
@@ -31,8 +33,11 @@ export function AccountsDonut({
   }));
 
   return (
-    <div className="bg-white rounded-3xl p-6 shadow-sm h-full flex flex-col">
-      <h2 className="font-bold text-lg text-slate-800 mb-4">Akun</h2>
+    <div className="bg-white rounded-3xl p-6 shadow-sm flex flex-col">
+      <h2 className="font-bold text-lg text-slate-800">
+        Distribusi Saldo Akun
+      </h2>
+      <p className="text-xs text-slate-400 mb-3">{caption ?? '\u00A0'}</p>
 
       {isLoading ? (
         <div className="flex-1 flex items-center justify-center text-slate-400 text-sm">

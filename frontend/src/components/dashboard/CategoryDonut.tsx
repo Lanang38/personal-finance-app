@@ -6,18 +6,23 @@ interface CategoryDonutProps {
   data: CategoryBreakdownPoint[];
   title?: string;
   emptyLabel?: string;
+  caption?: string;
 }
 
 export function CategoryDonut({
   data,
   title = 'Kategori Pengeluaran',
   emptyLabel = 'Belum ada data pengeluaran',
+  caption,
 }: CategoryDonutProps): JSX.Element {
   const total = data.reduce((sum, point) => sum + point.total, 0);
 
   return (
     <div className="bg-white rounded-3xl p-6 shadow-sm h-full flex flex-col">
-      <h2 className="font-bold text-lg text-slate-800 mb-4">{title}</h2>
+      <div className="mb-4">
+        <h2 className="font-bold text-lg text-slate-800">{title}</h2>
+        {caption && <p className="text-xs text-slate-400 mt-0.5">{caption}</p>}
+      </div>
 
       {data.length === 0 ? (
         <div className="flex-1 flex items-center justify-center text-slate-400 text-sm">
