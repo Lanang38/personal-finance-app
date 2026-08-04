@@ -6,24 +6,27 @@ import { SuggestionPanel } from '../components/analysis/SuggestionPanel';
 import { AnalysisSkeleton } from '../components/analysis/AnalysisSkeleton';
 import { fetchDashboardSummary } from '../api/dashboard';
 import { fetchInsights, dismissSuggestionRequest } from '../api/insights';
+import { withMinimumDelay } from '../utils/withMinimumDelay';
 import { useAccounts } from '../context/AccountContext';
 import { DashboardSummary, InsightsResponse } from '../types';
 import type { JSX } from 'react';
 
 export function AnalysisPage(): JSX.Element {
   const { accounts, isLoading: isAccountsLoading } = useAccounts();
+
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [insights, setInsights] = useState<InsightsResponse | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [isLoading, setIsLoading] = useState(true);
 
+  /**
+   * Loading awal (pakai skeleton)
+   */
   const loadData = useCallback(async () => {
     setIsLoading(true);
-    // Ambil summary & insights secara independen: kalau salah satu gagal
-    // (mis. Gemini API error), yang lain tetap tampil.
-    const [summaryResult, insightsResult] = await Promise.allSettled([
-      fetchDashboardSummary(),
-      fetchInsights(),
-    ]);
+
+    const [summaryResult, insightsResult] = await withMinimumDelay(
+      Promise.allSettled([fetchDashboardSummary(), fetchInsights()]),
+    );
 
     if (summaryResult.status === 'fulfilled') {
       setSummary(summaryResult.value);
