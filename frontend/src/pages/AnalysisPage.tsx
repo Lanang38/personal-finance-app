@@ -1,8 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { WalletChart } from '../components/dashboard/WalletChart';
-import { CategoryDonut } from '../components/dashboard/CategoryDonut';
-import { AccountsDonut } from '../components/dashboard/AccountsDonut';
+import { AnalysisDonut } from '../components/analysis/AnalysisDonut';
 import { SuggestionPanel } from '../components/analysis/SuggestionPanel';
 import { fetchDashboardSummary } from '../api/dashboard';
 import { fetchInsights, dismissSuggestionRequest } from '../api/insights';
@@ -58,29 +57,26 @@ export function AnalysisPage(): JSX.Element {
           onDismiss={handleDismiss}
         />
 
-        <WalletChart
-          data={summary?.dailySeries ?? []}
-          caption={insights?.widgetInsights.expenseTrend}
-        />
-
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <CategoryDonut
-            data={summary?.expenseByCategory ?? []}
-            title="Kategori Pengeluaran"
-            emptyLabel="Belum ada data pengeluaran"
-            caption={insights?.widgetInsights.expenseByCategory}
-          />
-          <CategoryDonut
-            data={summary?.incomeByCategory ?? []}
-            title="Kategori Pemasukan"
-            emptyLabel="Belum ada data pemasukan"
-            caption={insights?.widgetInsights.incomeByCategory}
-          />
-          <AccountsDonut
-            accounts={accounts}
-            isLoading={isAccountsLoading}
-            caption={insights?.widgetInsights.accounts}
-          />
+          <div className="lg:col-span-2">
+            <WalletChart
+              data={summary?.dailySeries ?? []}
+              caption={insights?.widgetInsights.expenseTrend}
+            />
+          </div>
+          <div>
+            <AnalysisDonut
+              expenseByCategory={summary?.expenseByCategory ?? []}
+              incomeByCategory={summary?.incomeByCategory ?? []}
+              accounts={accounts}
+              isAccountsLoading={isAccountsLoading}
+              captions={{
+                expense: insights?.widgetInsights.expenseByCategory,
+                income: insights?.widgetInsights.incomeByCategory,
+                accounts: insights?.widgetInsights.accounts,
+              }}
+            />
+          </div>
         </div>
       </div>
     </DashboardLayout>
