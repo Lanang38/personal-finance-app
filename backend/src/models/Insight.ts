@@ -9,7 +9,9 @@ export interface IInsightSuggestion {
 export interface IInsight extends Document {
   _id: Types.ObjectId;
   userId: Types.ObjectId;
-  date: string; // format "YYYY-MM-DD", tanggal insight ini digenerate
+  // Kapan insight ini terakhir digenerate oleh Gemini. Dipakai untuk cek
+  // apakah cache masih "segar" (< 1 jam) atau perlu digenerate ulang.
+  generatedAt: Date;
   widgetInsights: {
     expenseTrend: string;
     expenseByCategory: string;
@@ -28,9 +30,10 @@ const insightSchema = new Schema<IInsight>(
       type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
+      unique: true, // satu dokumen insight per user, di-refresh tiap 1 jam
       index: true,
     },
-    date: { type: String, required: true },
+    generatedAt: { type: Date, required: true },
     widgetInsights: {
       expenseTrend: { type: String, default: '' },
       expenseByCategory: { type: String, default: '' },
@@ -51,7 +54,5 @@ const insightSchema = new Schema<IInsight>(
   },
   { timestamps: true },
 );
-
-insightSchema.index({ userId: 1, date: 1 }, { unique: true });
 
 export const InsightModel = model<IInsight>('Insight', insightSchema);
