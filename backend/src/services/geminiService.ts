@@ -24,6 +24,19 @@ export interface GeminiInsightNarrative {
   affirmation: string | null;
 }
 
+export interface ReceiptItem {
+  name: string;
+  price: number;
+}
+
+export interface ReceiptExtraction {
+  merchant: string;
+  date: string | null; // format "YYYY-MM-DD", null kalau tidak terbaca
+  total: number;
+  items: ReceiptItem[];
+  suggestedCategory: string;
+}
+
 interface GenerateNarrativeInput {
   facts: Record<string, unknown>;
   candidateSummaries: { conditionKey: string; summary: string }[];
@@ -159,5 +172,98 @@ Balas HANYA JSON sesuai skema, tanpa markdown, tanpa penjelasan tambahan.
       suggestionTexts: [],
       affirmation: null,
     };
+  }
+}
+
+const FALLBACK_RECEIPT: ReceiptExtraction = {
+  merchant: '',
+  date: null,
+  total: 0,
+  items: [],
+  suggestedCategory: '',
+};
+
+/**
+ * Kirim foto struk (base64) ke Gemini, minta hasil ekstraksi dalam format
+ * JSON terstruktur. Hasil ini HANYA draft — tidak pernah disimpan otomatis
+ * ke database, harus dikonfirmasi/diedit dulu oleh user di form transaksi.
+ */
+export async function extractReceiptData(
+  imageBase64: string,
+  mimeType: string,
+  existingCategoryNames: string[],
+): Promise<ReceiptExtraction> {
+
+  const ai = await getGeminiClient();
+  const categoryHint =
+    existingCategoryNames.length > 0
+      ? `Kategori yang SUDAH ADA di akun user (utamakan pilih salah satu dari daftar ini kalau cocok): ${existingCategoryNames.join(', ')}.`
+      : 'User belum punya kategori pengeluaran apapun.';
+
+  const prompt = `
+Kamu membaca foto struk belanja/pembayaran berbahasa Indonesia. Ekstrak informasi berikut secara akurat dari gambar:
+- merchant: nama toko/merchant di struk
+- date: tanggal transaksi di struk, format "YYYY-MM-DD" (null kalau tidak terbaca jelas)
+- total: nominal total akhir yang dibayar (angka, tanpa "Rp" atau titik/koma pemisah)
+- items: daftar barang/item beserta harganya (kalau tidak terbaca detail per item, boleh kosong)
+- suggestedCategory: satu nama kategori pengeluaran yang paling cocok untuk struk ini
+
+${categoryHint}
+
+Kalau ada bagian yang tidak terbaca jelas di foto, JANGAN mengarang — kembalikan nilai 0 untuk angka atau string kosong untuk teks, biar user yang isi manual.
+
+Balas HANYA JSON sesuai skema, tanpa markdown, tanpa penjelasan tambahan.
+`.trim();
+
+  const response = await ai.models.generateContent({
+    model: 'gemini-2.5-flash',
+    contents: [
+      {
+        role: 'user',
+        parts: [
+          { inlineData: { mimeType, data: imageBase64 } },
+          { text: prompt },
+        ],
+      },
+    ],
+    config: {
+      responseMimeType: 'application/json',
+      responseSchema: {
+        type: 'object',
+        properties: {
+          merchant: { type: 'string' },
+          date: { type: 'string', nullable: true },
+          total: { type: 'number' },
+          items: {
+            type: 'array',
+            items: {
+              type: 'object',
+              properties: {
+                name: { type: 'string' },
+                price: { type: 'number' },
+              },
+              required: ['name', 'price'],
+            },
+          },
+          suggestedCategory: { type: 'string' },
+        },
+        required: ['merchant', 'total', 'items', 'suggestedCategory'],
+      },
+    },
+  });
+
+  try {
+    const parsed = JSON.parse(
+      response.text ?? '{}',
+    ) as Partial<ReceiptExtraction>;
+    return {
+      merchant: parsed.merchant ?? '',
+      date: parsed.date ?? null,
+      total: parsed.total ?? 0,
+      items: parsed.items ?? [],
+      suggestedCategory: parsed.suggestedCategory ?? '',
+    };
+  } catch {
+    return FALLBACK_RECEIPT;
   }
 }

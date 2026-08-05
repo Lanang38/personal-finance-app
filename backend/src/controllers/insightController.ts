@@ -6,19 +6,17 @@ import { generateInsightNarrative } from '../services/geminiService';
 import { asyncHandler } from '../utils/asyncHandler';
 import { AppError } from '../utils/AppError';
 
-function todayString(): string {
-  const now = new Date();
-  return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(
-    now.getDate(),
-  ).padStart(2, '0')}`;
-}
+const INSIGHT_REFRESH_INTERVAL_MS = 60 * 60 * 1000; // 1 jam
 
 export const getInsights = asyncHandler(async (req: Request, res: Response) => {
   const userId = req.user?.userId;
-  const date = todayString();
 
-  const cached = await InsightModel.findOne({ userId, date });
-  if (cached) {
+  const cached = await InsightModel.findOne({ userId });
+  const isFresh =
+    !!cached &&
+    Date.now() - cached.generatedAt.getTime() < INSIGHT_REFRESH_INTERVAL_MS;
+
+  if (isFresh && cached) {
     res.json({
       widgetInsights: cached.widgetInsights,
       suggestions: cached.suggestions,
@@ -53,10 +51,10 @@ export const getInsights = asyncHandler(async (req: Request, res: Response) => {
   const affirmation = suggestions.length === 0 ? narrative.affirmation : null;
 
   const saved = await InsightModel.findOneAndUpdate(
-    { userId, date },
+    { userId },
     {
       userId,
-      date,
+      generatedAt: new Date(),
       widgetInsights: narrative.widgetInsights,
       suggestions,
       affirmation,
@@ -86,11 +84,10 @@ export const dismissSuggestion = asyncHandler(
       { upsert: true },
     );
 
-    // Hilangkan juga dari cache hari ini supaya langsung hilang di UI,
-    // tidak perlu nunggu regenerate besok.
-    const date = todayString();
+    // Hilangkan juga dari cache yang sedang aktif supaya langsung hilang
+    // di UI, tidak perlu nunggu refresh 1 jam berikutnya.
     await InsightModel.updateOne(
-      { userId, date },
+      { userId },
       { $pull: { suggestions: { conditionKey } } },
     );
 

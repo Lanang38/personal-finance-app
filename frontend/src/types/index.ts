@@ -133,3 +133,17 @@ export interface InsightsResponse {
   suggestions: InsightSuggestion[];
   affirmation: string | null;
 }
+
+export interface ReceiptScanItem {
+  name: string;
+  price: number;
+}
+
+export interface ReceiptScanResult {
+  merchant: string;
+  date: string | null;
+  total: number;
+  items: ReceiptScanItem[];
+  suggestedCategoryId: string | null;
+  suggestedCategoryName: string;
+}
