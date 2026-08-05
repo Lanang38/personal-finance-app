@@ -8,6 +8,7 @@ import exportRoutes from "./exportRoutes";
 import budgetRoutes from './budgetRoutes';
 import goalRoutes from './goalRoutes';
 import insightRoutes from './insightRoutes';
+import receiptRoutes from './receiptRoutes';
 
 const router = Router();
 
@@ -20,5 +21,6 @@ router.use("/export", exportRoutes);
 router.use('/budgets', budgetRoutes);
 router.use('/goals', goalRoutes);
 router.use('/insights', insightRoutes);
+router.use('/receipts', receiptRoutes);
 
 export default router;
