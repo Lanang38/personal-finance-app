@@ -1,14 +1,9 @@
-import {
-  FormEvent,
-  ChangeEvent,
-  useRef,
-  useState,
-} from 'react';
+import { FormEvent, ChangeEvent, useRef, useState } from 'react';
 import { ChevronDown, ScanLine } from 'lucide-react';
 import { Account, Category, TransactionType } from '../../types';
 import { getErrorMessage } from '../../api/client';
 import { scanReceiptRequest } from '../../api/receipts';
-import { WarningModal } from '../warning/WarningModal';
+import { WarningModal } from '../alert/Warning';
 import type { JSX } from 'react';
 
 interface TransactionFormProps {
@@ -28,9 +23,7 @@ function getToday(): string {
   const today = new Date();
   const offset = today.getTimezoneOffset();
 
-  return new Date(today.getTime() - offset * 60000)
-    .toISOString()
-    .split('T')[0];
+  return new Date(today.getTime() - offset * 60000).toISOString().split('T')[0];
 }
 
 export function TransactionForm({

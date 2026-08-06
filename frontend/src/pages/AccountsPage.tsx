@@ -4,7 +4,7 @@ import { AccountForm } from '../components/accounts/AccountForm';
 import { AccountList } from '../components/accounts/AccountList';
 import { AccountsSkeleton } from '../components/accounts/AccountsSkeleton';
 import { AccountsDonut } from '../components/accounts/AccountsDonut';
-import { WarningModal } from '../components/warning/WarningModal';
+import { WarningModal } from '../components/alert/Warning';
 import { useAccounts } from '../context/AccountContext';
 import { createAccountRequest, deleteAccountRequest } from '../api/accounts';
 import { AccountType } from '../types';

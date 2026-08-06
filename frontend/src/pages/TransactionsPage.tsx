@@ -14,7 +14,7 @@ import {
   updateCategoryRequest,
   deleteCategoryRequest,
 } from '../api/categories';
-import { WarningModal } from '../components/warning/WarningModal';
+import { WarningModal } from '../components/alert/Warning';
 import { getErrorMessage } from '../api/client';
 import {
   fetchTransactions,

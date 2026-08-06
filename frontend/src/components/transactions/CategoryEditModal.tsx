@@ -2,7 +2,7 @@ import { FormEvent, useState } from 'react';
 import { X, ChevronDown } from 'lucide-react';
 import { Category, CategoryKind } from '../../types';
 import { getErrorMessage } from '../../api/client';
-import { WarningModal } from '../warning/WarningModal';
+import { WarningModal } from '../alert/Warning';
 import type { JSX } from 'react';
 
 interface CategoryEditModalProps {
