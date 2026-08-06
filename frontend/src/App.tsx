@@ -27,10 +27,6 @@ export default function App(): JSX.Element {
         <Route path="/goals" element={<GoalsPage />} />
         <Route path="/reports" element={<AnalysisPage />} />
         <Route
-          path="/scan-receipt"
-          element={<ComingSoonPage title="Scan Struk" />}
-        />
-        <Route
           path="/settings"
           element={<ComingSoonPage title="Pengaturan" />}
         />

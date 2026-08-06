@@ -5,7 +5,6 @@ import {
   Receipt,
   PiggyBank,
   FileBarChart,
-  ScanLine,
   Settings,
   LogOut,
   NotepadText,
@@ -33,7 +32,6 @@ const menuItemsPlus: MenuItem[] = [
 
 // Menu fitur yang sudah direncanakan tapi belum dikembangkan (mengarah ke halaman Coming Soon)
 const upcomingMenuItems: MenuItem[] = [
-  { label: 'Scan Struk', to: '/scan-receipt', icon: <ScanLine size={20} /> },
   { label: 'Pengaturan', to: '/settings', icon: <Settings size={20} /> },
 ];
 
