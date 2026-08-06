@@ -4,6 +4,8 @@ import { Account, Category, TransactionType } from '../../types';
 import { getErrorMessage } from '../../api/client';
 import { scanReceiptRequest } from '../../api/receipts';
 import { WarningModal } from '../alert/Warning';
+import { SuccessModal } from '../alert/Success';
+import { FailedModal } from '../alert/Failed';
 import type { JSX } from 'react';
 
 interface TransactionFormProps {
@@ -40,10 +42,11 @@ export function TransactionForm({
 
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [warningMessage, setWarningMessage] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [failedMessage, setFailedMessage] = useState<string | null>(null);
 
   // ===== Receipt Scan =====
   const [isScanning, setIsScanning] = useState<boolean>(false);
-  const [scanNotice, setScanNotice] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const filteredCategories = categories.filter(
@@ -61,8 +64,7 @@ export function TransactionForm({
     if (!file) return;
 
     setIsScanning(true);
-    setScanNotice('');
-    setWarningMessage(null);
+    setFailedMessage(null);
 
     try {
       const result = await scanReceiptRequest(file);
@@ -88,15 +90,9 @@ export function TransactionForm({
         setCategoryId('');
       }
 
-      setScanNotice(
-        result.suggestedCategoryId
-          ? 'Struk berhasil dipindai. Periksa kembali datanya sebelum disimpan.'
-          : `Struk berhasil dipindai. Kategori "${
-              result.suggestedCategoryName ?? '-'
-            }" belum tersedia, silakan pilih manual.`,
-      );
+      setSuccessMessage('Struk berhasil dipindai.');
     } catch (error) {
-      setWarningMessage(getErrorMessage(error));
+      setFailedMessage(getErrorMessage(error));
     } finally {
       setIsScanning(false);
     }
@@ -151,8 +147,6 @@ export function TransactionForm({
       setAmount('');
       setDescription('');
       setDate(getToday());
-
-      setScanNotice('');
     } catch (error) {
       setWarningMessage(getErrorMessage(error));
     } finally {
@@ -169,31 +163,29 @@ export function TransactionForm({
         <div className="flex items-center justify-between">
           <h2 className="font-bold text-lg text-slate-800">Tambah Transaksi</h2>
 
-          <button
-            type="button"
-            onClick={() => fileInputRef.current?.click()}
-            disabled={isScanning}
-            className="flex items-center gap-2 rounded-xl bg-brand-purple/10 px-3 py-2 text-sm font-semibold text-brand-purple transition hover:bg-brand-purple/20 disabled:opacity-60"
-          >
-            <ScanLine size={16} />
-            {isScanning ? 'Memindai...' : 'Scan Struk'}
-          </button>
+          <>
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              disabled={isScanning}
+              className={`flex items-center gap-2 rounded-xl bg-brand-purple/10 px-3 py-2 text-sm font-semibold text-brand-purple transition hover:bg-brand-purple/20 disabled:opacity-60 ${
+                type === 'expense' ? '' : 'invisible'
+              }`}
+            >
+              <ScanLine size={16} />
+              {isScanning ? 'Memindai...' : 'Scan Struk'}
+            </button>
 
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            capture="environment"
-            onChange={handleScanReceipt}
-            className="hidden"
-          />
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              onChange={handleScanReceipt}
+              className="hidden"
+            />
+          </>
         </div>
-
-        {scanNotice && (
-          <div className="rounded-xl bg-brand-purple/10 px-3 py-2 text-xs text-brand-purple">
-            {scanNotice}
-          </div>
-        )}
 
         {/* Jenis transaksi */}
         <div className="flex gap-2">
@@ -343,6 +335,20 @@ export function TransactionForm({
         <WarningModal
           message={warningMessage}
           onClose={() => setWarningMessage(null)}
+        />
+      )}
+
+      {successMessage && (
+        <SuccessModal
+          message={successMessage}
+          onClose={() => setSuccessMessage(null)}
+        />
+      )}
+
+      {failedMessage && (
+        <FailedModal
+          message={failedMessage}
+          onClose={() => setFailedMessage(null)}
         />
       )}
     </>
