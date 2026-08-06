@@ -1,10 +1,10 @@
-import { useEffect, useState, useCallback, FormEvent } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { useEffect, useState, useCallback } from 'react';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { TransactionForm } from '../components/transactions/TransactionForm';
 import { TransactionTable } from '../components/transactions/TransactionTable';
+import { CategoryForm } from '../components/transactions/CategoryForm';
 import { CategoryList } from '../components/transactions/CategoryList';
-import { CategoryEditModal } from '../components/transactions/CategoryEditModal';
+import { CategoryEditModal } from '../components/transactions/CategoryEdit';
 import { TransactionsTableSkeleton } from '../components/transactions/TransactionsSkeleton';
 import { CategoryListSkeleton } from '../components/transactions/CategoryListSkeleton';
 import { useAccounts } from '../context/AccountContext';
@@ -14,7 +14,7 @@ import {
   updateCategoryRequest,
   deleteCategoryRequest,
 } from '../api/categories';
-import { WarningModal } from '../components/warning/WarningModal';
+import { WarningModal } from '../components/alert/Warning';
 import { getErrorMessage } from '../api/client';
 import {
   fetchTransactions,
@@ -32,10 +32,6 @@ export function TransactionsPage(): JSX.Element {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [warningMessage, setWarningMessage] = useState<string | null>(null);
-
-  const [newCategoryName, setNewCategoryName] = useState('');
-  const [newCategoryKind, setNewCategoryKind] =
-    useState<CategoryKind>('expense');
 
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
 
@@ -88,21 +84,11 @@ export function TransactionsPage(): JSX.Element {
     await Promise.all([loadData(), refreshAccounts()]);
   }
 
-  async function handleAddCategory(
-    event: FormEvent<HTMLFormElement>,
-  ): Promise<void> {
-    event.preventDefault();
-
-    if (!newCategoryName.trim()) return;
-
-    await createCategoryRequest({
-      name: newCategoryName.trim(),
-      kind: newCategoryKind,
-    });
-
-    setNewCategoryName('');
-    setNewCategoryKind('expense');
-
+  async function handleAddCategory(payload: {
+    name: string;
+    kind: CategoryKind;
+  }): Promise<void> {
+    await createCategoryRequest(payload);
     await loadData();
   }
 
@@ -146,45 +132,7 @@ export function TransactionsPage(): JSX.Element {
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div className="h-62">
-              <form
-                onSubmit={handleAddCategory}
-                className="bg-white rounded-3xl p-6 shadow-sm space-y-3 h-fit"
-              >
-                <h2 className="font-bold text-slate-800">Kategori Baru</h2>
-
-                <input
-                  type="text"
-                  value={newCategoryName}
-                  onChange={(e) => setNewCategoryName(e.target.value)}
-                  placeholder="Nama kategori"
-                  className="w-full bg-slate-100 rounded-xl px-4 py-2.5 outline-none text-sm"
-                />
-
-                <div className="relative">
-                  <select
-                    value={newCategoryKind}
-                    onChange={(e) =>
-                      setNewCategoryKind(e.target.value as CategoryKind)
-                    }
-                    className="w-full appearance-none bg-slate-100 rounded-xl pl-4 pr-10 py-2.5 outline-none text-sm cursor-pointer"
-                  >
-                    <option value="expense">Pengeluaran</option>
-                    <option value="income">Pemasukan</option>
-                  </select>
-
-                  <ChevronDown
-                    size={16}
-                    className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
-                  />
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full bg-brand-purple text-white font-semibold py-2.5 rounded-xl text-sm"
-                >
-                  Tambah Kategori
-                </button>
-              </form>
+              <CategoryForm onSubmit={handleAddCategory} />
             </div>
 
             <div className="h-56">

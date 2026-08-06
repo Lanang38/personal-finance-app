@@ -10,7 +10,6 @@ interface ScanReceiptBody {
 }
 
 const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
-// Base64 ~4/3x ukuran asli; batasi ~6MB payload (~4.5MB gambar) supaya aman.
 const MAX_BASE64_LENGTH = 6_000_000;
 
 export const scanReceipt = asyncHandler(async (req: Request, res: Response) => {
@@ -42,9 +41,13 @@ export const scanReceipt = asyncHandler(async (req: Request, res: Response) => {
     categoryNames,
   );
 
-  // Cocokkan suggestedCategory (teks bebas dari Gemini) ke kategori ASLI milik
-  // user secara case-insensitive. Kalau tidak ketemu, kembalikan null —
-  // biarkan user pilih manual, jangan pernah membuat kategori baru otomatis.
+  if (!extraction.isReceipt) {
+    throw new AppError(
+      'Gambar tidak terdeteksi sebagai struk/bukti pembayaran. Coba foto lain yang lebih jelas, atau isi transaksi secara manual.',
+      422,
+    );
+  }
+
   const matchedCategory = expenseCategories.find(
     (c) => c.name.toLowerCase() === extraction.suggestedCategory.toLowerCase(),
   );
