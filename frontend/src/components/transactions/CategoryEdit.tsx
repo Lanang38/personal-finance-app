@@ -2,7 +2,7 @@ import { FormEvent, useState } from 'react';
 import { X, ChevronDown } from 'lucide-react';
 import { Category, CategoryKind } from '../../types';
 import { getErrorMessage } from '../../api/client';
-import { WarningModal } from '../alert/Warning';
+import { Warning } from '../alert/Warning';
 import type { JSX } from 'react';
 
 interface CategoryEditModalProps {
@@ -111,7 +111,7 @@ export function CategoryEditModal({
       </div>
 
       {warningMessage && (
-        <WarningModal
+        <Warning
           message={warningMessage}
           onClose={() => setWarningMessage(null)}
         />

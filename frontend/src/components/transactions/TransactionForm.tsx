@@ -3,9 +3,9 @@ import { ChevronDown, ScanLine } from 'lucide-react';
 import { Account, Category, TransactionType } from '../../types';
 import { getErrorMessage } from '../../api/client';
 import { scanReceiptRequest } from '../../api/receipts';
-import { WarningModal } from '../alert/Warning';
-import { SuccessModal } from '../alert/Success';
-import { FailedModal } from '../alert/Failed';
+import { Warning } from '../alert/Warning';
+import { Success } from '../alert/Success';
+import { Failed } from '../alert/Failed';
 import type { JSX } from 'react';
 
 interface TransactionFormProps {
@@ -332,21 +332,21 @@ export function TransactionForm({
       </form>
 
       {warningMessage && (
-        <WarningModal
+        <Warning
           message={warningMessage}
           onClose={() => setWarningMessage(null)}
         />
       )}
 
       {successMessage && (
-        <SuccessModal
+        <Success
           message={successMessage}
           onClose={() => setSuccessMessage(null)}
         />
       )}
 
       {failedMessage && (
-        <FailedModal
+        <Failed
           message={failedMessage}
           onClose={() => setFailedMessage(null)}
         />

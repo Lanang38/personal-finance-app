@@ -6,7 +6,7 @@ interface WarningModalProps {
   onClose: () => void;
 }
 
-export function WarningModal({
+export function Warning({
   message,
   onClose,
 }: WarningModalProps): JSX.Element {

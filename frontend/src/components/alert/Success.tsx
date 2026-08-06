@@ -6,7 +6,7 @@ interface SuccessModalProps {
   onClose: () => void;
 }
 
-export function SuccessModal({
+export function Success({
   message,
   onClose,
 }: SuccessModalProps): JSX.Element {
