@@ -4,7 +4,7 @@ import { TransactionForm } from '../components/transactions/TransactionForm';
 import { TransactionTable } from '../components/transactions/TransactionTable';
 import { CategoryForm } from '../components/transactions/CategoryForm';
 import { CategoryList } from '../components/transactions/CategoryList';
-import { CategoryEditModal } from '../components/transactions/CategoryEditModal';
+import { CategoryEditModal } from '../components/transactions/CategoryEdit';
 import { TransactionsTableSkeleton } from '../components/transactions/TransactionsSkeleton';
 import { CategoryListSkeleton } from '../components/transactions/CategoryListSkeleton';
 import { useAccounts } from '../context/AccountContext';
