@@ -106,7 +106,7 @@ Balas HANYA JSON sesuai skema, tanpa markdown, tanpa penjelasan tambahan.
   >;
   try {
     response = await ai.models.generateContent({
-      model: 'gemini-2.5-flash',
+      model: 'gemini-3.6-flash',
       contents: prompt,
       config: {
         responseMimeType: 'application/json',
@@ -193,7 +193,6 @@ export async function extractReceiptData(
   mimeType: string,
   existingCategoryNames: string[],
 ): Promise<ReceiptExtraction> {
-
   const ai = await getGeminiClient();
   const categoryHint =
     existingCategoryNames.length > 0
@@ -216,7 +215,7 @@ Balas HANYA JSON sesuai skema, tanpa markdown, tanpa penjelasan tambahan.
 `.trim();
 
   const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash',
+    model: 'gemini-3.6-flash',
     contents: [
       {
         role: 'user',
