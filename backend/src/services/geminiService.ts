@@ -4,8 +4,6 @@ import type { GoogleGenAI } from '@google/genai' with {
   'resolution-mode': 'import',
 };
 
-type GoogleGenAIType = InstanceType<typeof GoogleGenAI>;
-
 export interface GeminiSuggestionText {
   conditionKey: string;
   text: string;
@@ -30,6 +28,7 @@ export interface ReceiptItem {
 }
 
 export interface ReceiptExtraction {
+  isReceipt: boolean;
   merchant: string;
   date: string | null; // format "YYYY-MM-DD", null kalau tidak terbaca
   total: number;
@@ -49,11 +48,21 @@ const FALLBACK_WIDGET_INSIGHTS: GeminiWidgetInsights = {
   accounts: 'Belum ada cukup data akun.',
 };
 
-// Client dibuat lewat dynamic import() dan di-cache supaya package
-// cuma di-load sekali.
-let clientPromise: Promise<GoogleGenAIType> | null = null;
+const FALLBACK_RECEIPT: ReceiptExtraction = {
+  isReceipt: false,
+  merchant: '',
+  date: null,
+  total: 0,
+  items: [],
+  suggestedCategory: '',
+};
 
-async function getGeminiClient(): Promise<GoogleGenAIType> {
+// Client dibuat lewat dynamic import() dan di-cache supaya package
+// cuma di-load sekali. Dipakai langsung sebagai tipe "GoogleGenAI" (bukan
+// typeof) karena `import type` di atas memutus akses ke sisi value-nya.
+let clientPromise: Promise<GoogleGenAI> | null = null;
+
+async function getGeminiClient(): Promise<GoogleGenAI> {
   if (!clientPromise) {
     clientPromise = import('@google/genai').then(
       ({ GoogleGenAI }) =>
@@ -101,9 +110,7 @@ Instruksi output:
 Balas HANYA JSON sesuai skema, tanpa markdown, tanpa penjelasan tambahan.
 `.trim();
 
-  let response: Awaited<
-    ReturnType<GoogleGenAIType['models']['generateContent']>
-  >;
+  let response: Awaited<ReturnType<GoogleGenAI['models']['generateContent']>>;
   try {
     response = await ai.models.generateContent({
       model: 'gemini-3.6-flash',
@@ -146,8 +153,6 @@ Balas HANYA JSON sesuai skema, tanpa markdown, tanpa penjelasan tambahan.
       },
     });
   } catch {
-    // Panggilan ke Gemini gagal (API key salah, kuota habis, network,
-    // dll) — jangan sampai seluruh request /insights ikut gagal.
     return {
       widgetInsights: FALLBACK_WIDGET_INSIGHTS,
       suggestionTexts: [],
@@ -165,8 +170,6 @@ Balas HANYA JSON sesuai skema, tanpa markdown, tanpa penjelasan tambahan.
       affirmation: parsed.affirmation ?? null,
     };
   } catch {
-    // Kalau Gemini gagal/response tidak valid, jangan sampai seluruh
-    // request gagal — fallback ke teks default yang aman.
     return {
       widgetInsights: FALLBACK_WIDGET_INSIGHTS,
       suggestionTexts: [],
@@ -175,19 +178,6 @@ Balas HANYA JSON sesuai skema, tanpa markdown, tanpa penjelasan tambahan.
   }
 }
 
-const FALLBACK_RECEIPT: ReceiptExtraction = {
-  merchant: '',
-  date: null,
-  total: 0,
-  items: [],
-  suggestedCategory: '',
-};
-
-/**
- * Kirim foto struk (base64) ke Gemini, minta hasil ekstraksi dalam format
- * JSON terstruktur. Hasil ini HANYA draft — tidak pernah disimpan otomatis
- * ke database, harus dikonfirmasi/diedit dulu oleh user di form transaksi.
- */
 export async function extractReceiptData(
   imageBase64: string,
   mimeType: string,
@@ -200,62 +190,80 @@ export async function extractReceiptData(
       : 'User belum punya kategori pengeluaran apapun.';
 
   const prompt = `
-Kamu membaca foto struk belanja/pembayaran berbahasa Indonesia. Ekstrak informasi berikut secara akurat dari gambar:
-- merchant: nama toko/merchant di struk
-- date: tanggal transaksi di struk, format "YYYY-MM-DD" (null kalau tidak terbaca jelas)
-- total: nominal total akhir yang dibayar (angka, tanpa "Rp" atau titik/koma pemisah)
-- items: daftar barang/item beserta harganya (kalau tidak terbaca detail per item, boleh kosong)
-- suggestedCategory: satu nama kategori pengeluaran yang paling cocok untuk struk ini
+Kamu membaca sebuah foto. Tugasmu:
+
+1. TENTUKAN DULU apakah foto ini benar-benar berupa struk belanja/bukti pembayaran (nota, invoice, struk kasir, dsb). Foto yang BUKAN struk contohnya: selfie, pemandangan, hewan, dokumen lain, screenshot chat, foto blur/gelap yang tidak bisa dikenali sama sekali, dll.
+2. Isi "isReceipt" dengan true HANYA kalau foto tersebut memang struk/bukti pembayaran, walau kualitas fotonya kurang bagus. Isi false untuk semua kasus lain.
+3. Kalau "isReceipt" adalah false, JANGAN isi field lain (biarkan default: merchant="", date=null, total=0, items=[], suggestedCategory="").
+4. Kalau "isReceipt" adalah true, ekstrak informasi berikut secara akurat:
+   - merchant: nama toko/merchant di struk
+   - date: tanggal transaksi di struk, format "YYYY-MM-DD" (null kalau tidak terbaca jelas)
+   - total: nominal total akhir yang dibayar (angka, tanpa "Rp" atau titik/koma pemisah)
+   - items: daftar barang/item beserta harganya (kalau tidak terbaca detail per item, boleh kosong)
+   - suggestedCategory: satu nama kategori pengeluaran yang paling cocok untuk struk ini
 
 ${categoryHint}
 
-Kalau ada bagian yang tidak terbaca jelas di foto, JANGAN mengarang — kembalikan nilai 0 untuk angka atau string kosong untuk teks, biar user yang isi manual.
+Kalau isReceipt true tapi ada bagian yang tidak terbaca jelas, JANGAN mengarang — kembalikan nilai 0 untuk angka atau string kosong untuk teks itu saja, biar user yang isi manual. Ini beda dengan kasus foto bukan struk sama sekali (poin 3).
 
 Balas HANYA JSON sesuai skema, tanpa markdown, tanpa penjelasan tambahan.
 `.trim();
 
-  const response = await ai.models.generateContent({
-    model: 'gemini-3.6-flash',
-    contents: [
-      {
-        role: 'user',
-        parts: [
-          { inlineData: { mimeType, data: imageBase64 } },
-          { text: prompt },
-        ],
-      },
-    ],
-    config: {
-      responseMimeType: 'application/json',
-      responseSchema: {
-        type: 'object',
-        properties: {
-          merchant: { type: 'string' },
-          date: { type: 'string', nullable: true },
-          total: { type: 'number' },
-          items: {
-            type: 'array',
-            items: {
-              type: 'object',
-              properties: {
-                name: { type: 'string' },
-                price: { type: 'number' },
-              },
-              required: ['name', 'price'],
-            },
-          },
-          suggestedCategory: { type: 'string' },
+  let response: Awaited<ReturnType<GoogleGenAI['models']['generateContent']>>;
+  try {
+    response = await ai.models.generateContent({
+      model: 'gemini-3.6-flash',
+      contents: [
+        {
+          role: 'user',
+          parts: [
+            { inlineData: { mimeType, data: imageBase64 } },
+            { text: prompt },
+          ],
         },
-        required: ['merchant', 'total', 'items', 'suggestedCategory'],
+      ],
+      config: {
+        responseMimeType: 'application/json',
+        responseSchema: {
+          type: 'object',
+          properties: {
+            isReceipt: { type: 'boolean' },
+            merchant: { type: 'string' },
+            date: { type: 'string', nullable: true },
+            total: { type: 'number' },
+            items: {
+              type: 'array',
+              items: {
+                type: 'object',
+                properties: {
+                  name: { type: 'string' },
+                  price: { type: 'number' },
+                },
+                required: ['name', 'price'],
+              },
+            },
+            suggestedCategory: { type: 'string' },
+          },
+          required: [
+            'isReceipt',
+            'merchant',
+            'total',
+            'items',
+            'suggestedCategory',
+          ],
+        },
       },
-    },
-  });
+    });
+  } catch {
+    return FALLBACK_RECEIPT;
+  }
 
   try {
     const parsed = JSON.parse(
       response.text ?? '{}',
     ) as Partial<ReceiptExtraction>;
     return {
+      isReceipt: parsed.isReceipt ?? false,
       merchant: parsed.merchant ?? '',
       date: parsed.date ?? null,
       total: parsed.total ?? 0,
