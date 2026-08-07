@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { TransactionModel, TransactionType } from '../models/Transaction';
 import { AccountModel } from '../models/Account';
+import { GoalModel } from '../models/Goal';
 import { asyncHandler } from '../utils/asyncHandler';
 import { AppError } from '../utils/AppError';
 
@@ -161,6 +162,23 @@ export const deleteTransaction = asyncHandler(
     });
     if (!transaction) {
       throw new AppError('Transaksi tidak ditemukan', 404);
+    }
+
+    // Transaksi kontribusi goal (punya goalId) ikut "membatalkan" sejumlah
+    // progress goal-nya saat dihapus — supaya currentAmount tidak nyangkut
+    // menghitung uang yang transaksinya sudah tidak ada.
+    if (transaction.goalId) {
+      const goal = await GoalModel.findOne({
+        _id: transaction.goalId,
+        userId,
+      });
+      if (goal) {
+        goal.currentAmount = Math.max(
+          0,
+          goal.currentAmount - transaction.amount,
+        );
+        await goal.save();
+      }
     }
 
     res.status(204).send();

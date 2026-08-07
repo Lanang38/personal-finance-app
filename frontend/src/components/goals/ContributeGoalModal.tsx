@@ -2,7 +2,7 @@ import { useState, FormEvent } from 'react';
 import { X, ChevronDown } from 'lucide-react';
 import { Account, Goal } from '../../types';
 import { getErrorMessage } from '../../api/client';
-import { WarningModal } from '../alert/Warning';
+import { Warning } from '../alert/Warning';
 import type { JSX } from 'react';
 
 interface ContributeGoalModalProps {
@@ -135,7 +135,7 @@ export function ContributeGoalModal({
       </div>
 
       {warningMessage && (
-        <WarningModal
+        <Warning
           message={warningMessage}
           onClose={() => setWarningMessage(null)}
         />

@@ -14,7 +14,7 @@ import {
   updateCategoryRequest,
   deleteCategoryRequest,
 } from '../api/categories';
-import { WarningModal } from '../components/alert/Warning';
+import { Warning } from '../components/alert/Warning';
 import { getErrorMessage } from '../api/client';
 import {
   fetchTransactions,
@@ -158,7 +158,7 @@ export function TransactionsPage(): JSX.Element {
         />
       )}
       {warningMessage && (
-        <WarningModal
+        <Warning
           message={warningMessage}
           onClose={() => setWarningMessage(null)}
         />

@@ -2,8 +2,30 @@ import { Request, Response } from 'express';
 import { GoalModel } from '../models/Goal';
 import { AccountModel } from '../models/Account';
 import { TransactionModel } from '../models/Transaction';
+import { CategoryModel } from '../models/Category';
 import { asyncHandler } from '../utils/asyncHandler';
 import { AppError } from '../utils/AppError';
+
+const SAVINGS_CATEGORY_NAME = 'Tabungan';
+
+// Kategori "Tabungan" dipakai BERSAMA oleh semua goal milik satu user
+// (bukan 1 kategori per goal). Dibuat sekali secara lazy saat kontribusi
+// pertama kali terjadi, lalu dipakai ulang setelahnya.
+async function getOrCreateSavingsCategory(userId: string) {
+  const existing = await CategoryModel.findOne({
+    userId,
+    kind: 'expense',
+    name: SAVINGS_CATEGORY_NAME,
+  });
+  if (existing) return existing;
+
+  return CategoryModel.create({
+    userId,
+    name: SAVINGS_CATEGORY_NAME,
+    kind: 'expense',
+    color: '#0EA5E9',
+  });
+}
 
 interface CreateGoalBody {
   name: string;
@@ -145,6 +167,22 @@ export const contributeGoal = asyncHandler(
         400,
       );
     }
+
+    // Kontribusi ke goal HARUS tercatat sebagai transaksi expense di akun
+    // sumbernya — kalau tidak, saldo akun tidak akan berkurang padahal
+    // uangnya sudah "dialokasikan" ke tabungan (dobel hitung).
+    const savingsCategory = await getOrCreateSavingsCategory(userId as string);
+
+    await TransactionModel.create({
+      userId,
+      accountId: account._id,
+      categoryId: savingsCategory._id,
+      type: 'expense',
+      amount,
+      description: goal.name,
+      date: new Date(),
+      goalId: goal._id,
+    });
 
     goal.currentAmount += amount;
     await goal.save();

@@ -4,7 +4,7 @@ import { AccountForm } from '../components/accounts/AccountForm';
 import { AccountList } from '../components/accounts/AccountList';
 import { AccountsSkeleton } from '../components/accounts/AccountsSkeleton';
 import { AccountsDonut } from '../components/accounts/AccountsDonut';
-import { WarningModal } from '../components/alert/Warning';
+import { Warning } from '../components/alert/Warning';
 import { useAccounts } from '../context/AccountContext';
 import { createAccountRequest, deleteAccountRequest } from '../api/accounts';
 import { AccountType } from '../types';
@@ -61,7 +61,7 @@ export function AccountsPage(): JSX.Element {
       </div>
 
       {warningMessage && (
-        <WarningModal
+        <Warning
           message={warningMessage}
           onClose={() => setWarningMessage(null)}
         />
