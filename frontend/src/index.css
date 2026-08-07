@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-brand-purple: #6d28d9;
   --color-brand-purpleLight: #8b5cf6;
@@ -18,7 +20,7 @@
 }
 
 body {
-  @apply bg-[#EFEAFB] text-slate-800;
+  @apply bg-[#EFEAFB] text-slate-800 dark:bg-slate-900 dark:text-slate-100;
 }
 
 .recharts-wrapper svg,
