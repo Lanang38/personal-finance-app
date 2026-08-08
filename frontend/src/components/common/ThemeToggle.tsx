@@ -12,7 +12,7 @@ export function ThemeToggle(): JSX.Element {
   const { mode, setMode } = useTheme();
 
   return (
-    <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-800 rounded-full p-1">
+    <div className="flex items-center gap-1 bg-slate-100 dark:bg-dark-background rounded-full p-1">
       {OPTIONS.map((option) => (
         <button
           key={option.mode}
@@ -22,7 +22,7 @@ export function ThemeToggle(): JSX.Element {
           title={option.label}
           className={`flex items-center justify-center w-7 h-7 rounded-full transition-colors ${
             mode === option.mode
-              ? 'bg-white dark:bg-slate-700 text-brand-purple shadow-sm'
+              ? 'bg-brand-purple dark:bg-brand-blue text-slate-100 dark:text-slate-100 shadow-sm'
               : 'text-slate-400 dark:text-slate-500'
           }`}
         >

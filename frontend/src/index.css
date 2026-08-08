@@ -9,6 +9,8 @@
   --color-brand-blue: #2563eb;
   --color-brand-orange: #f97316;
   --color-brand-lime: #c6f135;
+  --color-dark-background: #363a45;
+  --color-dark-component: #272b34;
 
   --background-image-sidebar-gradient: linear-gradient(
     180deg,

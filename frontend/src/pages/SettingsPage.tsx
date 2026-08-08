@@ -239,14 +239,6 @@ export function SettingsPage(): JSX.Element {
               </div>
             </SettingsSection>
           )}
-
-          <button
-            type="button"
-            onClick={logout}
-            className="w-full text-center text-sm font-semibold text-brand-red py-2"
-          >
-            Keluar dari akun
-          </button>
         </div>
       </div>
     </DashboardLayout>

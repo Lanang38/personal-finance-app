@@ -39,7 +39,7 @@ export function Sidebar(): JSX.Element {
   const { logout } = useAuth();
 
   return (
-    <aside className="hidden lg:flex w-64 shrink-0 flex-col justify-between bg-sidebar-gradient rounded-3xl m-4 mr-0 p-6 text-white">
+    <aside className="hidden lg:flex w-64 shrink-0 flex-col justify-between bg-sidebar-gradient dark:bg-none dark:bg-dark-component rounded-3xl m-4 mr-0 p-6 text-white">
       <div>
         <div className="flex items-center gap-2 mb-10">
           <div className="w-9 h-9 rounded-full bg-brand-lime flex items-center justify-center text-brand-purple font-bold">
@@ -59,7 +59,7 @@ export function Sidebar(): JSX.Element {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-4 py-3 rounded-2xl font-semibold transition-colors ${
                   isActive
-                    ? 'bg-white text-brand-purple'
+                    ? 'bg-white text-brand-purple dark:bg-brand-blue dark:text-slate-100'
                     : 'text-white/85 hover:bg-white/10'
                 }`
               }
@@ -81,7 +81,7 @@ export function Sidebar(): JSX.Element {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-4 py-3 rounded-2xl font-semibold transition-colors ${
                   isActive
-                    ? 'bg-white text-brand-purple'
+                    ? 'bg-white text-brand-purple dark:bg-brand-blue dark:text-slate-100'
                     : 'text-white/85 hover:bg-white/10'
                 }`
               }
@@ -103,7 +103,7 @@ export function Sidebar(): JSX.Element {
               className={({ isActive }) =>
                 `flex items-center gap-3 px-4 py-3 rounded-2xl font-semibold transition-colors ${
                   isActive
-                    ? 'bg-white text-brand-purple'
+                    ? 'bg-white text-brand-purple dark:bg-brand-blue dark:text-slate-100'
                     : 'text-white/70 hover:bg-white/10'
                 }`
               }
@@ -118,7 +118,7 @@ export function Sidebar(): JSX.Element {
       <button
         type="button"
         onClick={logout}
-        className="flex items-center gap-3 px-4 py-3 rounded-2xl text-white/85 hover:bg-white/10 font-semibold"
+        className="flex items-center gap-3 px-4 py-3 rounded-2xl text-white/85 dark:text-brand-red hover:bg-white/10 font-semibold"
       >
         <LogOut size={20} />
         Keluar

@@ -9,7 +9,7 @@ interface DashboardLayoutProps {
 
 export function DashboardLayout({ children }: DashboardLayoutProps): JSX.Element {
   return (
-    <div className="min-h-screen flex bg-[#EFEAFB]">
+    <div className="min-h-screen flex bg-[#EFEAFB] dark:bg-dark-background">
       <Sidebar />
       <main className="flex-1 p-4 lg:p-8 overflow-x-hidden">
         <Header />

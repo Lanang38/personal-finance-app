@@ -12,7 +12,7 @@ export function SettingsSection({
   children,
 }: SettingsSectionProps): JSX.Element {
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-3xl p-6 shadow-sm">
+    <div className="bg-white dark:bg-dark-component rounded-3xl p-6 shadow-sm">
       <div className="mb-4">
         <h2 className="font-bold text-slate-800 dark:text-slate-100">
           {title}

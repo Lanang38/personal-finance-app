@@ -19,7 +19,7 @@ export function SettingsNav({
   onSelect,
 }: SettingsNavProps): JSX.Element {
   return (
-    <nav className="bg-white dark:bg-slate-800 rounded-3xl p-3 shadow-sm space-y-1">
+    <nav className="bg-white dark:bg-dark-component rounded-3xl px-3 py-9 shadow-sm space-y-3">
       {items.map((item) => {
         const isActive = item.id === activeId;
         const colorClass = item.danger
@@ -35,7 +35,7 @@ export function SettingsNav({
             onClick={() => onSelect(item.id)}
             className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-2xl text-sm font-semibold transition-colors ${colorClass} ${
               isActive
-                ? 'bg-brand-purple/10 dark:bg-brand-purple/20'
+                ? 'bg-brand-purple/10 dark:bg-brand-blue dark:text-slate-100'
                 : 'hover:bg-slate-50 dark:hover:bg-slate-700/50'
             }`}
           >
