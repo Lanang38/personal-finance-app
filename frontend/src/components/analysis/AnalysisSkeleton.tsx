@@ -5,7 +5,7 @@ export function AnalysisSkeleton(): JSX.Element {
   return (
     <div className="space-y-6">
       {/* Suggestion Panel */}
-      <div className="bg-white rounded-3xl p-6 shadow-sm">
+      <div className="bg-white dark:bg-dark-component rounded-3xl p-6 shadow-sm">
         <Skeleton className="h-5 w-52 rounded-full mb-5" />
 
         <div className="space-y-4">
@@ -32,7 +32,7 @@ export function AnalysisSkeleton(): JSX.Element {
       {/* Chart Section */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Wallet Chart */}
-        <div className="lg:col-span-2 bg-white rounded-3xl p-6 shadow-sm">
+        <div className="lg:col-span-2 bg-white dark:bg-dark-component rounded-3xl p-6 shadow-sm">
           <div className="flex items-center justify-between mb-3">
             <Skeleton className="h-6 w-44 rounded-full" />
             <Skeleton className="h-9 w-28 rounded-xl" />
@@ -44,7 +44,7 @@ export function AnalysisSkeleton(): JSX.Element {
         </div>
 
         {/* Analysis Donut */}
-        <div className="bg-white rounded-3xl p-6 shadow-sm h-full flex flex-col">
+        <div className="bg-white dark:bg-dark-component rounded-3xl p-6 shadow-sm h-full flex flex-col">
           <div className="flex items-center justify-between mb-2">
             <Skeleton className="h-6 w-28 rounded-full" />
             <Skeleton className="h-9 w-28 rounded-xl" />
