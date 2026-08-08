@@ -60,7 +60,6 @@ export function DashboardPage(): JSX.Element {
 
   const loadSummary = useCallback(async (filter: ActiveFilter | null) => {
     if (!hasLoadedOnce.current) {
-      // Hanya tampilkan skeleton penuh pada pemuatan pertama kali.
       setIsInitialLoading(true);
       const data = await withMinimumDelay(
         fetchDashboardSummary(filter?.month, filter?.year),
@@ -71,8 +70,6 @@ export function DashboardPage(): JSX.Element {
       return;
     }
 
-    // Perubahan filter setelahnya tidak lagi memicu skeleton, cukup
-    // perbarui data secara halus (transisi ditangani oleh framer-motion).
     setIsRefreshing(true);
     try {
       const data = await fetchDashboardSummary(filter?.month, filter?.year);
@@ -125,42 +122,42 @@ export function DashboardPage(): JSX.Element {
           key: 'saldo-total',
           label: 'Saldo Total',
           value: formatCurrency(totalSaldoAkun),
-          colorClass: 'bg-gradient-to-br from-slate-700 to-slate-900',
+          colorClass:
+            'bg-gradient-to-br from-slate-700 to-slate-900 dark:bg-none dark:bg-dark-component',
         },
         {
           key: 'saldo-bersih',
           label: 'Saldo Bersih',
           value: formatCurrency(summary.balance),
-          colorClass: 'bg-gradient-to-br from-brand-blue to-sky-400',
+          colorClass: 'bg-gradient-to-br from-brand-blue to-sky-400 dark:bg-none dark:bg-dark-component',
         },
         {
           key: 'total-pemasukan',
           label: 'Total Pemasukan',
           subtitle: 'Semua Data',
           value: formatCurrency(summary.totalIncome),
-          colorClass:
-            'bg-gradient-to-br from-brand-purple to-brand-purpleLight',
+          colorClass: 'bg-gradient-to-br from-brand-purple to-brand-purpleLight dark:bg-none dark:bg-dark-component',
         },
         {
           key: 'total-pengeluaran',
           label: 'Total Pengeluaran',
           subtitle: 'Semua Data',
           value: formatCurrency(summary.totalExpense),
-          colorClass: 'bg-gradient-to-br from-rose-600 to-brand-red',
+          colorClass: 'bg-gradient-to-br from-rose-600 to-brand-red dark:bg-none dark:bg-dark-component',
         },
         {
           key: 'pemasukan',
           label: 'Pemasukan',
           subtitle: periodLabel,
           value: formatCurrency(summary.monthIncome),
-          colorClass: 'bg-gradient-to-br from-emerald-600 to-emerald-400',
+          colorClass: 'bg-gradient-to-br from-emerald-600 to-emerald-400 dark:bg-none dark:bg-dark-component',
         },
         {
           key: 'pengeluaran',
           label: 'Pengeluaran',
           subtitle: periodLabel,
           value: formatCurrency(summary.monthExpense),
-          colorClass: 'bg-gradient-to-br from-brand-orange to-amber-400',
+          colorClass: 'bg-gradient-to-br from-brand-orange to-amber-400 dark:bg-none dark:bg-dark-component',
         },
       ]
     : [];
@@ -174,7 +171,9 @@ export function DashboardPage(): JSX.Element {
   return (
     <DashboardLayout>
       <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-        <h2 className="text-lg font-bold text-slate-700">Ringkasan Keuangan</h2>
+        <h2 className="text-lg font-bold text-slate-700 dark:text-slate-100">
+          Ringkasan Keuangan
+        </h2>
         <div className="flex items-center gap-3 flex-wrap">
           <MonthYearFilter
             activeMonth={activeFilter?.month ?? null}
@@ -188,7 +187,7 @@ export function DashboardPage(): JSX.Element {
             type="button"
             onClick={handleExport}
             disabled={isExporting}
-            className="flex items-center gap-2 bg-white border border-slate-200 text-slate-600 font-semibold px-4 py-2 rounded-xl text-sm disabled:opacity-60"
+            className="flex items-center gap-2 bg-white border border-slate-200 text-slate-600 dark:bg-dark-component dark:text-slate-100 dark:border-none font-semibold px-4 py-2 rounded-xl text-sm disabled:opacity-60"
           >
             <Download size={16} />
             {isExporting ? 'Mengekspor...' : 'Ekspor CSV'}
@@ -208,7 +207,7 @@ export function DashboardPage(): JSX.Element {
               type="button"
               onClick={() => scrollWidgets('left')}
               aria-label="Geser ke kiri"
-              className="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-10 h-9 w-9 items-center justify-center rounded-full bg-white shadow-md border border-slate-200 text-slate-500 hover:text-brand-purple hover:border-brand-purple/40 transition-colors"
+              className="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-10 h-9 w-9 items-center justify-center rounded-full bg-white dark:bg-dark-background shadow-md border border-slate-200 dark:border-dark-component text-slate-500 dark:text-slate-100 hover:text-brand-purplehover:border-brand-purple/40 dark:hover:border-slate-100  transition-colors"
             >
               <ChevronLeft size={18} />
             </button>
@@ -239,7 +238,7 @@ export function DashboardPage(): JSX.Element {
               type="button"
               onClick={() => scrollWidgets('right')}
               aria-label="Geser ke kanan"
-              className="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10 h-9 w-9 items-center justify-center rounded-full bg-white shadow-md border border-slate-200 text-slate-500 hover:text-brand-purple hover:border-brand-purple/40 transition-colors"
+              className="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10 h-9 w-9 items-center justify-center rounded-full bg-white dark:bg-dark-background shadow-md border border-slate-200 dark:border-dark-component text-slate-500 dark:text-slate-100 hover:text-brand-purplehover:border-brand-purple/40 dark:hover:border-slate-100  transition-colors"
             >
               <ChevronRight size={18} />
             </button>

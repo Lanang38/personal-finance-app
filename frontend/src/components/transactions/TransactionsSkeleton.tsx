@@ -3,7 +3,7 @@ import type { JSX } from 'react';
 
 export function TransactionsTableSkeleton(): JSX.Element {
   return (
-    <div className="bg-white rounded-3xl p-6 shadow-sm space-y-3">
+    <div className="bg-white dark:bg-dark-component rounded-3xl p-6 shadow-sm space-y-3">
       {/* Judul */}
       <Skeleton className="h-5 w-36 rounded-full" />
 
@@ -11,7 +11,7 @@ export function TransactionsTableSkeleton(): JSX.Element {
       {Array.from({ length: 4 }).map((_, i) => (
         <div
           key={i}
-          className="flex items-center gap-3 py-2 border-t border-slate-100 first:border-t-0"
+          className="flex items-center gap-3 py-2 border-t border-slate-100 dark:border-dark-background first:border-t-0"
         >
           <Skeleton className="h-8 w-8 rounded-lg shrink-0" />
 

@@ -1,5 +1,7 @@
 @import 'tailwindcss';
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme {
   --color-brand-purple: #6d28d9;
   --color-brand-purpleLight: #8b5cf6;
@@ -7,6 +9,9 @@
   --color-brand-blue: #2563eb;
   --color-brand-orange: #f97316;
   --color-brand-lime: #c6f135;
+  --color-dark-background: #363a45;
+  --color-dark-component: #272b34;
+  --color-dark-skeleton: #4a4e58;
 
   --background-image-sidebar-gradient: linear-gradient(
     180deg,
@@ -18,8 +23,9 @@
 }
 
 body {
-  @apply bg-[#EFEAFB] text-slate-800;
+  @apply bg-[#EFEAFB] text-slate-800 dark:bg-slate-900 dark:text-slate-100;
 }
+
 
 .recharts-wrapper svg,
 .recharts-surface,
@@ -59,4 +65,31 @@ textarea,
   cursor: text !important;
   -webkit-user-select: text !important;
   user-select: text !important;
+}
+
+.custom-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent; /* thumb: slate-300, track: transparan */
+}
+ 
+.dark .custom-scroll {
+  scrollbar-color: #363a45 transparent; /* thumb: dark-background */
+}
+ 
+/* Fallback untuk browser berbasis WebKit (Chrome/Safari/Edge lama) */
+.custom-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+ 
+.custom-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+ 
+.custom-scroll::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 9999px;
+}
+ 
+.dark .custom-scroll::-webkit-scrollbar-thumb {
+  background-color: #363a45;
 }

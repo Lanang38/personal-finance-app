@@ -157,18 +157,20 @@ export function TransactionForm({
     <>
       <form
         onSubmit={handleSubmit}
-        className="bg-white rounded-3xl p-6 shadow-sm space-y-4"
+        className="bg-white dark:bg-dark-component rounded-3xl p-6 shadow-sm space-y-4"
       >
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h2 className="font-bold text-lg text-slate-800">Tambah Transaksi</h2>
+          <h2 className="font-bold text-lg text-slate-800 dark:text-slate-100">
+            Tambah Transaksi
+          </h2>
 
           <>
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
               disabled={isScanning}
-              className={`flex items-center gap-2 rounded-xl bg-brand-purple/10 px-3 py-2 text-sm font-semibold text-brand-purple transition hover:bg-brand-purple/20 disabled:opacity-60 ${
+              className={`flex items-center gap-2 rounded-xl bg-brand-purple/10 dark:bg-brand-blue/10 px-3 py-2 text-sm font-semibold text-brand-purple dark:text-brand-blue transition hover:bg-brand-purple/20 dark:hover:bg-brand-blue/20 disabled:opacity-60 ${
                 type === 'expense' ? '' : 'invisible'
               }`}
             >
@@ -198,7 +200,7 @@ export function TransactionForm({
             className={`flex-1 rounded-xl py-2 text-sm font-semibold ${
               type === 'expense'
                 ? 'bg-brand-red text-white'
-                : 'bg-slate-100 text-slate-500'
+                : 'bg-slate-100 dark:bg-dark-background text-slate-500 dark:text-slate-100'
             }`}
           >
             Pengeluaran
@@ -212,8 +214,8 @@ export function TransactionForm({
             }}
             className={`flex-1 rounded-xl py-2 text-sm font-semibold ${
               type === 'income'
-                ? 'bg-brand-purple text-white'
-                : 'bg-slate-100 text-slate-500'
+                ? 'bg-brand-purple dark:bg-brand-blue text-white'
+                : 'bg-slate-100 dark:bg-dark-background text-slate-500 dark:text-slate-100'
             }`}
           >
             Pemasukan
@@ -231,7 +233,7 @@ export function TransactionForm({
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
             placeholder="0"
-            className="w-full appearance-none rounded-xl bg-slate-100 px-4 py-2.5 outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
+            className="w-full appearance-none rounded-xl bg-slate-100 dark:bg-dark-background px-4 py-2.5 outline-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
           />
         </div>
 
@@ -246,7 +248,7 @@ export function TransactionForm({
               <select
                 value={accountId}
                 onChange={(e) => setAccountId(e.target.value)}
-                className="w-full appearance-none rounded-xl bg-slate-100 py-2.5 pl-4 pr-9 outline-none"
+                className="w-full appearance-none rounded-xl bg-slate-100 dark:bg-dark-background py-2.5 pl-4 pr-9 outline-none"
               >
                 <option value="">Pilih akun</option>
 
@@ -273,7 +275,7 @@ export function TransactionForm({
               <select
                 value={categoryId}
                 onChange={(e) => setCategoryId(e.target.value)}
-                className="w-full appearance-none rounded-xl bg-slate-100 py-2.5 pl-4 pr-9 outline-none"
+                className="w-full appearance-none rounded-xl bg-slate-100 dark:bg-dark-background py-2.5 pl-4 pr-9 outline-none"
               >
                 <option value="">Pilih kategori</option>
 
@@ -302,7 +304,7 @@ export function TransactionForm({
             type="date"
             value={date}
             onChange={(e) => setDate(e.target.value)}
-            className="w-full rounded-xl bg-slate-100 px-4 py-2.5 outline-none"
+            className="w-full rounded-xl bg-slate-100 dark:bg-dark-background px-4 py-2.5 outline-none text-slate-700 dark:text-slate-100 scheme-light dark:scheme-dark"
           />
         </div>
 
@@ -317,7 +319,7 @@ export function TransactionForm({
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Opsional"
-            className="w-full rounded-xl bg-slate-100 px-4 py-2.5 outline-none"
+            className="w-full rounded-xl bg-slate-100 dark:bg-dark-background px-4 py-2.5 outline-none"
           />
         </div>
 
@@ -325,7 +327,7 @@ export function TransactionForm({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="w-full rounded-xl bg-brand-purple py-3 font-semibold text-white disabled:opacity-60"
+          className="w-full rounded-xl bg-brand-purple dark:bg-brand-blue py-3 font-semibold text-white disabled:opacity-60"
         >
           {isSubmitting ? 'Menyimpan...' : 'Simpan Transaksi'}
         </button>

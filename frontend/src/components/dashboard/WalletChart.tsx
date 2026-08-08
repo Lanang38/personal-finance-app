@@ -8,6 +8,7 @@ import {
   CartesianGrid,
 } from 'recharts';
 import { DailyPoint } from '../../types';
+import { useTheme } from '../../context/ThemeContext';
 import type { JSX } from 'react';
 
 interface WalletChartProps {
@@ -21,22 +22,32 @@ function formatShortDate(dateStr: string): string {
 }
 
 export function WalletChart({ data, caption }: WalletChartProps): JSX.Element {
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
+
   const chartData = data.map((point) => ({
     label: formatShortDate(point.date),
     Pemasukan: point.income,
     Pengeluaran: point.expense,
   }));
 
+  const gridStroke = isDark ? '#363a45' : '#F1F5F9';
+  const axisTickColor = isDark ? '#CBD5E1' : '#94A3B8';
+  const tooltipBg = isDark ? '#272b34' : '#FFFFFF';
+  const tooltipText = isDark ? '#F1F5F9' : '#1E293B';
+
   return (
-    <div className="bg-white rounded-3xl p-6 shadow-sm h-full">
+    <div className="bg-white dark:bg-dark-component rounded-3xl p-6 shadow-sm h-full">
       <div className="flex items-center justify-between mb-1">
-        <h2 className="font-bold text-lg text-slate-800">Analitik Dompet</h2>
+        <h2 className="font-bold text-lg text-slate-800 dark:text-slate-100">
+          Analitik Dompet
+        </h2>
         <span className="text-xs text-brand-red font-semibold">Bulan Ini</span>
       </div>
       <p className="text-xs text-slate-400 mb-4">{caption ?? '\u00A0'}</p>
 
       {chartData.length === 0 ? (
-        <div className="h-72 flex items-center justify-center text-slate-400 text-sm">
+        <div className="h-72 flex items-center justify-center text-slate-400 dark:text-slate-100 text-sm">
           Belum ada transaksi bulan ini
         </div>
       ) : (
@@ -58,16 +69,16 @@ export function WalletChart({ data, caption }: WalletChartProps): JSX.Element {
             <CartesianGrid
               strokeDasharray="3 3"
               vertical={false}
-              stroke="#F1F5F9"
+              stroke={gridStroke}
             />
             <XAxis
               dataKey="label"
-              tick={{ fontSize: 12, fill: '#94A3B8' }}
+              tick={{ fontSize: 12, fill: axisTickColor }}
               axisLine={false}
               tickLine={false}
             />
             <YAxis
-              tick={{ fontSize: 12, fill: '#94A3B8' }}
+              tick={{ fontSize: 12, fill: axisTickColor }}
               axisLine={false}
               tickLine={false}
             />
@@ -79,7 +90,10 @@ export function WalletChart({ data, caption }: WalletChartProps): JSX.Element {
                 borderRadius: 12,
                 border: 'none',
                 boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                backgroundColor: tooltipBg,
               }}
+              itemStyle={{ color: tooltipText }}
+              labelStyle={{ color: tooltipText }}
             />
             <Area
               type="monotone"

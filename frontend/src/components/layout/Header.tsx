@@ -12,17 +12,17 @@ export function Header(): JSX.Element {
 
   return (
     <header className="flex items-center justify-between mb-8 gap-4 flex-wrap">
-      <h1 className="text-2xl font-bold text-slate-800">Halo, {firstName}!</h1>
+      <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Halo, {firstName}!</h1>
 
       <div className="flex items-center gap-4">
         <button
           type="button"
-          className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-600"
+          className="w-10 h-10 rounded-full bg-slate-100 dark:bg-dark-component dark:text-slate-100 flex items-center justify-center text-slate-600"
         >
           <Bell size={18} />
         </button>
 
-        <div className="w-10 h-10 rounded-full bg-brand-purple text-white flex items-center justify-center font-semibold overflow-hidden shrink-0">
+        <div className="w-10 h-10 rounded-full bg-brand-purple text-white dark:bg-brand-blue flex items-center justify-center font-semibold overflow-hidden shrink-0">
           {showImage ? (
             <img
               src={user!.avatarUrl}

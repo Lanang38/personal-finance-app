@@ -1,7 +1,9 @@
 import { useState, useMemo } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
+import { ChevronDown } from 'lucide-react';
 import { Account, CategoryBreakdownPoint } from '../../types';
 import type { JSX } from 'react';
+import { useTheme } from '../../context/ThemeContext';
 
 type DonutView = 'expense' | 'income' | 'accounts';
 
@@ -10,6 +12,7 @@ interface InsightDonutProps {
   incomeByCategory: CategoryBreakdownPoint[];
   accounts: Account[];
   isAccountsLoading: boolean;
+  captions?: Partial<Record<DonutView, string | undefined>>;
 }
 
 interface DonutSlice {
@@ -18,7 +21,6 @@ interface DonutSlice {
   value: number;
   color: string;
 }
-
 
 const COLORS = [
   '#7C3AED',
@@ -48,8 +50,11 @@ export function InsightDonut({
   incomeByCategory,
   accounts,
   isAccountsLoading,
+  captions,
 }: InsightDonutProps): JSX.Element {
   const [view, setView] = useState<DonutView>('expense');
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
 
   const data: DonutSlice[] = useMemo(() => {
     if (view === 'expense') {
@@ -75,33 +80,45 @@ export function InsightDonut({
       color: COLORS[index % COLORS.length],
     }));
   }, [view, expenseByCategory, incomeByCategory, accounts]);
+  const tooltipBg = isDark ? '#272b34' : '#FFFFFF';
+  const tooltipText = isDark ? '#F1F5F9' : '#1E293B';
 
   const isLoading = view === 'accounts' && isAccountsLoading;
   const total = data.reduce((sum, entry) => sum + entry.value, 0);
+  const caption = captions?.[view];
 
   return (
-    <div className="bg-white rounded-3xl p-6 shadow-sm h-full flex flex-col">
-      <div className="flex items-center justify-between mb-4 gap-2">
-        <h2 className="font-bold text-lg text-slate-800">Rincian</h2>
-        <select
-          value={view}
-          onChange={(e) => setView(e.target.value as DonutView)}
-          className="bg-slate-100 text-sm font-semibold text-slate-600 rounded-xl px-3 py-1.5 outline-none hover:outline-none hover:ring-2 hover:ring-brand-purple/40"
-        >
-          {VIEW_OPTIONS.map((option) => (
-            <option key={option.value} value={option.value}>
-              {option.label}
-            </option>
-          ))}
-        </select>
+    <div className="bg-white dark:bg-dark-component rounded-3xl p-6 shadow-sm h-full flex flex-col">
+      <div className="flex items-center justify-between mb-1 gap-2">
+        <h2 className="font-bold text-lg text-slate-800 dark:text-slate-100">
+          Rincian
+        </h2>
+        <div className="relative">
+          <select
+            value={view}
+            onChange={(e) => setView(e.target.value as DonutView)}
+            className="appearance-none bg-slate-100 dark:bg-dark-background text-sm font-semibold text-slate-600 dark:text-slate-100 rounded-xl pl-3 pr-8 py-1.5 outline-none hover:outline-none hover:ring-2 hover:ring-brand-purple/40 dark:hover:ring-dark-background"
+          >
+            {VIEW_OPTIONS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+          <ChevronDown
+            size={16}
+            className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-500 dark:text-slate-100"
+          />
+        </div>
       </div>
+      <p className="text-xs text-slate-400 mb-3">{caption ?? '\u00A0'}</p>
 
       {isLoading ? (
-        <div className="flex-1 flex items-center justify-center text-slate-400 text-sm">
+        <div className="flex-1 flex items-center justify-center text-slate-400 dark:text-slate-100 text-sm">
           Memuat...
         </div>
       ) : data.length === 0 ? (
-        <div className="flex-1 flex items-center justify-center text-slate-400 text-sm">
+        <div className="flex-1 flex items-center justify-center text-slate-400 dark:text-slate-100 text-sm">
           {EMPTY_LABEL[view]}
         </div>
       ) : (
@@ -133,7 +150,10 @@ export function InsightDonut({
                 borderRadius: 12,
                 border: 'none',
                 boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                backgroundColor: tooltipBg,
               }}
+              itemStyle={{ color: tooltipText }}
+              labelStyle={{ color: tooltipText }}
             />
           </PieChart>
         </ResponsiveContainer>

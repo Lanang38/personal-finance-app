@@ -4,11 +4,11 @@ import { RegisterPage } from './pages/RegisterPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { TransactionsPage } from './pages/TransactionsPage';
 import { AccountsPage } from './pages/AccountsPage';
-import { ComingSoonPage } from './pages/ComingSoonPage';
 import { BudgetsPage } from './pages/BudgetsPage';
 import { PrivateLayout } from './components/PrivateLayout';
 import { GoalsPage } from './pages/GoalsPage';
 import { AnalysisPage } from './pages/AnalysisPage';
+import { SettingsPage } from './pages/SettingsPage';
 
 import type { JSX } from 'react';
 
@@ -26,10 +26,7 @@ export default function App(): JSX.Element {
         <Route path="/budgets" element={<BudgetsPage />} />
         <Route path="/goals" element={<GoalsPage />} />
         <Route path="/reports" element={<AnalysisPage />} />
-        <Route
-          path="/settings"
-          element={<ComingSoonPage title="Pengaturan" />}
-        />
+        <Route path="/settings" element={<SettingsPage />} />
       </Route>
 
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
