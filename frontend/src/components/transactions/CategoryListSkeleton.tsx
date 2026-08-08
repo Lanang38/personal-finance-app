@@ -3,7 +3,7 @@ import type { JSX } from 'react';
 
 export function CategoryListSkeleton(): JSX.Element {
   return (
-    <div className="bg-white rounded-3xl p-6 shadow-sm h-full flex flex-col">
+    <div className="bg-white dark:bg-dark-component rounded-3xl p-6 shadow-sm h-full flex flex-col">
       {/* Judul */}
       <Skeleton className="h-5 w-32 rounded-full mb-5" />
 
@@ -12,7 +12,7 @@ export function CategoryListSkeleton(): JSX.Element {
         {Array.from({ length: 3 }).map((_, index) => (
           <div
             key={index}
-            className="flex items-center gap-3 bg-slate-50 rounded-xl px-4 py-3"
+            className="flex items-center gap-3 bg-slate-50 dark:bg-dark-background rounded-xl px-4 py-3"
           >
             {/* Bulatan */}
             <Skeleton className="w-3 h-3 rounded-full shrink-0" />

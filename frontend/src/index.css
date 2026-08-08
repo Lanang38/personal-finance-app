@@ -11,6 +11,7 @@
   --color-brand-lime: #c6f135;
   --color-dark-background: #363a45;
   --color-dark-component: #272b34;
+  --color-dark-skeleton: #4a4e58;
 
   --background-image-sidebar-gradient: linear-gradient(
     180deg,
@@ -64,4 +65,31 @@ textarea,
   cursor: text !important;
   -webkit-user-select: text !important;
   user-select: text !important;
+}
+
+.custom-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent; /* thumb: slate-300, track: transparan */
+}
+ 
+.dark .custom-scroll {
+  scrollbar-color: #363a45 transparent; /* thumb: dark-background */
+}
+ 
+/* Fallback untuk browser berbasis WebKit (Chrome/Safari/Edge lama) */
+.custom-scroll::-webkit-scrollbar {
+  width: 6px;
+}
+ 
+.custom-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+ 
+.custom-scroll::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 9999px;
+}
+ 
+.dark .custom-scroll::-webkit-scrollbar-thumb {
+  background-color: #363a45;
 }

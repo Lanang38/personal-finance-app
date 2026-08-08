@@ -50,8 +50,8 @@ export function TransactionTable({
 
   return (
     <>
-      <div className="bg-white rounded-3xl p-6 shadow-sm overflow-x-auto">
-        <h2 className="font-bold text-lg text-slate-800 mb-4">
+      <div className="bg-white dark:bg-dark-component rounded-3xl p-6 shadow-sm overflow-x-auto">
+        <h2 className="font-bold text-lg text-slate-800 dark:text-slate-100 mb-4">
           Riwayat Transaksi
         </h2>
 
@@ -63,7 +63,7 @@ export function TransactionTable({
           <>
             <table className="w-full min-w-150 text-sm">
               <thead>
-                <tr className="border-b border-slate-100 text-left text-xs uppercase text-slate-400">
+                <tr className="border-b border-slate-100 dark:border-slate-400 text-left text-xs uppercase text-slate-400 dark:text-slate-100">
                   <th className="py-3 font-semibold">Tanggal</th>
                   <th className="py-3 font-semibold">Akun</th>
                   <th className="py-3 font-semibold">Kategori</th>
@@ -77,28 +77,28 @@ export function TransactionTable({
                 {paginatedTransactions.map((tx) => (
                   <tr
                     key={tx._id}
-                    className="border-b border-slate-50 last:border-0"
+                    className="border-b border-slate-50 dark:border-slate-400 last:border-0"
                   >
-                    <td className="py-3 text-slate-600">
+                    <td className="py-3 text-slate-600 dark:text-slate-400">
                       {formatDate(tx.date)}
                     </td>
 
-                    <td className="py-3 text-slate-600">
+                    <td className="py-3 text-slate-600 dark:text-slate-400">
                       {refName(tx.accountId)}
                     </td>
 
-                    <td className="py-3 text-slate-600">
+                    <td className="py-3 text-slate-600 dark:text-slate-400">
                       {refName(tx.categoryId)}
                     </td>
 
-                    <td className="py-3 text-slate-500">
+                    <td className="py-3 text-slate-600 dark:text-slate-400">
                       {tx.description || '-'}
                     </td>
 
                     <td
                       className={`py-3 font-semibold ${
                         tx.type === 'income'
-                          ? 'text-brand-purple'
+                          ? 'text-brand-purple dark:text-brand-blue'
                           : 'text-brand-red'
                       }`}
                     >
@@ -126,7 +126,8 @@ export function TransactionTable({
                   type="button"
                   onClick={() => setPage((prev) => Math.max(1, prev - 1))}
                   disabled={safePage === 1}
-                  className="flex items-center gap-1 text-sm font-semibold text-slate-500 transition-colors hover:text-brand-purple disabled:cursor-not-allowed disabled:opacity-40"
+                  className="flex items-center gap-1 text-sm font-semibold text-slate-500 dark:text-slate-100 transition-colors hover:text-brand-purple dark:hover:text-brand-blue
+                  disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   <ChevronLeft size={16} />
                   Sebelumnya
@@ -142,7 +143,8 @@ export function TransactionTable({
                     setPage((prev) => Math.min(totalPages, prev + 1))
                   }
                   disabled={safePage === totalPages}
-                  className="flex items-center gap-1 text-sm font-semibold text-slate-500 transition-colors hover:text-brand-purple disabled:cursor-not-allowed disabled:opacity-40"
+                  className="flex items-center gap-1 text-sm font-semibold text-slate-500 dark:text-slate-100 transition-colors hover:text-brand-purple dark:hover:text-brand-blue
+                  disabled:cursor-not-allowed disabled:opacity-40"
                 >
                   Selanjutnya
                   <ChevronRight size={16} />
