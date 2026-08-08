@@ -16,12 +16,16 @@ export function Warning({
         <div className="w-12 h-12 rounded-full bg-amber-100 text-amber-500 flex items-center justify-center mx-auto mb-3">
           <AlertTriangle size={22} />
         </div>
-        <h2 className="font-bold text-slate-800 dark:text-slate-100 mb-2">Peringatan</h2>
-        <p className="text-sm text-slate-500 dark:text-slate-100 mb-5">{message}</p>
+        <h2 className="font-bold text-slate-800 dark:text-slate-100 mb-2">
+          Peringatan
+        </h2>
+        <p className="text-sm text-slate-500 dark:text-slate-100 mb-5">
+          {message}
+        </p>
         <button
           type="button"
           onClick={onClose}
-          className="w-full bg-brand-purple dark:bg-brand-blue text-white font-semibold py-2.5 rounded-xl text-sm"
+          className="w-full rounded-xl bg-brand-purple dark:bg-brand-blue py-2.5 text-sm font-semibold text-white transition hover:opacity-90"
         >
           Mengerti
         </button>
