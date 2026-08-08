@@ -49,7 +49,7 @@ const TAB_ITEMS: SettingsTabItem[] = [
 ];
 
 export function SettingsPage(): JSX.Element {
-  const { user, logout } = useAuth();
+  const { user, } = useAuth();
   const [activeTab, setActiveTab] = useState<SettingsTabId>('profile');
   const [isExporting, setIsExporting] = useState<boolean>(false);
 

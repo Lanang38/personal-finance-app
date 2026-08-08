@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { WalletChart } from '../components/dashboard/WalletChart';
-import { AnalysisDonut } from '../components/analysis/AnalysisDonut';
+import { InsightDonut } from '../components/dashboard/InsightDonut';
 import { SuggestionPanel } from '../components/analysis/SuggestionPanel';
 import { AnalysisSkeleton } from '../components/analysis/AnalysisSkeleton';
 import { fetchDashboardSummary } from '../api/dashboard';
@@ -73,7 +73,7 @@ export function AnalysisPage(): JSX.Element {
             </div>
 
             <div>
-              <AnalysisDonut
+              <InsightDonut
                 expenseByCategory={summary?.expenseByCategory ?? []}
                 incomeByCategory={summary?.incomeByCategory ?? []}
                 accounts={accounts}

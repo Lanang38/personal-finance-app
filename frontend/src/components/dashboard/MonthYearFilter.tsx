@@ -108,9 +108,9 @@ export function MonthYearFilter({
   if (isLoadingPeriods) {
     return (
       <div className="flex items-center gap-2">
-        <div className="h-9.5 w-28 rounded-xl bg-slate-100 animate-pulse" />
-        <div className="h-9.5 w-20 rounded-xl bg-slate-100 animate-pulse" />
-        <div className="h-9.5 w-24 rounded-xl bg-slate-100 animate-pulse" />
+        <div className="h-9.5 w-28 rounded-xl bg-slate-100 dark:bg-dark-component animate-pulse" />
+        <div className="h-9.5 w-20 rounded-xl bg-slate-100 dark:bg-dark-component animate-pulse" />
+        <div className="h-9.5 w-24 rounded-xl bg-slate-100 dark:bg-dark-component animate-pulse" />
       </div>
     );
   }
@@ -129,7 +129,7 @@ export function MonthYearFilter({
         <select
           value={pendingMonth ?? ''}
           onChange={(e) => handleMonthChange(Number(e.target.value))}
-          className="appearance-none bg-white border border-slate-200 text-sm font-semibold text-slate-600 rounded-xl pl-3 pr-9 py-2 outline-none focus:ring-2 focus:ring-brand-purple/40 cursor-pointer"
+          className="appearance-none bg-white border dark:bg-dark-component border-slate-200 dark:border-none text-sm font-semibold text-slate-600 dark:text-slate-100 rounded-xl pl-3 pr-9 py-2 outline-none cursor-pointer"
         >
           {availableMonthsForYear.map((m) => (
             <option key={m} value={m}>
@@ -139,7 +139,7 @@ export function MonthYearFilter({
         </select>
         <ChevronDown
           size={14}
-          className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
+          className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-100"
         />
       </div>
 
@@ -147,7 +147,7 @@ export function MonthYearFilter({
         <select
           value={pendingYear ?? ''}
           onChange={(e) => handleYearChange(Number(e.target.value))}
-          className="appearance-none bg-white border border-slate-200 text-sm font-semibold text-slate-600 rounded-xl pl-3 pr-9 py-2 outline-none focus:ring-2 focus:ring-brand-purple/40 cursor-pointer"
+          className="appearance-none bg-white border dark:bg-dark-component border-slate-200 dark:border-none text-sm font-semibold text-slate-600 dark:text-slate-100 rounded-xl pl-3 pr-9 py-2 outline-none cursor-pointer"
         >
           {availableYears.map((y) => (
             <option key={y} value={y}>
@@ -157,7 +157,7 @@ export function MonthYearFilter({
         </select>
         <ChevronDown
           size={14}
-          className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
+          className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 dark:text-slate-100"
         />
       </div>
 
@@ -165,7 +165,7 @@ export function MonthYearFilter({
         <button
           type="button"
           onClick={onReset}
-          className="flex items-center gap-1.5 bg-white border border-slate-200 text-brand-red font-semibold px-3 py-2 rounded-xl text-sm hover:bg-rose-50 transition-colors"
+          className="flex items-center gap-1.5 bg-brand-red text-white text-sm font-semibold px-3 py-2 rounded-xl hover:opacity-90 transition-colors"
         >
           <X size={14} />
           Reset
@@ -174,7 +174,7 @@ export function MonthYearFilter({
         <button
           type="button"
           onClick={handleApply}
-          className="flex items-center gap-1.5 bg-brand-purple text-white text-sm font-semibold px-3 py-2 rounded-xl hover:opacity-90 transition-opacity"
+          className="flex items-center gap-1.5 bg-brand-purple dark:bg-brand-blue text-white text-sm font-semibold px-3 py-2 rounded-xl hover:opacity-90 transition-opacity"
         >
           <Filter size={14} />
           Terapkan

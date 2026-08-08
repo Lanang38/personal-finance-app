@@ -4,7 +4,6 @@ import { RegisterPage } from './pages/RegisterPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { TransactionsPage } from './pages/TransactionsPage';
 import { AccountsPage } from './pages/AccountsPage';
-import { ComingSoonPage } from './pages/ComingSoonPage';
 import { BudgetsPage } from './pages/BudgetsPage';
 import { PrivateLayout } from './components/PrivateLayout';
 import { GoalsPage } from './pages/GoalsPage';
