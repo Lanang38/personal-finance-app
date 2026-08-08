@@ -64,10 +64,6 @@ export function SettingsPage(): JSX.Element {
 
   return (
     <DashboardLayout>
-      <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-6">
-        Pengaturan Akun
-      </h1>
-
       <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
         <div className="lg:col-span-1">
           <SettingsNav
