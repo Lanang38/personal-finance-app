@@ -56,9 +56,9 @@ export function AccountForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white rounded-3xl p-6 shadow-sm space-y-4"
+      className="bg-white dark:bg-dark-component rounded-3xl p-6 shadow-sm space-y-4"
     >
-      <h2 className="font-bold text-lg text-slate-800">Tambah Akun</h2>
+      <h2 className="font-bold text-lg text-slate-800 dark:text-slate-100">Tambah Akun</h2>
 
       <div>
         <label className="text-xs font-semibold text-slate-500 mb-1 block">
@@ -69,7 +69,7 @@ export function AccountForm({
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Contoh: BCA, Dompet, GoPay"
-          className="w-full bg-slate-100 rounded-xl px-4 py-2.5 outline-none"
+          className="w-full bg-slate-100 dark:bg-dark-background rounded-xl px-4 py-2.5 outline-none"
         />
       </div>
 
@@ -81,7 +81,7 @@ export function AccountForm({
           <select
             value={type}
             onChange={(e) => setType(e.target.value as AccountType)}
-            className="w-full appearance-none bg-slate-100 rounded-xl pl-4 pr-9 py-2.5 outline-none cursor-pointer"
+            className="w-full appearance-none bg-slate-100 dark:bg-dark-background rounded-xl pl-4 pr-9 py-2.5 outline-none cursor-pointer"
           >
             {accountTypes.map((t) => (
               <option key={t.value} value={t.value}>
@@ -105,14 +105,14 @@ export function AccountForm({
           value={initialBalance}
           onChange={(e) => setInitialBalance(e.target.value)}
           placeholder="0"
-          className="w-full bg-slate-100 rounded-xl px-4 py-2.5 outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          className="w-full bg-slate-100 dark:bg-dark-background rounded-xl px-4 py-2.5 outline-none [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
       </div>
 
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full bg-brand-purple text-white font-semibold py-3 rounded-xl disabled:opacity-60"
+        className="w-full bg-brand-purple dark:bg-brand-blue text-white font-semibold py-3 rounded-xl disabled:opacity-60"
       >
         {isSubmitting ? 'Menyimpan...' : 'Tambah Akun'}
       </button>
