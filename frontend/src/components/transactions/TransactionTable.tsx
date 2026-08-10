@@ -77,7 +77,7 @@ export function TransactionTable({
                 {paginatedTransactions.map((tx) => (
                   <tr
                     key={tx._id}
-                    className="border-b border-slate-50 dark:border-slate-400 last:border-0"
+                    className="border-b border-slate-50 dark:border-slate-600 last:border-0"
                   >
                     <td className="py-3 text-slate-600 dark:text-slate-400">
                       {formatDate(tx.date)}
@@ -121,7 +121,7 @@ export function TransactionTable({
               </tbody>
             </table>
             {totalPages > 1 && (
-              <div className="mt-4 flex items-center justify-between border-t border-slate-100 pt-4">
+              <div className="mt-4 flex items-center justify-between border-t border-slate-100 dark:border-slate-600 pt-4">
                 <button
                   type="button"
                   onClick={() => setPage((prev) => Math.max(1, prev - 1))}

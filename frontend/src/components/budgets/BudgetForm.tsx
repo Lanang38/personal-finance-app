@@ -1,4 +1,4 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useMemo, useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { Category } from '../../types';
 import type { JSX } from 'react';
@@ -21,6 +21,13 @@ export function BudgetForm({
   const [limitAmount, setLimitAmount] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
+  const budgetableCategories = useMemo(
+    () =>
+      availableCategories.filter(
+        (category) => category.name.trim().toLowerCase() !== 'tabungan',
+      ),
+    [availableCategories],
+  );
 
   async function handleSubmit(
     event: FormEvent<HTMLFormElement>,
@@ -58,9 +65,11 @@ export function BudgetForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white rounded-3xl p-6 shadow-sm space-y-4"
+      className="bg-white dark:bg-dark-component rounded-3xl p-6 shadow-sm space-y-4"
     >
-      <h2 className="font-bold text-slate-800">Tambah Anggaran</h2>
+      <h2 className="font-bold text-slate-800 dark:text-slate-100">
+        Tambah Anggaran
+      </h2>
 
       <div>
         <label className="text-xs font-semibold text-slate-500 mb-1 block">
@@ -71,11 +80,11 @@ export function BudgetForm({
           <select
             value={categoryId}
             onChange={(e) => setCategoryId(e.target.value)}
-            className="w-full appearance-none bg-slate-100 rounded-xl pl-4 pr-9 py-2.5 outline-none"
+            className="w-full appearance-none bg-slate-100 dark:bg-dark-background rounded-xl pl-4 pr-9 py-2.5 outline-none"
           >
             <option value="">Pilih kategori</option>
 
-            {availableCategories.map((category) => (
+            {budgetableCategories.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.name}
               </option>
@@ -88,7 +97,7 @@ export function BudgetForm({
           />
         </div>
 
-        {isReady && availableCategories.length === 0 && (
+        {isReady && budgetableCategories.length === 0 && (
           <p className="text-xs text-slate-400 mt-1">
             Semua kategori pengeluaran sudah punya anggaran bulan ini
           </p>
@@ -106,7 +115,7 @@ export function BudgetForm({
           value={limitAmount}
           onChange={(e) => setLimitAmount(e.target.value)}
           placeholder="0"
-          className="w-full bg-slate-100 rounded-xl px-4 py-2.5 outline-none appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          className="w-full bg-slate-100 dark:bg-dark-background rounded-xl px-4 py-2.5 outline-none appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
       </div>
 
@@ -114,8 +123,8 @@ export function BudgetForm({
 
       <button
         type="submit"
-        disabled={isSubmitting || (!availableCategories.length && isReady)}
-        className="w-full bg-brand-purple text-white font-semibold py-3 rounded-xl disabled:opacity-60"
+        disabled={isSubmitting || (!budgetableCategories.length && isReady)}
+        className="w-full bg-brand-purple dark:bg-brand-blue text-white font-semibold py-3 rounded-xl disabled:opacity-60"
       >
         {isSubmitting ? 'Menyimpan...' : 'Tambah Anggaran'}
       </button>

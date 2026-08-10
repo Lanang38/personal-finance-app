@@ -3,7 +3,7 @@ import type { JSX } from 'react';
 
 export function BudgetSkeleton(): JSX.Element {
   return (
-    <div className="bg-white rounded-3xl p-6 shadow-sm space-y-4">
+    <div className="bg-white dark:bg-dark-component rounded-3xl p-6 shadow-sm space-y-4">
       <div className="flex items-center justify-between pb-2">
         <Skeleton className="h-4 w-36 rounded-full" />
         <Skeleton className="h-3 w-16 rounded-full" />
@@ -12,7 +12,7 @@ export function BudgetSkeleton(): JSX.Element {
       {Array.from({ length: 4 }).map((_, index) => (
         <div
           key={index}
-          className="border-t border-slate-100 first:border-t-0 pt-4 first:pt-0"
+          className="border-t border-slate-100 dark:border-dark-skeleton first:border-t-0 pt-4 first:pt-0"
         >
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2 flex-1">

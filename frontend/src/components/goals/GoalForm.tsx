@@ -50,9 +50,11 @@ export function GoalForm({ onSubmit }: GoalFormProps): JSX.Element {
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white rounded-3xl p-6 shadow-sm space-y-4"
+      className="bg-white dark:bg-dark-component rounded-3xl p-6 shadow-sm space-y-4"
     >
-      <h2 className="font-bold text-slate-800">Tambah Target Tabungan</h2>
+      <h2 className="font-bold text-slate-800 dark:text-slate-100">
+        Tambah Target Tabungan
+      </h2>
 
       <div>
         <label className="text-xs font-semibold text-slate-500 mb-1 block">
@@ -63,7 +65,7 @@ export function GoalForm({ onSubmit }: GoalFormProps): JSX.Element {
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Contoh: DP Rumah, Liburan, Dana Darurat"
-          className="w-full bg-slate-100 rounded-xl px-4 py-2.5 outline-none"
+          className="w-full bg-slate-100 dark:bg-dark-background rounded-xl px-4 py-2.5 outline-none"
         />
       </div>
 
@@ -77,7 +79,7 @@ export function GoalForm({ onSubmit }: GoalFormProps): JSX.Element {
           value={targetAmount}
           onChange={(e) => setTargetAmount(e.target.value)}
           placeholder="0"
-          className="w-full bg-slate-100 rounded-xl px-4 py-2.5 outline-none appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+          className="w-full bg-slate-100 dark:bg-dark-background rounded-xl px-4 py-2.5 outline-none appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
         />
       </div>
 
@@ -89,7 +91,7 @@ export function GoalForm({ onSubmit }: GoalFormProps): JSX.Element {
           type="date"
           value={targetDate}
           onChange={(e) => setTargetDate(e.target.value)}
-          className="w-full bg-slate-100 rounded-xl px-4 py-2.5 outline-none"
+          className="w-full bg-slate-100 dark:bg-dark-background dark:scheme-dark rounded-xl px-4 py-2.5 outline-none"
         />
       </div>
 
@@ -98,7 +100,7 @@ export function GoalForm({ onSubmit }: GoalFormProps): JSX.Element {
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full bg-brand-purple text-white font-semibold py-3 rounded-xl disabled:opacity-60"
+        className="w-full bg-brand-purple dark:bg-brand-blue text-white font-semibold py-3 rounded-xl disabled:opacity-60"
       >
         {isSubmitting ? 'Menyimpan...' : 'Tambah Target'}
       </button>

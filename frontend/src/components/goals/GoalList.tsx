@@ -72,17 +72,17 @@ export function GoalList({
   }, [goals, safePage]);
 
   return (
-    <div className="bg-white rounded-3xl p-6 shadow-sm">
-      <h2 className="font-bold text-lg text-slate-800 mb-4">
+    <div className="bg-white dark:bg-dark-component rounded-3xl p-6 shadow-sm">
+      <h2 className="font-bold text-lg text-slate-800 dark:text-slate-100 mb-4">
         Daftar Target Tabungan
       </h2>
 
       {isLoading ? (
-        <p className="text-sm text-slate-400 py-8 text-center">
+        <p className="text-sm text-slate-400 dark:text-slate-100 py-8 text-center">
           Memuat target tabungan...
         </p>
       ) : goals.length === 0 ? (
-        <p className="text-sm text-slate-400 py-8 text-center">
+        <p className="text-sm text-slate-400 dark:text-slate-100 py-8 text-center">
           Belum ada target tabungan
         </p>
       ) : (
@@ -102,16 +102,16 @@ export function GoalList({
               return (
                 <div
                   key={goal.id}
-                  className="border-b border-slate-100 pb-6 last:border-0 last:pb-0"
+                  className="border-b border-slate-100 dark:border-slate-600 pb-6 last:border-0 last:pb-0"
                 >
                   <div className="flex items-center justify-between mb-2">
                     <div className="flex items-center gap-2 min-w-0">
-                      <span className="font-semibold text-slate-700 text-sm truncate">
+                      <span className="font-semibold text-slate-700 dark:text-slate-100 text-sm truncate">
                         {goal.name}
                       </span>
 
                       {goal.isCompleted && (
-                        <span className="flex items-center gap-1 text-[11px] font-semibold text-brand-purple bg-brand-purple/10 px-2 py-0.5 rounded-full shrink-0">
+                        <span className="flex items-center gap-1 text-[11px] font-semibold text-brand-purple dark:text-brand-blue bg-brand-purple/10 px-2 py-0.5 rounded-full shrink-0">
                           <PartyPopper size={11} />
                           Tercapai
                         </span>
@@ -172,7 +172,7 @@ export function GoalList({
                     <button
                       type="button"
                       onClick={() => setContributingGoal(goal)}
-                      className="flex items-center gap-1.5 text-xs font-semibold text-brand-purple"
+                      className="flex items-center gap-1.5 text-xs font-semibold text-brand-purple hover:text-brand-purple/80 dark:text-brand-blue dark:hover:text-brand-blue/80 transition-colors"
                     >
                       <PlusCircle size={14} />
                       Tambah Kontribusi
@@ -184,12 +184,12 @@ export function GoalList({
           </div>
 
           {totalPages > 1 && (
-            <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-100">
+            <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-100 dark:border-slate-600">
               <button
                 type="button"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={safePage === 1}
-                className="flex items-center gap-1 text-sm font-semibold text-slate-500 disabled:opacity-40 disabled:cursor-not-allowed hover:text-brand-purple transition-colors"
+                className="flex items-center gap-1 text-sm font-semibold text-slate-500 dark:text-slate-100 disabled:opacity-40 disabled:cursor-not-allowed hover:text-brand-purple dark:hover:text-brand-blue transition-colors"
               >
                 <ChevronLeft size={16} />
                 Sebelumnya
@@ -203,7 +203,7 @@ export function GoalList({
                 type="button"
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={safePage === totalPages}
-                className="flex items-center gap-1 text-sm font-semibold text-slate-500 disabled:opacity-40 disabled:cursor-not-allowed hover:text-brand-purple transition-colors"
+                className="flex items-center gap-1 text-sm font-semibold text-slate-500dark:text-slate-100 disabled:opacity-40 disabled:cursor-not-allowed hover:text-brand-purple dark:hover:text-brand-blue transition-colors"
               >
                 Selanjutnya
                 <ChevronRight size={16} />

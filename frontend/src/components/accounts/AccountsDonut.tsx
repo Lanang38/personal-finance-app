@@ -1,6 +1,7 @@
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 import { Account } from '../../types';
 import type { JSX } from 'react';
+import { useTheme } from '../../context/ThemeContext';
 
 interface AccountsDonutProps {
   accounts: Account[];
@@ -22,16 +23,21 @@ export function AccountsDonut({
   accounts,
   isLoading,
 }: AccountsDonutProps): JSX.Element {
+  const { resolvedTheme } = useTheme();
+  const isDark = resolvedTheme === 'dark';
+
   const data = accounts.map((account, index) => ({
     id: account.id,
     name: account.name,
     balance: account.balance,
     color: ACCOUNT_COLORS[index % ACCOUNT_COLORS.length],
   }));
+  const tooltipBg = isDark ? '#272b34' : '#FFFFFF';
+  const tooltipText = isDark ? '#F1F5F9' : '#1E293B';
 
   return (
-    <div className="bg-white rounded-3xl p-6 shadow-sm flex flex-col">
-      <h2 className="font-bold text-lg text-slate-800 mb-3">
+    <div className="bg-white dark:bg-dark-component rounded-3xl p-6 shadow-sm flex flex-col">
+      <h2 className="font-bold text-lg text-slate-800 dark:text-slate-100 mb-3">
         Distribusi Saldo Akun
       </h2>
 
@@ -62,6 +68,14 @@ export function AccountsDonut({
               formatter={(value) =>
                 `Rp ${Number(value ?? 0).toLocaleString('id-ID')}`
               }
+              contentStyle={{
+                borderRadius: 12,
+                border: 'none',
+                boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+                backgroundColor: tooltipBg,
+              }}
+              itemStyle={{ color: tooltipText }}
+              labelStyle={{ color: tooltipText }}
             />
           </PieChart>
         </ResponsiveContainer>

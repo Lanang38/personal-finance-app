@@ -36,8 +36,8 @@ export function BudgetList({
 
   return (
     <>
-      <div className="bg-white rounded-3xl p-6 shadow-sm">
-        <h2 className="font-bold text-lg text-slate-800 mb-4">
+      <div className="bg-white dark:bg-dark-component rounded-3xl p-6 shadow-sm">
+        <h2 className="font-bold text-lg text-slate-800 dark:text-slate-100 mb-4">
           Daftar Anggaran
         </h2>
 
@@ -60,23 +60,18 @@ export function BudgetList({
                   ? 'bg-brand-red'
                   : isWarning
                     ? 'bg-brand-orange'
-                    : 'bg-brand-purple';
+                    : 'bg-brand-purple dark:bg-brand-blue';
 
                 return (
                   <div
                     key={budget.id}
-                    className="border-b border-slate-100 pb-5 last:border-0 last:pb-0"
+                    className="border-b border-slate-100 dark:border-slate-600 pb-5 last:border-0 last:pb-0"
                   >
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <span
-                          className="w-2.5 h-2.5 rounded-full shrink-0"
-                          style={{
-                            backgroundColor: budget.category.color,
-                          }}
-                        />
+                        <span className="w-2.5 h-2.5 rounded-full shrink-0 bg-brand-purple dark:bg-brand-blue" />
 
-                        <span className="font-semibold text-slate-700 text-sm">
+                        <span className="font-semibold text-slate-700 dark:text-slate-100 text-sm">
                           {budget.category.name}
                         </span>
                       </div>
@@ -135,12 +130,12 @@ export function BudgetList({
             </div>
 
             {totalPages > 1 && (
-              <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-100">
+              <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-100 dark:border-slate-600">
                 <button
                   type="button"
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={safePage === 1}
-                  className="flex items-center gap-1 text-sm font-semibold text-slate-500 disabled:opacity-40 disabled:cursor-not-allowed hover:text-brand-purple transition-colors"
+                  className="flex items-center gap-1 text-sm font-semibold text-slate-500 dark:text-slate-100 disabled:opacity-40 disabled:cursor-not-allowed hover:text-brand-purple dark:hover:text-brand-blue transition-colors"
                 >
                   <ChevronLeft size={16} />
                   Sebelumnya
@@ -154,7 +149,7 @@ export function BudgetList({
                   type="button"
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={safePage === totalPages}
-                  className="flex items-center gap-1 text-sm font-semibold text-slate-500 disabled:opacity-40 disabled:cursor-not-allowed hover:text-brand-purple transition-colors"
+                  className="flex items-center gap-1 text-sm font-semibold text-slate-500 dark:text-slate-100 disabled:opacity-40 disabled:cursor-not-allowed hover:text-brand-purple dark:hover:text-brand-blue transition-colors"
                 >
                   Selanjutnya
                   <ChevronRight size={16} />

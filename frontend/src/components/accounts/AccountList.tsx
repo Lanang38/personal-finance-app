@@ -28,11 +28,13 @@ export function AccountList({
   }, [accounts, safePage]);
 
   return (
-    <div className="bg-white rounded-3xl p-6 shadow-sm flex flex-col">
-      <h2 className="font-bold text-lg text-slate-800 mb-4">Akun Saya</h2>
+    <div className="bg-white dark:bg-dark-component rounded-3xl p-6 shadow-sm flex flex-col">
+      <h2 className="font-bold text-lg text-slate-800 dark:text-slate-100 mb-4">
+        Akun Saya
+      </h2>
 
       {accounts.length === 0 ? (
-        <p className="text-sm text-slate-400 py-8 text-center">
+        <p className="text-sm text-slate-400 dark:text-slate-100 py-8 text-center">
           Belum ada akun
         </p>
       ) : (
@@ -41,9 +43,9 @@ export function AccountList({
             {paginatedAccounts.map((account) => (
               <div
                 key={account.id}
-                className="w-full flex items-center gap-3 p-2 rounded-2xl bg-slate-50 text-slate-700"
+                className="w-full flex items-center gap-3 p-2 rounded-2xl bg-slate-50 dark:bg-dark-background text-slate-700 dark:text-slate-100"
               >
-                <div className="w-10 h-10 rounded-full bg-white flex items-center justify-center shrink-0">
+                <div className="w-10 h-10 rounded-full bg-white dark:bg-dark-background flex items-center justify-center shrink-0">
                   <Wallet size={18} />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -70,7 +72,7 @@ export function AccountList({
                 type="button"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={safePage === 1}
-                className="flex items-center gap-1 text-sm font-semibold text-slate-500 disabled:opacity-40 disabled:cursor-not-allowed hover:text-brand-purple transition-colors"
+                className="flex items-center gap-1 text-sm font-semibold text-slate-500 dark:text-slate-100 disabled:opacity-40 disabled:cursor-not-allowed hover:text-brand-purple dark:hover:text-brand-blue transition-colors"
               >
                 <ChevronLeft size={16} />
                 Sebelumnya
@@ -82,7 +84,7 @@ export function AccountList({
                 type="button"
                 onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                 disabled={safePage === totalPages}
-                className="flex items-center gap-1 text-sm font-semibold text-slate-500 disabled:opacity-40 disabled:cursor-not-allowed hover:text-brand-purple transition-colors"
+                className="flex items-center gap-1 text-sm font-semibold text-slate-500 dark:text-slate-100 disabled:opacity-40 disabled:cursor-not-allowed hover:text-brand-purple dark:hover:text-brand-blue transition-colors"
               >
                 Selanjutnya
                 <ChevronRight size={16} />
