@@ -20,7 +20,6 @@ import { PreferencesTab } from '../components/settings/tabs/PreferencesTab';
 import { DataExportTab } from '../components/settings/tabs/DataExportTab';
 import { AboutTab } from '../components/settings/tabs/AboutTab';
 import { DeleteAccountTab } from '../components/settings/tabs/DeleteAccountTab';
-import { useAuth } from '../context/AuthContext';
 import type { JSX } from 'react';
 
 type SettingsTabId =
