@@ -135,7 +135,7 @@ export function BudgetList({
                   type="button"
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={safePage === 1}
-                  className="flex items-center gap-1 text-sm font-semibold text-slate-500 disabled:opacity-40 disabled:cursor-not-allowed hover:text-brand-purple dark:hover:text-brand-blue transition-colors"
+                  className="flex items-center gap-1 text-sm font-semibold text-slate-500 dark:text-slate-100 disabled:opacity-40 disabled:cursor-not-allowed hover:text-brand-purple dark:hover:text-brand-blue transition-colors"
                 >
                   <ChevronLeft size={16} />
                   Sebelumnya
@@ -149,7 +149,7 @@ export function BudgetList({
                   type="button"
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={safePage === totalPages}
-                  className="flex items-center gap-1 text-sm font-semibold text-slate-500 disabled:opacity-40 disabled:cursor-not-allowed hover:text-brand-purple dark:hover:text-brand-blue transition-colors"
+                  className="flex items-center gap-1 text-sm font-semibold text-slate-500 dark:text-slate-100 disabled:opacity-40 disabled:cursor-not-allowed hover:text-brand-purple dark:hover:text-brand-blue transition-colors"
                 >
                   Selanjutnya
                   <ChevronRight size={16} />
