@@ -36,8 +36,8 @@ export function BudgetList({
 
   return (
     <>
-      <div className="bg-white rounded-3xl p-6 shadow-sm">
-        <h2 className="font-bold text-lg text-slate-800 mb-4">
+      <div className="bg-white dark:bg-dark-component rounded-3xl p-6 shadow-sm">
+        <h2 className="font-bold text-lg text-slate-800 dark:text-slate-100 mb-4">
           Daftar Anggaran
         </h2>
 
@@ -60,23 +60,20 @@ export function BudgetList({
                   ? 'bg-brand-red'
                   : isWarning
                     ? 'bg-brand-orange'
-                    : 'bg-brand-purple';
+                    : 'bg-brand-purple dark:bg-brand-blue';
 
                 return (
                   <div
                     key={budget.id}
-                    className="border-b border-slate-100 pb-5 last:border-0 last:pb-0"
+                    className="border-b border-slate-100 dark:border-slate-400 pb-5 last:border-0 last:pb-0"
                   >
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <span
-                          className="w-2.5 h-2.5 rounded-full shrink-0"
-                          style={{
-                            backgroundColor: budget.category.color,
-                          }}
+                          className="w-2.5 h-2.5 rounded-full shrink-0 bg-brand-purple dark:bg-brand-blue"
                         />
 
-                        <span className="font-semibold text-slate-700 text-sm">
+                        <span className="font-semibold text-slate-700 dark:text-slate-100 text-sm">
                           {budget.category.name}
                         </span>
                       </div>

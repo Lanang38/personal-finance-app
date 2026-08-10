@@ -58,12 +58,8 @@ export function BudgetsPage(): JSX.Element {
         setMonth(months[0]);
       }
     })();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  /**
-   * Loading awal (pakai skeleton)
-   */
   const loadData = useCallback(async () => {
     setIsLoading(true);
 
@@ -77,9 +73,6 @@ export function BudgetsPage(): JSX.Element {
     setIsLoading(false);
   }, [month]);
 
-  /**
-   * Refresh data (tanpa skeleton)
-   */
   const refreshData = useCallback(async () => {
     const [categoryList, budgetResponse] = await Promise.all([
       fetchCategories(),
@@ -134,16 +127,16 @@ export function BudgetsPage(): JSX.Element {
     <DashboardLayout>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div className="space-y-6">
-          <div className="bg-white rounded-3xl p-6 shadow-sm">
+          <div className="bg-white dark:bg-dark-component rounded-3xl p-6 shadow-sm">
             <div className="flex items-center justify-between gap-3">
-              <h2 className="font-bold text-lg text-slate-800">Anggaran</h2>
+              <h2 className="font-bold text-lg text-slate-800 dark:text-slate-100">Anggaran</h2>
 
               <div className="relative">
                 <select
                   value={month}
                   onChange={(e) => setMonth(e.target.value)}
                   disabled={availableMonths.length === 0}
-                  className="appearance-none bg-slate-100 rounded-xl pl-4 pr-9 py-2 text-sm font-semibold text-slate-700 outline-none disabled:opacity-60"
+                  className="appearance-none bg-slate-100 dark:bg-dark-background rounded-xl pl-4 pr-9 py-2 text-sm font-semibold text-slate-700 dark:text-slate-100 outline-none disabled:opacity-60"
                 >
                   {availableMonths.length === 0 ? (
                     <option value={month}>{formatMonthLabel(month)}</option>

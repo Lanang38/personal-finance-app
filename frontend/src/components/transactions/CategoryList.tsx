@@ -37,7 +37,7 @@ export function CategoryList({
                   className={`w-3 h-3 rounded-full shrink-0 ${
                     category.kind === 'expense'
                       ? 'bg-brand-red'
-                      : 'bg-brand-purple'
+                      : 'bg-brand-purple dark:bg-brand-blue'
                   }`}
                 />
 
