@@ -9,15 +9,18 @@ import {
   Trash2,
 } from 'lucide-react';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
-import { SettingsSection } from '../components/settings/SettingsSection';
 import {
   SettingsNav,
   SettingsTabItem,
 } from '../components/settings/SettingsNav';
-import { ComingSoonBadge } from '../components/settings/ComingSoonBadge';
-import { ThemeToggle } from '../components/common/ThemeToggle';
+import { ProfileTab } from '../components/settings/tabs/ProfileTab';
+import { AppearanceTab } from '../components/settings/tabs/AppearanceTab';
+import { NotificationsTab } from '../components/settings/tabs/NotificationsTab';
+import { PreferencesTab } from '../components/settings/tabs/PreferencesTab';
+import { DataExportTab } from '../components/settings/tabs/DataExportTab';
+import { AboutTab } from '../components/settings/tabs/AboutTab';
+import { DeleteAccountTab } from '../components/settings/tabs/DeleteAccountTab';
 import { useAuth } from '../context/AuthContext';
-import { downloadTransactionsCsv } from '../api/export';
 import type { JSX } from 'react';
 
 type SettingsTabId =
@@ -48,19 +51,18 @@ const TAB_ITEMS: SettingsTabItem[] = [
   },
 ];
 
-export function SettingsPage(): JSX.Element {
-  const { user, } = useAuth();
-  const [activeTab, setActiveTab] = useState<SettingsTabId>('profile');
-  const [isExporting, setIsExporting] = useState<boolean>(false);
+const TAB_CONTENT: Record<SettingsTabId, JSX.Element> = {
+  profile: <ProfileTab />,
+  appearance: <AppearanceTab />,
+  notifications: <NotificationsTab />,
+  preferences: <PreferencesTab />,
+  data: <DataExportTab />,
+  about: <AboutTab />,
+  delete: <DeleteAccountTab />,
+};
 
-  async function handleExport(): Promise<void> {
-    setIsExporting(true);
-    try {
-      await downloadTransactionsCsv();
-    } finally {
-      setIsExporting(false);
-    }
-  }
+export function SettingsPage(): JSX.Element {
+  const [activeTab, setActiveTab] = useState<SettingsTabId>('profile');
 
   return (
     <DashboardLayout>
@@ -73,173 +75,7 @@ export function SettingsPage(): JSX.Element {
           />
         </div>
 
-        <div className="lg:col-span-3 space-y-6">
-          {activeTab === 'profile' && (
-            <>
-              <SettingsSection title="Profil">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <div className="w-14 h-14 rounded-full bg-brand-purple text-white flex items-center justify-center font-semibold text-lg overflow-hidden shrink-0">
-                      {user?.avatarUrl ? (
-                        <img
-                          src={user.avatarUrl}
-                          alt={user.name}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        (user?.name.charAt(0) ?? '?').toUpperCase()
-                      )}
-                    </div>
-                    <div>
-                      <p className="font-semibold text-slate-800 dark:text-slate-100">
-                        {user?.name}
-                      </p>
-                      <p className="text-sm text-slate-400 dark:text-slate-500">
-                        {user?.email}
-                      </p>
-                    </div>
-                  </div>
-                  <ComingSoonBadge />
-                </div>
-              </SettingsSection>
-
-              <SettingsSection title="Informasi Pribadi">
-                <div className="grid grid-cols-2 gap-y-4 text-sm">
-                  <div>
-                    <p className="text-slate-400 dark:text-slate-500 text-xs mb-0.5">
-                      Nama
-                    </p>
-                    <p className="font-medium text-slate-700 dark:text-slate-200">
-                      {user?.name}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-slate-400 dark:text-slate-500 text-xs mb-0.5">
-                      Email
-                    </p>
-                    <p className="font-medium text-slate-700 dark:text-slate-200">
-                      {user?.email}
-                    </p>
-                  </div>
-                </div>
-              </SettingsSection>
-
-              <SettingsSection title="Keamanan">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-slate-700 dark:text-slate-200">
-                      {user?.authProvider === 'google'
-                        ? 'Masuk dengan Google'
-                        : 'Password'}
-                    </p>
-                    <p className="text-xs text-slate-400 dark:text-slate-500">
-                      {user?.authProvider === 'google'
-                        ? 'Dikelola oleh akun Google kamu'
-                        : 'Ubah password login kamu'}
-                    </p>
-                  </div>
-                  {user?.authProvider !== 'google' && <ComingSoonBadge />}
-                </div>
-              </SettingsSection>
-            </>
-          )}
-
-          {activeTab === 'appearance' && (
-            <SettingsSection
-              title="Tampilan"
-              description="Sesuaikan tema aplikasi"
-            >
-              <div className="flex items-center justify-between">
-                <p className="text-sm text-slate-600 dark:text-slate-300">
-                  Mode warna
-                </p>
-                <ThemeToggle />
-              </div>
-            </SettingsSection>
-          )}
-
-          {activeTab === 'notifications' && (
-            <SettingsSection
-              title="Notifikasi"
-              description="Pengingat anggaran dan target tabungan"
-            >
-              <div className="flex items-center justify-between opacity-60">
-                <div className="flex items-center gap-3">
-                  <Bell size={18} className="text-slate-400" />
-                  <p className="text-sm text-slate-600 dark:text-slate-300">
-                    Notifikasi push
-                  </p>
-                </div>
-                <ComingSoonBadge />
-              </div>
-            </SettingsSection>
-          )}
-
-          {activeTab === 'preferences' && (
-            <SettingsSection
-              title="Preferensi Keuangan"
-              description="Mata uang utama untuk semua laporan"
-            >
-              <div className="flex items-center justify-between opacity-60">
-                <div className="flex items-center gap-3">
-                  <Wallet size={18} className="text-slate-400" />
-                  <p className="text-sm text-slate-600 dark:text-slate-300">
-                    Mata uang (IDR)
-                  </p>
-                </div>
-                <ComingSoonBadge />
-              </div>
-            </SettingsSection>
-          )}
-
-          {activeTab === 'data' && (
-            <SettingsSection
-              title="Data & Ekspor"
-              description="Kelola data keuanganmu"
-            >
-              <button
-                type="button"
-                onClick={handleExport}
-                disabled={isExporting}
-                className="w-full flex items-center justify-between rounded-xl bg-slate-50 dark:bg-slate-700/50 px-4 py-3 disabled:opacity-60"
-              >
-                <span className="flex items-center gap-3 text-sm font-medium text-slate-700 dark:text-slate-200">
-                  <Download size={16} />
-                  {isExporting ? 'Mengekspor...' : 'Export transaksi (CSV)'}
-                </span>
-              </button>
-            </SettingsSection>
-          )}
-
-          {activeTab === 'about' && (
-            <SettingsSection title="Tentang">
-              <div className="flex items-center justify-between text-sm">
-                <span className="text-slate-500 dark:text-slate-400">
-                  Versi aplikasi
-                </span>
-                <span className="text-slate-700 dark:text-slate-200 font-medium">
-                  1.0.0
-                </span>
-              </div>
-            </SettingsSection>
-          )}
-
-          {activeTab === 'delete' && (
-            <SettingsSection
-              title="Hapus Akun"
-              description="Tindakan ini permanen dan tidak bisa dibatalkan"
-            >
-              <div className="flex items-center justify-between rounded-xl bg-red-50 dark:bg-red-500/10 px-4 py-3">
-                <span className="flex items-center gap-3 text-sm font-medium text-brand-red">
-                  <Trash2 size={16} />
-                  Hapus akun beserta semua data transaksi, akun, anggaran, dan
-                  target tabungan
-                </span>
-                <ComingSoonBadge />
-              </div>
-            </SettingsSection>
-          )}
-        </div>
+        <div className="lg:col-span-3 space-y-6">{TAB_CONTENT[activeTab]}</div>
       </div>
     </DashboardLayout>
   );
