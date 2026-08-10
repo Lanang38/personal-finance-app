@@ -18,7 +18,10 @@
     },
     {
       "source": "/(.*)",
-      "destination": { "service": "backend" }
+      "destination": {
+        "type": "service",
+        "service": "frontend"
+      }
     }
   ]
 }
