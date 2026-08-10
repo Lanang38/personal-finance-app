@@ -65,13 +65,11 @@ export function BudgetList({
                 return (
                   <div
                     key={budget.id}
-                    className="border-b border-slate-100 dark:border-slate-400 pb-5 last:border-0 last:pb-0"
+                    className="border-b border-slate-100 dark:border-slate-600 pb-5 last:border-0 last:pb-0"
                   >
                     <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
-                        <span
-                          className="w-2.5 h-2.5 rounded-full shrink-0 bg-brand-purple dark:bg-brand-blue"
-                        />
+                        <span className="w-2.5 h-2.5 rounded-full shrink-0 bg-brand-purple dark:bg-brand-blue" />
 
                         <span className="font-semibold text-slate-700 dark:text-slate-100 text-sm">
                           {budget.category.name}
@@ -137,7 +135,7 @@ export function BudgetList({
                   type="button"
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
                   disabled={safePage === 1}
-                  className="flex items-center gap-1 text-sm font-semibold text-slate-500 disabled:opacity-40 disabled:cursor-not-allowed hover:text-brand-purple transition-colors"
+                  className="flex items-center gap-1 text-sm font-semibold text-slate-500 disabled:opacity-40 disabled:cursor-not-allowed hover:text-brand-purple dark:hover:text-brand-blue transition-colors"
                 >
                   <ChevronLeft size={16} />
                   Sebelumnya
@@ -151,7 +149,7 @@ export function BudgetList({
                   type="button"
                   onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                   disabled={safePage === totalPages}
-                  className="flex items-center gap-1 text-sm font-semibold text-slate-500 disabled:opacity-40 disabled:cursor-not-allowed hover:text-brand-purple transition-colors"
+                  className="flex items-center gap-1 text-sm font-semibold text-slate-500 disabled:opacity-40 disabled:cursor-not-allowed hover:text-brand-purple dark:hover:text-brand-blue transition-colors"
                 >
                   Selanjutnya
                   <ChevronRight size={16} />
