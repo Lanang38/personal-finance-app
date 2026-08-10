@@ -3,14 +3,14 @@ import type { JSX } from 'react';
 
 export function GoalSkeleton(): JSX.Element {
   return (
-    <div className="bg-white rounded-3xl p-6 shadow-sm">
+    <div className="bg-white dark:bg-dark-component rounded-3xl p-6 shadow-sm">
       <Skeleton className="h-5 w-40 rounded-full mb-5" />
 
       <div className="space-y-6">
         {Array.from({ length: 2 }).map((_, index) => (
           <div
             key={index}
-            className="border-b border-slate-100 pb-6 last:border-0 last:pb-0"
+            className="border-b border-slate-100 dark:border-dark-skeleton pb-6 last:border-0 last:pb-0"
           >
             <div className="flex items-center justify-between mb-3">
               <div className="flex items-center gap-2">
