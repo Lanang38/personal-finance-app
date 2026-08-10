@@ -11,6 +11,9 @@ export async function connectDatabase(): Promise<void> {
   } catch (error) {
     // eslint-disable-next-line no-console
     console.error('[db] Gagal terhubung ke MongoDB:', error);
-    process.exit(1);
+    if (!process.env.VERCEL) {
+      process.exit(1);
+    }
+    throw error;
   }
 }
