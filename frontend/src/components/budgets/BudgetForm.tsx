@@ -1,4 +1,4 @@
-import { FormEvent, useState } from 'react';
+import { FormEvent, useMemo, useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { Category } from '../../types';
 import type { JSX } from 'react';
@@ -21,6 +21,13 @@ export function BudgetForm({
   const [limitAmount, setLimitAmount] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
+  const budgetableCategories = useMemo(
+    () =>
+      availableCategories.filter(
+        (category) => category.name.trim().toLowerCase() !== 'tabungan',
+      ),
+    [availableCategories],
+  );
 
   async function handleSubmit(
     event: FormEvent<HTMLFormElement>,
@@ -60,7 +67,9 @@ export function BudgetForm({
       onSubmit={handleSubmit}
       className="bg-white dark:bg-dark-component rounded-3xl p-6 shadow-sm space-y-4"
     >
-      <h2 className="font-bold text-slate-800 dark:text-slate-100">Tambah Anggaran</h2>
+      <h2 className="font-bold text-slate-800 dark:text-slate-100">
+        Tambah Anggaran
+      </h2>
 
       <div>
         <label className="text-xs font-semibold text-slate-500 mb-1 block">
@@ -75,7 +84,7 @@ export function BudgetForm({
           >
             <option value="">Pilih kategori</option>
 
-            {availableCategories.map((category) => (
+            {budgetableCategories.map((category) => (
               <option key={category.id} value={category.id}>
                 {category.name}
               </option>
@@ -88,7 +97,7 @@ export function BudgetForm({
           />
         </div>
 
-        {isReady && availableCategories.length === 0 && (
+        {isReady && budgetableCategories.length === 0 && (
           <p className="text-xs text-slate-400 mt-1">
             Semua kategori pengeluaran sudah punya anggaran bulan ini
           </p>
@@ -114,7 +123,7 @@ export function BudgetForm({
 
       <button
         type="submit"
-        disabled={isSubmitting || (!availableCategories.length && isReady)}
+        disabled={isSubmitting || (!budgetableCategories.length && isReady)}
         className="w-full bg-brand-purple dark:bg-brand-blue text-white font-semibold py-3 rounded-xl disabled:opacity-60"
       >
         {isSubmitting ? 'Menyimpan...' : 'Tambah Anggaran'}
