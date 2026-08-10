@@ -132,7 +132,7 @@ export function BudgetList({
             </div>
 
             {totalPages > 1 && (
-              <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-100">
+              <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-100 dark:border-slate-600">
                 <button
                   type="button"
                   onClick={() => setPage((p) => Math.max(1, p - 1))}
