@@ -6,7 +6,8 @@ export interface AuthUser {
 export interface PublicUser {
   id: string;
   name: string;
+  nickname?: string;
   email: string;
   avatarUrl?: string;
-  authProvider: "local" | "google";
+  authProvider: 'local' | 'google';
 }

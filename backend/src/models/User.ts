@@ -3,11 +3,12 @@ import { Schema, model, Document, Types } from "mongoose";
 export interface IUser extends Document {
   _id: Types.ObjectId;
   name: string;
+  nickname?: string;
   email: string;
   password?: string;
   googleId?: string;
   avatarUrl?: string;
-  authProvider: "local" | "google";
+  authProvider: 'local' | 'google';
   createdAt: Date;
   updatedAt: Date;
 }
@@ -15,6 +16,7 @@ export interface IUser extends Document {
 const userSchema = new Schema<IUser>(
   {
     name: { type: String, required: true, trim: true },
+    nickname: { type: String, trim: true },
     email: {
       type: String,
       required: true,
@@ -27,12 +29,12 @@ const userSchema = new Schema<IUser>(
     avatarUrl: { type: String },
     authProvider: {
       type: String,
-      enum: ["local", "google"],
+      enum: ['local', 'google'],
       required: true,
-      default: "local",
+      default: 'local',
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export const UserModel = model<IUser>("User", userSchema);

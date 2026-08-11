@@ -17,6 +17,7 @@ interface AuthContextValue {
   register: (name: string, email: string, password: string) => Promise<void>;
   loginWithGoogle: (credential: string) => Promise<void>;
   logout: () => void;
+  updateUser: (user: User) => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -71,6 +72,10 @@ export function AuthProvider({ children }: { children: ReactNode }): JSX.Element
     setUser(null);
   }, []);
 
+  const updateUser = useCallback((next: User) => {
+    setUser(next);
+  }, []);
+
   const value: AuthContextValue = {
     user,
     isLoading,
@@ -78,6 +83,7 @@ export function AuthProvider({ children }: { children: ReactNode }): JSX.Element
     register,
     loginWithGoogle,
     logout,
+    updateUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

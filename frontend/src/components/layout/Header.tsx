@@ -5,7 +5,7 @@ import type { JSX } from 'react';
 
 export function Header(): JSX.Element {
   const { user } = useAuth();
-  const firstName = user?.name.split(' ')[0] ?? '';
+  const firstName = user?.nickname?.split(' ')[0] ?? '';
   const [imgFailed, setImgFailed] = useState(false);
 
   const showImage = Boolean(user?.avatarUrl) && !imgFailed;

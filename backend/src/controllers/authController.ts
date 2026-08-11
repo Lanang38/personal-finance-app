@@ -18,17 +18,19 @@ async function invalidateInsightCache(userId: string): Promise<void> {
 function toPublicUser(user: {
   _id: unknown;
   name: string;
+  nickname?: string;
   email: string;
   avatarUrl?: string;
   authProvider: 'local' | 'google';
-}): PublicUser {
-  return {
-    id: String(user._id),
-    name: user.name,
-    email: user.email,
-    avatarUrl: user.avatarUrl,
-    authProvider: user.authProvider,
-  };
+  }): PublicUser {
+    return {
+      id: String(user._id),
+      name: user.name,
+      nickname: user.nickname,
+      email: user.email,
+      avatarUrl: user.avatarUrl,
+      authProvider: user.authProvider,
+    };
 }
 
 interface RegisterBody {
