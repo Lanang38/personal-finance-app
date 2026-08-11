@@ -147,3 +147,12 @@ export interface ReceiptScanResult {
   suggestedCategoryId: string | null;
   suggestedCategoryName: string;
 }
+
+export interface User {
+  id: string;
+  name: string;
+  nickname?: string;
+  email: string;
+  avatarUrl?: string;
+  authProvider: AuthProvider;
+}
