@@ -4,7 +4,6 @@ import { env } from "./config/env";
 import { connectDatabase } from "./config/db";
 import apiRoutes from "./routes";
 import { errorHandler, notFoundHandler } from "./middleware/errorHandler";
-import "./types/express.d";
 
 const app: Application = express();
 
