@@ -22,9 +22,6 @@ export function GoalsPage(): JSX.Element {
   const [goals, setGoals] = useState<Goal[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
-  /**
-   * Loading awal
-   */
   const loadData = useCallback(async () => {
     setIsLoading(true);
 
@@ -34,9 +31,7 @@ export function GoalsPage(): JSX.Element {
     setIsLoading(false);
   }, []);
 
-  /**
-   * Refresh tanpa skeleton
-   */
+
   const refreshData = useCallback(async () => {
     const data = await fetchGoals();
     setGoals(data);

@@ -32,3 +32,9 @@ export async function changePasswordRequest(
 ): Promise<void> {
   await apiClient.patch('/users/me/password', { currentPassword, newPassword });
 }
+
+export async function deleteAccountRequest(
+  confirmationName: string,
+): Promise<void> {
+  await apiClient.delete('/users/me', { data: { confirmationName } });
+}
