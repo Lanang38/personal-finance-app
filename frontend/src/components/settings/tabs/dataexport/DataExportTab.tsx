@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Download } from 'lucide-react';
-import { SettingsSection } from '../SettingsSection';
-import { downloadTransactionsCsv } from '../../../api/export';
+import { SettingsSection } from '../../SettingsSection';
+import { downloadTransactionsCsv } from '../../../../api/export';
 import type { JSX } from 'react';
 
 export function DataExportTab(): JSX.Element {
