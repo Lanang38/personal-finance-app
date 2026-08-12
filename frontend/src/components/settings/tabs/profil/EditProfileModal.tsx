@@ -28,8 +28,6 @@ export function EditProfileModal({
     event.preventDefault();
     setError('');
 
-    // Akun Google cuma boleh ubah nama panggilan — backend juga tetap
-    // menolak kalau nama benar-benar diubah, ini lapis validasi kedua.
     if (!isGoogleUser && !nameInput.trim()) {
       setError('Nama tidak boleh kosong');
       return;
@@ -63,7 +61,7 @@ export function EditProfileModal({
               type="text"
               value={nameInput}
               onChange={(e) => setNameInput(e.target.value)}
-              className="w-full bg-slate-100 dark:bg-slate-700 dark:text-slate-100 rounded-xl px-4 py-2.5 outline-none"
+              className="w-full bg-slate-100 dark:bg-dark-background dark:text-slate-100 rounded-xl px-4 py-2.5 outline-none"
             />
           </div>
         )}
@@ -77,7 +75,7 @@ export function EditProfileModal({
             value={nicknameInput}
             onChange={(e) => setNicknameInput(e.target.value)}
             placeholder="Opsional"
-            className="w-full bg-slate-100 dark:bg-slate-700 dark:text-slate-100 rounded-xl px-4 py-2.5 outline-none"
+            className="w-full bg-slate-100 dark:bg-dark-background dark:text-slate-100 rounded-xl px-4 py-2.5 outline-none"
           />
         </div>
 
@@ -94,14 +92,14 @@ export function EditProfileModal({
           <button
             type="button"
             onClick={onClose}
-            className="flex-1 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold py-2.5 rounded-xl"
+            className="flex-1 bg-slate-100 dark:bg-dark-background text-slate-600 dark:text-slate-100 font-semibold py-2.5 rounded-xl"
           >
             Batal
           </button>
           <button
             type="submit"
             disabled={isSaving}
-            className="flex-1 bg-brand-purple text-white font-semibold py-2.5 rounded-xl disabled:opacity-60"
+            className="flex-1 bg-brand-purple dark:bg-brand-blue text-white font-semibold py-2.5 rounded-xl disabled:opacity-60"
           >
             {isSaving ? 'Menyimpan...' : 'Simpan'}
           </button>

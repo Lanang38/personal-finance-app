@@ -22,7 +22,7 @@ export function DataExportTab(): JSX.Element {
         type="button"
         onClick={handleExport}
         disabled={isExporting}
-        className="w-full flex items-center justify-between rounded-xl bg-slate-50 dark:bg-slate-700/50 px-4 py-3 disabled:opacity-60"
+        className="w-full flex items-center justify-between rounded-xl bg-slate-50 dark:bg-dark-background px-4 py-3 disabled:opacity-60"
       >
         <span className="flex items-center gap-3 text-sm font-medium text-slate-700 dark:text-slate-200">
           <Download size={16} />

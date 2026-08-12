@@ -2,15 +2,10 @@ const MAX_DIMENSION = 1024;
 const JPEG_QUALITY = 0.8;
 
 export interface CompressedImage {
-  base64: string; // tanpa prefix "data:...;base64,"
+  base64: string;
   mimeType: string;
 }
 
-/**
- * Resize gambar ke maksimal 1024px di sisi terpanjang, lalu compress jadi
- * JPEG kualitas 80%. Ini dilakukan di browser (client-side) sebelum upload
- * supaya hemat bandwidth & token API, tanpa perlu library tambahan.
- */
 export async function compressImage(file: File): Promise<CompressedImage> {
   const dataUrl = await readFileAsDataUrl(file);
   const image = await loadImage(dataUrl);

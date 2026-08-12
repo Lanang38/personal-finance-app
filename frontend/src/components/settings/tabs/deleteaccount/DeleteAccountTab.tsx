@@ -91,7 +91,7 @@ export function DeleteAccountTab(): JSX.Element {
                 onChange={(e) => setConfirmationInput(e.target.value)}
                 placeholder={user?.name}
                 autoComplete="off"
-                className="w-full bg-slate-100 dark:bg-slate-700 dark:text-slate-100 rounded-xl px-4 py-2.5 outline-none"
+                className="w-full bg-slate-100 dark:bg-dark-background dark:text-slate-100 rounded-xl px-4 py-2.5 outline-none"
               />
             </div>
 
@@ -101,7 +101,7 @@ export function DeleteAccountTab(): JSX.Element {
               <button
                 type="button"
                 onClick={() => setIsModalOpen(false)}
-                className="flex-1 bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold py-2.5 rounded-xl"
+                className="flex-1 bg-slate-100 dark:bg-dark-background text-slate-600 dark:text-slate-100 font-semibold py-2.5 rounded-xl"
               >
                 Batal
               </button>
@@ -109,7 +109,7 @@ export function DeleteAccountTab(): JSX.Element {
                 type="button"
                 onClick={handleDelete}
                 disabled={!isConfirmed || isDeleting}
-                className="flex-1 bg-brand-red text-white font-semibold py-2.5 rounded-xl disabled:opacity-40"
+                className="flex-1 bg-brand-red text-slate-100 font-semibold py-2.5 rounded-xl disabled:opacity-40"
               >
                 {isDeleting ? 'Menghapus...' : 'Hapus Akun'}
               </button>
