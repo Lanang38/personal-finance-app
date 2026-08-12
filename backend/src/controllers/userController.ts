@@ -1,6 +1,13 @@
 import { Request, Response } from 'express';
 import bcrypt from 'bcryptjs';
 import { UserModel } from '../models/User';
+import { TransactionModel } from '../models/Transaction';
+import { AccountModel } from '../models/Account';
+import { CategoryModel } from '../models/Category';
+import { BudgetModel } from '../models/Budget';
+import { GoalModel } from '../models/Goal';
+import { InsightModel } from '../models/Insight';
+import { DismissedSuggestionModel } from '../models/DismissedSuggestion';
 import { asyncHandler } from '../utils/asyncHandler';
 import { AppError } from '../utils/AppError';
 import { PublicUser } from '../types';
@@ -146,6 +153,36 @@ export const changePassword = asyncHandler(
     user.password = await bcrypt.hash(newPassword, 10);
     await user.save();
 
+    res.status(204).send();
+  },
+);
+
+export const deleteAccount = asyncHandler(
+  async (req: Request, res: Response) => {
+    const userId = req.user?.userId;
+    const { confirmationName } = req.body as { confirmationName?: string };
+
+    const user = await UserModel.findById(userId);
+    if (!user) {
+      throw new AppError('Pengguna tidak ditemukan', 404);
+    }
+
+    // Validasi ulang di backend — jangan cuma percaya frontend sudah cek ini.
+    if (confirmationName !== user.name) {
+      throw new AppError('Konfirmasi nama tidak cocok', 400);
+    }
+
+    await Promise.all([
+      TransactionModel.deleteMany({ userId }),
+      AccountModel.deleteMany({ userId }),
+      CategoryModel.deleteMany({ userId }),
+      BudgetModel.deleteMany({ userId }),
+      GoalModel.deleteMany({ userId }),
+      InsightModel.deleteMany({ userId }),
+      DismissedSuggestionModel.deleteMany({ userId }),
+    ]);
+
+    await UserModel.findByIdAndDelete(userId);
     res.status(204).send();
   },
 );
