@@ -13,13 +13,13 @@ import {
   SettingsNav,
   SettingsTabItem,
 } from '../components/settings/SettingsNav';
-import { ProfileTab } from '../components/settings/tabs/ProfileTab';
-import { AppearanceTab } from '../components/settings/tabs/AppearanceTab';
-import { NotificationsTab } from '../components/settings/tabs/NotificationsTab';
-import { PreferencesTab } from '../components/settings/tabs/PreferencesTab';
-import { DataExportTab } from '../components/settings/tabs/DataExportTab';
-import { AboutTab } from '../components/settings/tabs/AboutTab';
-import { DeleteAccountTab } from '../components/settings/tabs/DeleteAccountTab';
+import { ProfileTab } from '../components/settings/tabs/profil/ProfileTab';
+import { AppearanceTab } from '../components/settings/tabs/appearance/AppearanceTab';
+import { NotificationsTab } from '../components/settings/tabs/notification/NotificationsTab';
+import { PreferencesTab } from '../components/settings/tabs/preferences/PreferencesTab';
+import { DataExportTab } from '../components/settings/tabs/dataexport/DataExportTab';
+import { AboutTab } from '../components/settings/tabs/about/AboutTab';
+import { DeleteAccountTab } from '../components/settings/tabs/deleteaccount/DeleteAccountTab';
 import type { JSX } from 'react';
 
 type SettingsTabId =

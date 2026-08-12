@@ -1,6 +1,6 @@
 import { Wallet } from 'lucide-react';
-import { SettingsSection } from '../SettingsSection';
-import { ComingSoonBadge } from '../ComingSoonBadge';
+import { SettingsSection } from '../../SettingsSection';
+import { ComingSoonBadge } from '../../ComingSoonBadge';
 import type { JSX } from 'react';
 
 export function PreferencesTab(): JSX.Element {

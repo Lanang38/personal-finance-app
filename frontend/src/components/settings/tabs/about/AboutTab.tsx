@@ -1,4 +1,4 @@
-import { SettingsSection } from '../SettingsSection';
+import { SettingsSection } from '../../SettingsSection';
 import type { JSX } from 'react';
 
 export function AboutTab(): JSX.Element {

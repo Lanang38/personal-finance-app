@@ -41,40 +41,48 @@ export function LoginPage(): JSX.Element {
   );
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#EFEAFB] px-4">
-      <div className="w-full max-w-md bg-white rounded-3xl shadow-sm p-8">
+    <div className="min-h-screen flex items-center justify-center bg-[#EFEAFB] dark:bg-dark-background px-4">
+      <div className="w-full max-w-md bg-white dark:bg-dark-component rounded-3xl shadow-sm p-8">
         <div className="flex items-center gap-2 mb-8 justify-center">
           <div className="w-10 h-10 rounded-full bg-brand-purple flex items-center justify-center text-brand-lime font-bold">
             F
           </div>
-          <span className="text-2xl font-bold text-slate-800">Finance</span>
+          <span className="text-2xl font-bold text-slate-800 dark:text-slate-100">
+            Finance
+          </span>
         </div>
 
-        <h1 className="text-xl font-bold text-slate-800 mb-1 text-center">Selamat Datang</h1>
+        <h1 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-1 text-center">
+          Selamat Datang
+        </h1>
         <p className="text-sm text-slate-400 text-center mb-6">
           Masuk untuk mengelola keuangan Anda
         </p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="text-xs font-semibold text-slate-500 mb-1 block">Email</label>
+            <label className="text-xs font-semibold text-slate-500 mb-1 block">
+              Email
+            </label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="w-full bg-slate-100 rounded-xl px-4 py-2.5 outline-none"
+              className="w-full bg-slate-100 dark:bg-dark-background rounded-xl px-4 py-2.5 outline-none"
               placeholder="nama@email.com"
             />
           </div>
           <div>
-            <label className="text-xs font-semibold text-slate-500 mb-1 block">Password</label>
+            <label className="text-xs font-semibold text-slate-500 mb-1 block">
+              Password
+            </label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
-              className="w-full bg-slate-100 rounded-xl px-4 py-2.5 outline-none"
+              className="w-full bg-slate-100 dark:bg-dark-background rounded-xl px-4 py-2.5 outline-none"
               placeholder="••••••••"
             />
           </div>
@@ -84,23 +92,23 @@ export function LoginPage(): JSX.Element {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-brand-purple text-white font-semibold py-3 rounded-xl disabled:opacity-60"
+            className="w-full bg-brand-purple dark:bg-brand-blue text-white font-semibold py-3 rounded-xl disabled:opacity-60"
           >
-            {isSubmitting ? "Memproses..." : "Masuk"}
+            {isSubmitting ? 'Memproses...' : 'Masuk'}
           </button>
         </form>
 
         <div className="flex items-center gap-3 my-6">
-          <div className="h-px bg-slate-100 flex-1" />
-          <span className="text-xs text-slate-400">atau</span>
-          <div className="h-px bg-slate-100 flex-1" />
+          <div className="h-px bg-slate-100 dark:bg-slate-600 flex-1" />
+          <span className="text-xs text-slate-400 dark:text-slate-500">atau</span>
+          <div className="h-px bg-slate-100 dark:bg-slate-600 flex-1" />
         </div>
 
         <GoogleLoginButton onCredential={handleGoogleCredential} />
 
         <p className="text-sm text-slate-500 text-center mt-6">
-          Belum punya akun?{" "}
-          <Link to="/register" className="text-brand-purple font-semibold">
+          Belum punya akun?{' '}
+          <Link to="/register" className="text-brand-purple dark:text-brand-blue font-semibold">
             Daftar
           </Link>
         </p>

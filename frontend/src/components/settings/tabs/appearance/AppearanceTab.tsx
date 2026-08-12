@@ -1,5 +1,5 @@
-import { SettingsSection } from '../SettingsSection';
-import { ThemeToggle } from '../../common/ThemeToggle';
+import { SettingsSection } from '../../SettingsSection';
+import { ThemeToggle } from '../../../common/ThemeToggle';
 import type { JSX } from 'react';
 
 export function AppearanceTab(): JSX.Element {
