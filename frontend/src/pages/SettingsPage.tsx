@@ -18,7 +18,7 @@ import { AppearanceTab } from '../components/settings/tabs/appearance/Appearance
 import { NotificationsTab } from '../components/settings/tabs/notification/NotificationsTab';
 import { PreferencesTab } from '../components/settings/tabs/preferences/PreferencesTab';
 import { DataExportTab } from '../components/settings/tabs/dataexport/DataExportTab';
-import { AboutTab } from '../components/settings/tabs/AboutTab';
+import { AboutTab } from '../components/settings/tabs/about/AboutTab';
 import { DeleteAccountTab } from '../components/settings/tabs/deleteaccount/DeleteAccountTab';
 import type { JSX } from 'react';
 
