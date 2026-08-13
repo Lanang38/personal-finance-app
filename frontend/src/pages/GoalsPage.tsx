@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { GoalForm } from '../components/goals/GoalForm';
+import { GoalFormModal } from '../components/goals/GoalFormModal';
 import { GoalList } from '../components/goals/GoalList';
 import { GoalSkeleton } from '../components/goals/GoalSkeleton';
 import { useAccounts } from '../context/AccountContext';
@@ -21,6 +22,7 @@ export function GoalsPage(): JSX.Element {
   const { accounts } = useAccounts();
   const [goals, setGoals] = useState<Goal[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   const loadData = useCallback(async () => {
     setIsLoading(true);
@@ -30,7 +32,6 @@ export function GoalsPage(): JSX.Element {
     setGoals(data);
     setIsLoading(false);
   }, []);
-
 
   const refreshData = useCallback(async () => {
     const data = await fetchGoals();
@@ -66,12 +67,12 @@ export function GoalsPage(): JSX.Element {
 
   return (
     <DashboardLayout>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div>
+      <div className="grid grid-cols-1 min-[1281px]:grid-cols-3 gap-6">
+        <div className="hidden min-[1281px]:block">
           <GoalForm onSubmit={handleCreate} />
         </div>
 
-        <div className="lg:col-span-2">
+        <div className="min-[1281px]:col-span-2">
           {isLoading ? (
             <GoalSkeleton />
           ) : (
@@ -81,10 +82,18 @@ export function GoalsPage(): JSX.Element {
               isLoading={false}
               onContribute={handleContribute}
               onDelete={handleDelete}
+              onAddClick={() => setIsFormOpen(true)}
             />
           )}
         </div>
       </div>
+
+      {isFormOpen && (
+        <GoalFormModal
+          onSubmit={handleCreate}
+          onClose={() => setIsFormOpen(false)}
+        />
+      )}
     </DashboardLayout>
   );
 }

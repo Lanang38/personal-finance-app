@@ -5,6 +5,7 @@ import {
   PartyPopper,
   ChevronLeft,
   ChevronRight,
+  Plus,
 } from 'lucide-react';
 import { Account, Goal } from '../../types';
 import { ContributeGoalModal } from './ContributeGoalModal';
@@ -20,6 +21,7 @@ interface GoalListProps {
     accountId: string,
   ) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
+  onAddClick: () => void;
 }
 
 const PAGE_SIZE = 2;
@@ -51,6 +53,7 @@ export function GoalList({
   isLoading,
   onContribute,
   onDelete,
+  onAddClick,
 }: GoalListProps): JSX.Element {
   const [contributingGoal, setContributingGoal] = useState<Goal | null>(null);
 
@@ -73,9 +76,20 @@ export function GoalList({
 
   return (
     <div className="bg-white dark:bg-dark-component rounded-3xl p-6 shadow-sm">
-      <h2 className="font-bold text-lg text-slate-800 dark:text-slate-100 mb-4">
-        Daftar Target Tabungan
-      </h2>
+      <div className="flex items-center justify-between mb-4">
+        <h2 className="font-bold text-lg text-slate-800 dark:text-slate-100">
+          Daftar Target Tabungan
+        </h2>
+
+        <button
+          type="button"
+          onClick={onAddClick}
+          aria-label="Tambah target tabungan"
+          className="min-[1281px]:hidden flex items-center justify-center w-8 h-8 rounded-full bg-brand-purple dark:bg-brand-blue text-white shrink-0"
+        >
+          <Plus size={16} />
+        </button>
+      </div>
 
       {isLoading ? (
         <p className="text-sm text-slate-400 dark:text-slate-100 py-8 text-center">
