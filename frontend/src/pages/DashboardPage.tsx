@@ -320,11 +320,11 @@ export function DashboardPage(): JSX.Element {
               </div>
 
               {/* TABLET */}
-              <div className="hidden sm:flex w-full shrink-0 tablet-cards">
+              <div className="w-full shrink-0 tablet-cards">
                 {tabletWidgetPages.map((page, pageIndex) => (
                   <div
                     key={`tablet-${pageIndex}`}
-                    className="w-full shrink-0 snap-start grid grid-cols-2 gap-4"
+                    className="w-full shrink-0 snap-start grid grid-cols-2 gap-4 pr-4 last:pr-0"
                   >
                     {page.map((widget) => (
                       <StatCard
