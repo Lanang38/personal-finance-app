@@ -43,7 +43,11 @@ export function MobileTopbar(): JSX.Element {
       <div className="relative" ref={dropdownRef}>
         <motion.button
           type="button"
-          onClick={() => setIsOpen((prev) => !prev)}
+          onClick={() => {
+            window.dispatchEvent(new CustomEvent('close-settings-dropdown'));
+
+            setIsOpen((prev) => !prev);
+          }}
           aria-label="Buka menu"
           whileTap={{ scale: 0.92 }}
           className="w-10 h-10 rounded-full bg-white dark:bg-dark-component shadow-sm flex items-center justify-center text-slate-600 dark:text-slate-100"
