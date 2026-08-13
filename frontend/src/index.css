@@ -95,7 +95,19 @@ textarea,
 }
 
 .tablet-cards {
-  display: flex;
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .tablet-cards {
+    display: flex;
+  }
+}
+
+@media (min-width: 1281px) {
+  .tablet-cards {
+    display: none;
+  }
 }
 
 .desktop-cards {
@@ -103,10 +115,6 @@ textarea,
 }
 
 @media (min-width: 1281px) {
-  .tablet-cards {
-    display: none;
-  }
-
   .desktop-cards {
     display: flex;
   }
