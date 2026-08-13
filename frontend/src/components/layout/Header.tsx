@@ -5,13 +5,15 @@ import type { JSX } from 'react';
 
 export function Header(): JSX.Element {
   const { user } = useAuth();
+
   const firstName = user?.nickname?.split(' ')[0] ?? '';
+
   const [imgFailed, setImgFailed] = useState(false);
 
   const showImage = Boolean(user?.avatarUrl) && !imgFailed;
 
   return (
-    <header className="hidden lg:flex items-center justify-between mb-8 gap-4 flex-wrap">
+    <header className="hidden min-[1281px]:flex items-center justify-between mb-8 gap-4 flex-wrap">
       <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">
         Halo, {firstName}!
       </h1>

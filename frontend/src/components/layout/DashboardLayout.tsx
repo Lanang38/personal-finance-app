@@ -14,9 +14,12 @@ export function DashboardLayout({
   return (
     <div className="min-h-screen flex bg-[#EFEAFB] dark:bg-dark-background">
       <Sidebar />
-      <main className="flex-1 p-4 lg:p-8 overflow-x-hidden">
+
+      <main className="flex-1 p-4 min-[1281px]:p-8 overflow-x-hidden">
         <MobileTopbar />
+
         <Header />
+
         {children}
       </main>
     </div>

@@ -18,39 +18,70 @@ export interface MenuItem {
   icon: JSX.Element;
 }
 
-// Menu yang sudah berfungsi penuh
 export const menuItems: MenuItem[] = [
-  { label: 'Dashboard', to: '/dashboard', icon: <LayoutGrid size={20} /> },
-  { label: 'Transaksi', to: '/transactions', icon: <Receipt size={20} /> },
-  { label: 'Akun', to: '/accounts', icon: <Wallet size={20} /> },
-];
-export const menuItemsPlus: MenuItem[] = [
-  { label: 'Anggaran', to: '/budgets', icon: <NotepadText size={20} /> },
-  { label: 'Target Tabungan', to: '/goals', icon: <PiggyBank size={20} /> },
-  { label: 'Laporan', to: '/reports', icon: <FileBarChart size={20} /> },
+  {
+    label: 'Dashboard',
+    to: '/dashboard',
+    icon: <LayoutGrid size={20} />,
+  },
+  {
+    label: 'Transaksi',
+    to: '/transactions',
+    icon: <Receipt size={20} />,
+  },
+  {
+    label: 'Akun',
+    to: '/accounts',
+    icon: <Wallet size={20} />,
+  },
 ];
 
-// Menu fitur yang sudah direncanakan tapi belum dikembangkan (mengarah ke halaman Coming Soon)
+export const menuItemsPlus: MenuItem[] = [
+  {
+    label: 'Anggaran',
+    to: '/budgets',
+    icon: <NotepadText size={20} />,
+  },
+  {
+    label: 'Target Tabungan',
+    to: '/goals',
+    icon: <PiggyBank size={20} />,
+  },
+  {
+    label: 'Laporan',
+    to: '/reports',
+    icon: <FileBarChart size={20} />,
+  },
+];
+
 export const upcomingMenuItems: MenuItem[] = [
-  { label: 'Pengaturan', to: '/settings', icon: <Settings size={20} /> },
+  {
+    label: 'Pengaturan',
+    to: '/settings',
+    icon: <Settings size={20} />,
+  },
 ];
 
 export function Sidebar(): JSX.Element {
   const { logout } = useAuth();
 
   return (
-    <aside className="hidden lg:flex w-64 shrink-0 flex-col justify-between bg-sidebar-gradient dark:bg-none dark:bg-dark-component rounded-3xl m-4 mr-0 p-6 text-white">
+    <aside className="hidden desktop-sidebar w-64 shrink-0 flex-col justify-between bg-sidebar-gradient dark:bg-none dark:bg-dark-component rounded-3xl m-4 mr-0 p-6 text-white">
       <div>
+        {/* Logo */}
         <div className="flex items-center gap-2 mb-10">
           <div className="w-9 h-9 rounded-full bg-brand-lime flex items-center justify-center text-brand-purple font-bold">
             F
           </div>
+
           <span className="text-xl font-bold">Finance</span>
         </div>
 
+        {/* Menu */}
         <p className="text-xs uppercase tracking-wide text-white/60 mb-3">
           Menu
         </p>
+
         <nav className="flex flex-col gap-1 mb-6">
           {menuItems.map((item) => (
             <NavLink
@@ -70,9 +101,11 @@ export function Sidebar(): JSX.Element {
           ))}
         </nav>
 
+        {/* Menu Tambahan */}
         <p className="text-xs uppercase tracking-wide text-white/60 mb-3">
           Menu Tambahan
         </p>
+
         <nav className="flex flex-col gap-1 mb-6">
           {menuItemsPlus.map((item) => (
             <NavLink
@@ -92,9 +125,11 @@ export function Sidebar(): JSX.Element {
           ))}
         </nav>
 
+        {/* Segera Hadir */}
         <p className="text-xs uppercase tracking-wide text-white/60 mb-3">
           Segera Hadir
         </p>
+
         <nav className="flex flex-col gap-1">
           {upcomingMenuItems.map((item) => (
             <NavLink
@@ -115,6 +150,7 @@ export function Sidebar(): JSX.Element {
         </nav>
       </div>
 
+      {/* Logout */}
       <button
         type="button"
         onClick={logout}
