@@ -36,8 +36,11 @@ function formatCurrency(amount: number): string {
 
 export function DashboardPage(): JSX.Element {
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
+
   const [isInitialLoading, setIsInitialLoading] = useState<boolean>(true);
+
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
+
   const [isExporting, setIsExporting] = useState<boolean>(false);
 
   const [activeFilter, setActiveFilter] = useState<ActiveFilter | null>(null);
@@ -49,10 +52,15 @@ export function DashboardPage(): JSX.Element {
   const [isLoadingPeriods, setIsLoadingPeriods] = useState<boolean>(true);
 
   const hasLoadedOnce = useRef(false);
+
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const { accounts, isLoading: isAccountsLoading } = useAccounts();
 
+  /*
+   * Scroll card hanya digunakan untuk
+   * iPad Pro besar / desktop >= 1281px.
+   */
   function scrollWidgets(direction: 'left' | 'right'): void {
     const container = scrollRef.current;
 
@@ -65,6 +73,9 @@ export function DashboardPage(): JSX.Element {
     });
   }
 
+  /*
+   * Load dashboard summary
+   */
   const loadSummary = useCallback(async (filter: ActiveFilter | null) => {
     if (!hasLoadedOnce.current) {
       setIsInitialLoading(true);
@@ -95,6 +106,9 @@ export function DashboardPage(): JSX.Element {
     void loadSummary(activeFilter);
   }, [loadSummary, activeFilter]);
 
+  /*
+   * Load available periods
+   */
   useEffect(() => {
     let isMounted = true;
 
@@ -117,6 +131,9 @@ export function DashboardPage(): JSX.Element {
     };
   }, []);
 
+  /*
+   * Export CSV
+   */
   async function handleExport(): Promise<void> {
     setIsExporting(true);
 
@@ -127,15 +144,24 @@ export function DashboardPage(): JSX.Element {
     }
   }
 
+  /*
+   * Total saldo seluruh akun
+   */
   const totalSaldoAkun = accounts.reduce(
     (sum, account) => sum + account.balance,
     0,
   );
 
+  /*
+   * Label periode
+   */
   const periodLabel = activeFilter
     ? `${MONTH_NAMES[activeFilter.month - 1]} ${activeFilter.year}`
     : 'Semua Data';
 
+  /*
+   * Widget data
+   */
   const widgets: WidgetConfig[] = summary
     ? [
         {
@@ -145,6 +171,7 @@ export function DashboardPage(): JSX.Element {
           colorClass:
             'bg-gradient-to-br from-slate-700 to-slate-900 dark:bg-none dark:bg-dark-component',
         },
+
         {
           key: 'saldo-bersih',
           label: 'Saldo Bersih',
@@ -152,6 +179,7 @@ export function DashboardPage(): JSX.Element {
           colorClass:
             'bg-gradient-to-br from-brand-blue to-sky-400 dark:bg-none dark:bg-dark-component',
         },
+
         {
           key: 'total-pemasukan',
           label: 'Total Pemasukan',
@@ -160,6 +188,7 @@ export function DashboardPage(): JSX.Element {
           colorClass:
             'bg-gradient-to-br from-brand-purple to-brand-purpleLight dark:bg-none dark:bg-dark-component',
         },
+
         {
           key: 'total-pengeluaran',
           label: 'Total Pengeluaran',
@@ -168,6 +197,7 @@ export function DashboardPage(): JSX.Element {
           colorClass:
             'bg-gradient-to-br from-rose-600 to-brand-red dark:bg-none dark:bg-dark-component',
         },
+
         {
           key: 'pemasukan',
           label: 'Pemasukan',
@@ -176,6 +206,7 @@ export function DashboardPage(): JSX.Element {
           colorClass:
             'bg-gradient-to-br from-emerald-600 to-emerald-400 dark:bg-none dark:bg-dark-component',
         },
+
         {
           key: 'pengeluaran',
           label: 'Pengeluaran',
@@ -187,28 +218,27 @@ export function DashboardPage(): JSX.Element {
       ]
     : [];
 
-  // Desktop
-  const desktopWidgetPages: WidgetConfig[][] = [];
+  const mobileWidgetPages: WidgetConfig[][] = widgets.map((widget) => [widget]);
 
-  for (let i = 0; i < widgets.length; i += 3) {
-    desktopWidgetPages.push(widgets.slice(i, i + 3));
-  }
-
-  // Tablet
   const tabletWidgetPages: WidgetConfig[][] = [];
 
   for (let i = 0; i < widgets.length; i += 2) {
     tabletWidgetPages.push(widgets.slice(i, i + 2));
   }
 
-  // Mobile
-  const mobileWidgetPages: WidgetConfig[][] = widgets.map((widget) => [widget]);
+  const largeWidgetPages: WidgetConfig[][] = [];
+
+  for (let i = 0; i < widgets.length; i += 3) {
+    largeWidgetPages.push(widgets.slice(i, i + 3));
+  }
 
   return (
     <DashboardLayout>
-      {/* Header */}
+      {/* ====================================
+          HEADER / FILTER
+          ==================================== */}
       <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
-        <h2 className="text-lg font-bold text-slate-700 dark:text-slate-100">
+        <h2 className="hidden min-[1281px]:block text-lg font-bold text-slate-700 dark:text-slate-100">
           Ringkasan Keuangan
         </h2>
 
@@ -218,11 +248,16 @@ export function DashboardPage(): JSX.Element {
             activeYear={activeFilter?.year ?? null}
             availablePeriods={availablePeriods}
             isLoadingPeriods={isLoadingPeriods}
-            onApply={(month, year) => setActiveFilter({ month, year })}
+            onApply={(month, year) =>
+              setActiveFilter({
+                month,
+                year,
+              })
+            }
             onReset={() => setActiveFilter(null)}
           />
 
-          {/* Export CSV */}
+          {/* EXPORT CSV */}
           <button
             type="button"
             onClick={handleExport}
@@ -230,12 +265,13 @@ export function DashboardPage(): JSX.Element {
             className="hidden sm:flex items-center gap-2 bg-white border border-slate-200 text-slate-600 dark:bg-dark-component dark:text-slate-100 dark:border-none font-semibold px-4 py-2 rounded-xl text-sm disabled:opacity-60"
           >
             <Download size={16} />
+
             {isExporting ? 'Mengekspor...' : 'Ekspor CSV'}
           </button>
         </div>
       </div>
 
-      {/* Content */}
+      {/* LOADING */}
       {isInitialLoading || !summary ? (
         <DashboardSkeleton />
       ) : (
@@ -249,12 +285,12 @@ export function DashboardPage(): JSX.Element {
         >
           {/* STAT CARDS */}
           <div className="relative mb-6">
-            {/* Previous Button */}
+            {/* Left Scroll Button */}
             <button
               type="button"
               onClick={() => scrollWidgets('left')}
               aria-label="Geser ke kiri"
-              className="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-10 h-9 w-9 items-center justify-center rounded-full bg-white dark:bg-dark-background shadow-md border border-slate-200 dark:border-dark-component text-slate-500 dark:text-slate-100 hover:text-brand-purple hover:border-brand-purple/40 dark:hover:border-slate-100 transition-colors"
+              className="hidden min-[1281px]:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-10 h-9 w-9 items-center justify-center rounded-full bg-white dark:bg-dark-background shadow-md border border-slate-200 dark:border-dark-component text-slate-500 dark:text-slate-100 hover:text-brand-purple hover:border-brand-purple/40 dark:hover:border-slate-100 transition-colors"
             >
               <ChevronLeft size={18} />
             </button>
@@ -264,7 +300,7 @@ export function DashboardPage(): JSX.Element {
               className="flex overflow-x-auto scroll-smooth snap-x snap-mandatory [scrollbar-none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
             >
               {/* MOBILE */}
-              <div className="flex sm:hidden w-full">
+              <div className="flex sm:hidden w-full shrink-0">
                 {mobileWidgetPages.map((page, pageIndex) => (
                   <div
                     key={`mobile-${pageIndex}`}
@@ -284,11 +320,11 @@ export function DashboardPage(): JSX.Element {
               </div>
 
               {/* TABLET */}
-              <div className="hidden sm:flex lg:hidden w-full">
+              <div className="hidden sm:flex w-full shrink-0 tablet-cards">
                 {tabletWidgetPages.map((page, pageIndex) => (
                   <div
                     key={`tablet-${pageIndex}`}
-                    className="w-full shrink-0 snap-start grid grid-cols-2 gap-4 pr-4 last:pr-0"
+                    className="w-full shrink-0 snap-start grid grid-cols-2 gap-4"
                   >
                     {page.map((widget) => (
                       <StatCard
@@ -304,8 +340,8 @@ export function DashboardPage(): JSX.Element {
               </div>
 
               {/* DESKTOP */}
-              <div className="hidden lg:flex w-full">
-                {desktopWidgetPages.map((page, pageIndex) => (
+              <div className="hidden w-full shrink-0 desktop-cards">
+                {largeWidgetPages.map((page, pageIndex) => (
                   <div
                     key={`desktop-${pageIndex}`}
                     className="w-full shrink-0 snap-start grid grid-cols-3 gap-4 pr-4 last:pr-0"
@@ -324,12 +360,12 @@ export function DashboardPage(): JSX.Element {
               </div>
             </div>
 
-            {/* Next Button */}
+            {/* Right Scroll Button */}
             <button
               type="button"
               onClick={() => scrollWidgets('right')}
               aria-label="Geser ke kanan"
-              className="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10 h-9 w-9 items-center justify-center rounded-full bg-white dark:bg-dark-background shadow-md border border-slate-200 dark:border-dark-component text-slate-500 dark:text-slate-100 hover:text-brand-purple hover:border-brand-purple/40 dark:hover:border-slate-100 transition-colors"
+              className="hidden min-[1281px]:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10 h-9 w-9 items-center justify-center rounded-full bg-white dark:bg-dark-background shadow-md border border-slate-200 dark:border-dark-component text-slate-500 dark:text-slate-100 hover:text-brand-purple hover:border-brand-purple/40 dark:hover:border-slate-100 transition-colors"
             >
               <ChevronRight size={18} />
             </button>

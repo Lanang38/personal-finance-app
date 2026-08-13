@@ -38,8 +38,8 @@ export function MobileTopbar(): JSX.Element {
   }, [isOpen]);
 
   return (
-    <div className="lg:hidden flex items-center justify-between mb-4">
-      {/* MENU */}
+    <div className="min-[1281px]:hidden flex items-center justify-between mb-4">
+      {/* Menu */}
       <div className="relative" ref={dropdownRef}>
         <motion.button
           type="button"
@@ -103,7 +103,7 @@ export function MobileTopbar(): JSX.Element {
           </AnimatePresence>
         </motion.button>
 
-        {/* DROPDOWN */}
+        {/* Dropdown */}
         <AnimatePresence>
           {isOpen && (
             <motion.div
@@ -186,7 +186,7 @@ export function MobileTopbar(): JSX.Element {
         </AnimatePresence>
       </div>
 
-      {/* RIGHT SIDE */}
+      {/* Right */}
       <div className="flex items-center gap-3">
         <motion.button
           type="button"
