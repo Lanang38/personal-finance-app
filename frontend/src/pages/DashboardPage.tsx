@@ -39,18 +39,25 @@ export function DashboardPage(): JSX.Element {
   const [isInitialLoading, setIsInitialLoading] = useState<boolean>(true);
   const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
   const [isExporting, setIsExporting] = useState<boolean>(false);
+
   const [activeFilter, setActiveFilter] = useState<ActiveFilter | null>(null);
+
   const [availablePeriods, setAvailablePeriods] = useState<AvailablePeriod[]>(
     [],
   );
+
   const [isLoadingPeriods, setIsLoadingPeriods] = useState<boolean>(true);
+
   const hasLoadedOnce = useRef(false);
   const scrollRef = useRef<HTMLDivElement>(null);
+
   const { accounts, isLoading: isAccountsLoading } = useAccounts();
 
   function scrollWidgets(direction: 'left' | 'right'): void {
     const container = scrollRef.current;
+
     if (!container) return;
+
     container.scrollBy({
       left:
         direction === 'left' ? -container.clientWidth : container.clientWidth,
@@ -61,18 +68,23 @@ export function DashboardPage(): JSX.Element {
   const loadSummary = useCallback(async (filter: ActiveFilter | null) => {
     if (!hasLoadedOnce.current) {
       setIsInitialLoading(true);
+
       const data = await withMinimumDelay(
         fetchDashboardSummary(filter?.month, filter?.year),
       );
+
       setSummary(data);
       setIsInitialLoading(false);
       hasLoadedOnce.current = true;
+
       return;
     }
 
     setIsRefreshing(true);
+
     try {
       const data = await fetchDashboardSummary(filter?.month, filter?.year);
+
       setSummary(data);
     } finally {
       setIsRefreshing(false);
@@ -85,14 +97,21 @@ export function DashboardPage(): JSX.Element {
 
   useEffect(() => {
     let isMounted = true;
+
     setIsLoadingPeriods(true);
+
     fetchAvailablePeriods()
       .then((periods) => {
-        if (isMounted) setAvailablePeriods(periods);
+        if (isMounted) {
+          setAvailablePeriods(periods);
+        }
       })
       .finally(() => {
-        if (isMounted) setIsLoadingPeriods(false);
+        if (isMounted) {
+          setIsLoadingPeriods(false);
+        }
       });
+
     return () => {
       isMounted = false;
     };
@@ -100,6 +119,7 @@ export function DashboardPage(): JSX.Element {
 
   async function handleExport(): Promise<void> {
     setIsExporting(true);
+
     try {
       await downloadTransactionsCsv();
     } finally {
@@ -129,51 +149,69 @@ export function DashboardPage(): JSX.Element {
           key: 'saldo-bersih',
           label: 'Saldo Bersih',
           value: formatCurrency(summary.balance),
-          colorClass: 'bg-gradient-to-br from-brand-blue to-sky-400 dark:bg-none dark:bg-dark-component',
+          colorClass:
+            'bg-gradient-to-br from-brand-blue to-sky-400 dark:bg-none dark:bg-dark-component',
         },
         {
           key: 'total-pemasukan',
           label: 'Total Pemasukan',
           subtitle: 'Semua Data',
           value: formatCurrency(summary.totalIncome),
-          colorClass: 'bg-gradient-to-br from-brand-purple to-brand-purpleLight dark:bg-none dark:bg-dark-component',
+          colorClass:
+            'bg-gradient-to-br from-brand-purple to-brand-purpleLight dark:bg-none dark:bg-dark-component',
         },
         {
           key: 'total-pengeluaran',
           label: 'Total Pengeluaran',
           subtitle: 'Semua Data',
           value: formatCurrency(summary.totalExpense),
-          colorClass: 'bg-gradient-to-br from-rose-600 to-brand-red dark:bg-none dark:bg-dark-component',
+          colorClass:
+            'bg-gradient-to-br from-rose-600 to-brand-red dark:bg-none dark:bg-dark-component',
         },
         {
           key: 'pemasukan',
           label: 'Pemasukan',
           subtitle: periodLabel,
           value: formatCurrency(summary.monthIncome),
-          colorClass: 'bg-gradient-to-br from-emerald-600 to-emerald-400 dark:bg-none dark:bg-dark-component',
+          colorClass:
+            'bg-gradient-to-br from-emerald-600 to-emerald-400 dark:bg-none dark:bg-dark-component',
         },
         {
           key: 'pengeluaran',
           label: 'Pengeluaran',
           subtitle: periodLabel,
           value: formatCurrency(summary.monthExpense),
-          colorClass: 'bg-gradient-to-br from-brand-orange to-amber-400 dark:bg-none dark:bg-dark-component',
+          colorClass:
+            'bg-gradient-to-br from-brand-orange to-amber-400 dark:bg-none dark:bg-dark-component',
         },
       ]
     : [];
 
-  const widgetsPerPage = 3;
-  const widgetPages: WidgetConfig[][] = [];
-  for (let i = 0; i < widgets.length; i += widgetsPerPage) {
-    widgetPages.push(widgets.slice(i, i + widgetsPerPage));
+  // Desktop
+  const desktopWidgetPages: WidgetConfig[][] = [];
+
+  for (let i = 0; i < widgets.length; i += 3) {
+    desktopWidgetPages.push(widgets.slice(i, i + 3));
   }
+
+  // Tablet
+  const tabletWidgetPages: WidgetConfig[][] = [];
+
+  for (let i = 0; i < widgets.length; i += 2) {
+    tabletWidgetPages.push(widgets.slice(i, i + 2));
+  }
+
+  // Mobile
+  const mobileWidgetPages: WidgetConfig[][] = widgets.map((widget) => [widget]);
 
   return (
     <DashboardLayout>
+      {/* Header */}
       <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
         <h2 className="text-lg font-bold text-slate-700 dark:text-slate-100">
           Ringkasan Keuangan
         </h2>
+
         <div className="flex items-center gap-3 flex-wrap">
           <MonthYearFilter
             activeMonth={activeFilter?.month ?? null}
@@ -183,11 +221,13 @@ export function DashboardPage(): JSX.Element {
             onApply={(month, year) => setActiveFilter({ month, year })}
             onReset={() => setActiveFilter(null)}
           />
+
+          {/* Export CSV */}
           <button
             type="button"
             onClick={handleExport}
             disabled={isExporting}
-            className="flex items-center gap-2 bg-white border border-slate-200 text-slate-600 dark:bg-dark-component dark:text-slate-100 dark:border-none font-semibold px-4 py-2 rounded-xl text-sm disabled:opacity-60"
+            className="hidden sm:flex items-center gap-2 bg-white border border-slate-200 text-slate-600 dark:bg-dark-component dark:text-slate-100 dark:border-none font-semibold px-4 py-2 rounded-xl text-sm disabled:opacity-60"
           >
             <Download size={16} />
             {isExporting ? 'Mengekspor...' : 'Ekspor CSV'}
@@ -195,19 +235,26 @@ export function DashboardPage(): JSX.Element {
         </div>
       </div>
 
+      {/* Content */}
       {isInitialLoading || !summary ? (
         <DashboardSkeleton />
       ) : (
         <motion.div
-          animate={{ opacity: isRefreshing ? 0.6 : 1 }}
-          transition={{ duration: 0.2 }}
+          animate={{
+            opacity: isRefreshing ? 0.6 : 1,
+          }}
+          transition={{
+            duration: 0.2,
+          }}
         >
+          {/* STAT CARDS */}
           <div className="relative mb-6">
+            {/* Previous Button */}
             <button
               type="button"
               onClick={() => scrollWidgets('left')}
               aria-label="Geser ke kiri"
-              className="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-10 h-9 w-9 items-center justify-center rounded-full bg-white dark:bg-dark-background shadow-md border border-slate-200 dark:border-dark-component text-slate-500 dark:text-slate-100 hover:text-brand-purplehover:border-brand-purple/40 dark:hover:border-slate-100  transition-colors"
+              className="hidden sm:flex absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-10 h-9 w-9 items-center justify-center rounded-full bg-white dark:bg-dark-background shadow-md border border-slate-200 dark:border-dark-component text-slate-500 dark:text-slate-100 hover:text-brand-purple hover:border-brand-purple/40 dark:hover:border-slate-100 transition-colors"
             >
               <ChevronLeft size={18} />
             </button>
@@ -216,38 +263,84 @@ export function DashboardPage(): JSX.Element {
               ref={scrollRef}
               className="flex overflow-x-auto scroll-smooth snap-x snap-mandatory [scrollbar-none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
             >
-              {widgetPages.map((page, pageIndex) => (
-                <div
-                  key={pageIndex}
-                  className="w-full shrink-0 snap-start grid grid-cols-1 sm:grid-cols-3 gap-4 pr-4 last:pr-0"
-                >
-                  {page.map((widget) => (
-                    <StatCard
-                      key={widget.key}
-                      label={widget.label}
-                      subtitle={widget.subtitle}
-                      value={widget.value}
-                      colorClass={widget.colorClass}
-                    />
-                  ))}
-                </div>
-              ))}
+              {/* MOBILE */}
+              <div className="flex sm:hidden w-full">
+                {mobileWidgetPages.map((page, pageIndex) => (
+                  <div
+                    key={`mobile-${pageIndex}`}
+                    className="w-full shrink-0 snap-start grid grid-cols-1 gap-4"
+                  >
+                    {page.map((widget) => (
+                      <StatCard
+                        key={widget.key}
+                        label={widget.label}
+                        subtitle={widget.subtitle}
+                        value={widget.value}
+                        colorClass={widget.colorClass}
+                      />
+                    ))}
+                  </div>
+                ))}
+              </div>
+
+              {/* TABLET */}
+              <div className="hidden sm:flex lg:hidden w-full">
+                {tabletWidgetPages.map((page, pageIndex) => (
+                  <div
+                    key={`tablet-${pageIndex}`}
+                    className="w-full shrink-0 snap-start grid grid-cols-2 gap-4 pr-4 last:pr-0"
+                  >
+                    {page.map((widget) => (
+                      <StatCard
+                        key={widget.key}
+                        label={widget.label}
+                        subtitle={widget.subtitle}
+                        value={widget.value}
+                        colorClass={widget.colorClass}
+                      />
+                    ))}
+                  </div>
+                ))}
+              </div>
+
+              {/* DESKTOP */}
+              <div className="hidden lg:flex w-full">
+                {desktopWidgetPages.map((page, pageIndex) => (
+                  <div
+                    key={`desktop-${pageIndex}`}
+                    className="w-full shrink-0 snap-start grid grid-cols-3 gap-4 pr-4 last:pr-0"
+                  >
+                    {page.map((widget) => (
+                      <StatCard
+                        key={widget.key}
+                        label={widget.label}
+                        subtitle={widget.subtitle}
+                        value={widget.value}
+                        colorClass={widget.colorClass}
+                      />
+                    ))}
+                  </div>
+                ))}
+              </div>
             </div>
 
+            {/* Next Button */}
             <button
               type="button"
               onClick={() => scrollWidgets('right')}
               aria-label="Geser ke kanan"
-              className="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10 h-9 w-9 items-center justify-center rounded-full bg-white dark:bg-dark-background shadow-md border border-slate-200 dark:border-dark-component text-slate-500 dark:text-slate-100 hover:text-brand-purplehover:border-brand-purple/40 dark:hover:border-slate-100  transition-colors"
+              className="hidden sm:flex absolute right-0 top-1/2 -translate-y-1/2 translate-x-1/2 z-10 h-9 w-9 items-center justify-center rounded-full bg-white dark:bg-dark-background shadow-md border border-slate-200 dark:border-dark-component text-slate-500 dark:text-slate-100 hover:text-brand-purple hover:border-brand-purple/40 dark:hover:border-slate-100 transition-colors"
             >
               <ChevronRight size={18} />
             </button>
           </div>
 
+          {/* CHARTS */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div className="lg:col-span-2">
               <WalletChart data={summary.dailySeries} />
             </div>
+
             <div>
               <InsightDonut
                 expenseByCategory={summary.expenseByCategory}

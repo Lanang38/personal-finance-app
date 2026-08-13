@@ -11,8 +11,10 @@ export function Header(): JSX.Element {
   const showImage = Boolean(user?.avatarUrl) && !imgFailed;
 
   return (
-    <header className="flex items-center justify-between mb-8 gap-4 flex-wrap">
-      <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">Halo, {firstName}!</h1>
+    <header className="hidden lg:flex items-center justify-between mb-8 gap-4 flex-wrap">
+      <h1 className="text-2xl font-bold text-slate-800 dark:text-slate-100">
+        Halo, {firstName}!
+      </h1>
 
       <div className="flex items-center gap-4">
         <button

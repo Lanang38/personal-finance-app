@@ -12,26 +12,26 @@ import {
 import { useAuth } from '../../context/AuthContext';
 import type { JSX } from 'react';
 
-interface MenuItem {
+export interface MenuItem {
   label: string;
   to: string;
   icon: JSX.Element;
 }
 
 // Menu yang sudah berfungsi penuh
-const menuItems: MenuItem[] = [
+export const menuItems: MenuItem[] = [
   { label: 'Dashboard', to: '/dashboard', icon: <LayoutGrid size={20} /> },
   { label: 'Transaksi', to: '/transactions', icon: <Receipt size={20} /> },
   { label: 'Akun', to: '/accounts', icon: <Wallet size={20} /> },
 ];
-const menuItemsPlus: MenuItem[] = [
+export const menuItemsPlus: MenuItem[] = [
   { label: 'Anggaran', to: '/budgets', icon: <NotepadText size={20} /> },
   { label: 'Target Tabungan', to: '/goals', icon: <PiggyBank size={20} /> },
   { label: 'Laporan', to: '/reports', icon: <FileBarChart size={20} /> },
 ];
 
 // Menu fitur yang sudah direncanakan tapi belum dikembangkan (mengarah ke halaman Coming Soon)
-const upcomingMenuItems: MenuItem[] = [
+export const upcomingMenuItems: MenuItem[] = [
   { label: 'Pengaturan', to: '/settings', icon: <Settings size={20} /> },
 ];
 
