@@ -1,4 +1,5 @@
 import { useState, FormEvent } from 'react';
+import { X } from 'lucide-react';
 import { SettingsSection } from '../../SettingsSection';
 import { PopUp } from '../../../common/PopUp';
 import { changePasswordRequest } from '../../../../api/users';
@@ -21,6 +22,12 @@ export function ChangePasswordForm(): JSX.Element {
     setIsModalOpen(true);
   }
 
+  function closeModal(): void {
+    if (isSubmitting) return;
+
+    setIsModalOpen(false);
+  }
+
   async function handleSubmit(
     event: FormEvent<HTMLFormElement>,
   ): Promise<void> {
@@ -31,12 +38,14 @@ export function ChangePasswordForm(): JSX.Element {
       setError('Password baru minimal 6 karakter');
       return;
     }
+
     if (newPassword !== confirmPassword) {
       setError('Konfirmasi password baru tidak cocok');
       return;
     }
 
     setIsSubmitting(true);
+
     try {
       await changePasswordRequest(currentPassword, newPassword);
       setIsModalOpen(false);
@@ -60,12 +69,35 @@ export function ChangePasswordForm(): JSX.Element {
       </SettingsSection>
 
       {isModalOpen && (
-        <PopUp title="Ubah Password" onClose={() => setIsModalOpen(false)}>
-          <form onSubmit={handleSubmit} className="space-y-3">
+        <PopUp onClose={closeModal}>
+          <form
+            onSubmit={handleSubmit}
+            className="relative bg-white dark:bg-dark-component rounded-3xl p-6 shadow-sm space-y-3"
+          >
+            {/* Header */}
+            <div className="flex items-center justify-between mb-4 pr-10">
+              <h2 className="font-bold text-lg text-slate-800 dark:text-slate-100">
+                Ubah Password
+              </h2>
+            </div>
+
+            {/* Tombol X */}
+            <button
+              type="button"
+              onClick={closeModal}
+              disabled={isSubmitting}
+              aria-label="Tutup"
+              className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-colors disabled:opacity-50"
+            >
+              <X size={18} />
+            </button>
+
+            {/* Password Saat Ini */}
             <div>
               <label className="text-xs font-semibold text-slate-500 mb-1 block">
                 Password Saat Ini
               </label>
+
               <input
                 type="password"
                 value={currentPassword}
@@ -74,10 +106,12 @@ export function ChangePasswordForm(): JSX.Element {
               />
             </div>
 
+            {/* Password Baru */}
             <div>
               <label className="text-xs font-semibold text-slate-500 mb-1 block">
                 Password Baru
               </label>
+
               <input
                 type="password"
                 value={newPassword}
@@ -86,10 +120,12 @@ export function ChangePasswordForm(): JSX.Element {
               />
             </div>
 
+            {/* Konfirmasi Password */}
             <div>
               <label className="text-xs font-semibold text-slate-500 mb-1 block">
                 Konfirmasi Password Baru
               </label>
+
               <input
                 type="password"
                 value={confirmPassword}
@@ -98,16 +134,20 @@ export function ChangePasswordForm(): JSX.Element {
               />
             </div>
 
+            {/* Error */}
             {error && <p className="text-sm text-brand-red">{error}</p>}
 
+            {/* Buttons */}
             <div className="flex gap-2 pt-1">
               <button
                 type="button"
-                onClick={() => setIsModalOpen(false)}
-                className="flex-1 bg-slate-100 dark:bg-dark-background text-slate-600 dark:text-slate-300 font-semibold py-2.5 rounded-xl"
+                onClick={closeModal}
+                disabled={isSubmitting}
+                className="flex-1 bg-slate-100 dark:bg-dark-background text-slate-600 dark:text-slate-300 font-semibold py-2.5 rounded-xl disabled:opacity-60"
               >
                 Batal
               </button>
+
               <button
                 type="submit"
                 disabled={isSubmitting}
