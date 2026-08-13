@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ChevronDown } from 'lucide-react';
+import { AnimatePresence, motion } from 'framer-motion';
 import type { JSX } from 'react';
 
 export interface SettingsTabItem {
@@ -27,6 +28,27 @@ export function SettingsNav({
   const activeColorClass = activeItem?.danger
     ? 'text-brand-red'
     : 'text-brand-purple dark:text-slate-100';
+
+  /*
+   * Tutup dropdown ketika hamburger MobileTopbar ditekan.
+   */
+  useEffect(() => {
+    function handleCloseSettingsDropdown(): void {
+      setIsOpen(false);
+    }
+
+    window.addEventListener(
+      'close-settings-dropdown',
+      handleCloseSettingsDropdown,
+    );
+
+    return () => {
+      window.removeEventListener(
+        'close-settings-dropdown',
+        handleCloseSettingsDropdown,
+      );
+    };
+  }, []);
 
   function handleSelect(id: string): void {
     onSelect(id);
@@ -59,37 +81,63 @@ export function SettingsNav({
           />
         </button>
 
-        {isOpen && (
-          <div className="absolute left-0 right-0 top-full mt-2 z-50 bg-white dark:bg-dark-component rounded-2xl shadow-lg p-2 border border-slate-100 dark:border-white/5">
-            <nav className="flex flex-col gap-1">
-              {items.map((item) => {
-                const isActive = item.id === activeId;
+        <AnimatePresence>
+          {isOpen && (
+            <motion.div
+              initial={{
+                opacity: 0,
+                height: 0,
+                y: -8,
+              }}
+              animate={{
+                opacity: 1,
+                height: 'auto',
+                y: 0,
+              }}
+              exit={{
+                opacity: 0,
+                height: 0,
+                y: -8,
+              }}
+              transition={{
+                duration: 0.2,
+                ease: 'easeOut',
+              }}
+              className="absolute left-0 right-0 top-full mt-2 z-50 overflow-hidden bg-white dark:bg-dark-component rounded-2xl shadow-lg p-2 border border-slate-100 dark:border-white/5"
+            >
+              <nav className="flex flex-col gap-1">
+                {items.map((item) => {
+                  const isActive = item.id === activeId;
 
-                const colorClass = item.danger
-                  ? 'text-brand-red'
-                  : isActive
-                    ? 'text-brand-purple dark:text-slate-100'
-                    : 'text-slate-500 dark:text-slate-400';
+                  const colorClass = item.danger
+                    ? 'text-brand-red'
+                    : isActive
+                      ? 'text-brand-purple dark:text-slate-100'
+                      : 'text-slate-500 dark:text-slate-400';
 
-                return (
-                  <button
-                    key={item.id}
-                    type="button"
-                    onClick={() => handleSelect(item.id)}
-                    className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${colorClass} ${
-                      isActive
-                        ? 'bg-brand-purple/10 dark:bg-brand-blue'
-                        : 'hover:bg-slate-50 dark:hover:bg-slate-700/50'
-                    }`}
-                  >
-                    {item.icon}
-                    <span>{item.label}</span>
-                  </button>
-                );
-              })}
-            </nav>
-          </div>
-        )}
+                  return (
+                    <motion.button
+                      key={item.id}
+                      type="button"
+                      onClick={() => handleSelect(item.id)}
+                      initial={{ opacity: 0, y: -5 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.15 }}
+                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-semibold transition-colors ${colorClass} ${
+                        isActive
+                          ? 'bg-brand-purple/10 dark:bg-brand-blue'
+                          : 'hover:bg-slate-50 dark:hover:bg-slate-700/50'
+                      }`}
+                    >
+                      {item.icon}
+                      <span>{item.label}</span>
+                    </motion.button>
+                  );
+                })}
+              </nav>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       {/* DESKTOP */}
