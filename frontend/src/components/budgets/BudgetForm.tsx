@@ -1,5 +1,5 @@
 import { FormEvent, useMemo, useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, X } from 'lucide-react';
 import { Category } from '../../types';
 import type { JSX } from 'react';
 
@@ -10,17 +10,20 @@ interface BudgetFormProps {
     categoryId: string;
     limitAmount: number;
   }) => Promise<void>;
+  onClose?: () => void;
 }
 
 export function BudgetForm({
   availableCategories,
   isReady,
   onSubmit,
+  onClose,
 }: BudgetFormProps): JSX.Element {
   const [categoryId, setCategoryId] = useState<string>('');
   const [limitAmount, setLimitAmount] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
+
   const budgetableCategories = useMemo(
     () =>
       availableCategories.filter(
@@ -65,8 +68,20 @@ export function BudgetForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white dark:bg-dark-component rounded-3xl p-6 shadow-sm space-y-4"
+      className="relative bg-white dark:bg-dark-component rounded-3xl p-6 shadow-sm space-y-4"
     >
+      {onClose && (
+        <button
+          type="button"
+          onClick={onClose}
+          disabled={isSubmitting}
+          aria-label="Tutup"
+          className="min-[1281px]:hidden absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-colors disabled:opacity-50"
+        >
+          <X size={18} />
+        </button>
+      )}
+
       <h2 className="font-bold text-slate-800 dark:text-slate-100">
         Tambah Anggaran
       </h2>
