@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { ChevronDown } from 'lucide-react';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { BudgetForm } from '../components/budgets/BudgetForm';
+import { BudgetFormModal } from '../components/budgets/BudgetFormModal';
 import { BudgetList } from '../components/budgets/BudgetList';
 import { BudgetSkeleton } from '../components/budgets/BudgetSkeleton';
 import { fetchCategories } from '../api/categories';
@@ -33,11 +34,13 @@ const MONTH_NAMES = [
 
 function currentMonth(): string {
   const now = new Date();
+
   return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 }
 
 function formatMonthLabel(value: string): string {
   const [year, month] = value.split('-');
+
   return `${MONTH_NAMES[Number(month) - 1]} ${year}`;
 }
 
@@ -47,6 +50,7 @@ export function BudgetsPage(): JSX.Element {
   const [categories, setCategories] = useState<Category[]>([]);
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isFormOpen, setIsFormOpen] = useState(false);
 
   useEffect(() => {
     void (async () => {
@@ -113,23 +117,24 @@ export function BudgetsPage(): JSX.Element {
 
   async function handleEdit(id: string, limitAmount: number): Promise<void> {
     await updateBudgetRequest(id, limitAmount);
-
     await refreshData();
   }
 
   async function handleDelete(id: string): Promise<void> {
     await deleteBudgetRequest(id);
-
     await refreshData();
   }
 
   return (
     <DashboardLayout>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div className="space-y-6">
+      <div className="space-y-6 min-[1281px]:grid min-[1281px]:grid-cols-3 min-[1281px]:gap-6 min-[1281px]:space-y-0">
+        {/* FILTER */}
+        <div className="min-[1281px]:space-y-6">
           <div className="bg-white dark:bg-dark-component rounded-3xl p-6 shadow-sm">
             <div className="flex items-center justify-between gap-3">
-              <h2 className="font-bold text-lg text-slate-800 dark:text-slate-100">Anggaran</h2>
+              <h2 className="font-bold text-lg text-slate-800 dark:text-slate-100">
+                Anggaran
+              </h2>
 
               <div className="relative">
                 <select
@@ -157,14 +162,18 @@ export function BudgetsPage(): JSX.Element {
             </div>
           </div>
 
-          <BudgetForm
-            availableCategories={availableCategories}
-            isReady={!isLoading}
-            onSubmit={handleCreate}
-          />
+          {/* FORM DESKTOP SAJA */}
+          <div className="hidden min-[1281px]:block">
+            <BudgetForm
+              availableCategories={availableCategories}
+              isReady={!isLoading}
+              onSubmit={handleCreate}
+            />
+          </div>
         </div>
 
-        <div className="lg:col-span-2">
+        {/* LIST */}
+        <div className="min-[1281px]:col-span-2">
           {isLoading ? (
             <BudgetSkeleton />
           ) : (
@@ -173,10 +182,21 @@ export function BudgetsPage(): JSX.Element {
               isLoading={false}
               onEdit={handleEdit}
               onDelete={handleDelete}
+              onAdd={() => setIsFormOpen(true)}
             />
           )}
         </div>
       </div>
+
+      {/* POPUP TABLET + MOBILE */}
+      {isFormOpen && (
+        <BudgetFormModal
+          availableCategories={availableCategories}
+          isReady={!isLoading}
+          onSubmit={handleCreate}
+          onClose={() => setIsFormOpen(false)}
+        />
+      )}
     </DashboardLayout>
   );
 }

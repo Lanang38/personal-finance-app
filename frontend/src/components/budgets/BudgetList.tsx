@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Trash2, Pencil, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Trash2, Pencil, ChevronLeft, ChevronRight, Plus } from 'lucide-react';
 import { Budget } from '../../types';
 import { BudgetEditModal } from './BudgetEditModal';
 import type { JSX } from 'react';
@@ -9,6 +9,7 @@ interface BudgetListProps {
   isLoading: boolean;
   onEdit: (id: string, limitAmount: number) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
+  onAdd: () => void;
 }
 
 const PAGE_SIZE = 4;
@@ -22,6 +23,7 @@ export function BudgetList({
   isLoading,
   onEdit,
   onDelete,
+  onAdd,
 }: BudgetListProps): JSX.Element {
   const [editingBudget, setEditingBudget] = useState<Budget | null>(null);
   const [page, setPage] = useState(1);
@@ -37,9 +39,20 @@ export function BudgetList({
   return (
     <>
       <div className="bg-white dark:bg-dark-component rounded-3xl p-6 shadow-sm">
-        <h2 className="font-bold text-lg text-slate-800 dark:text-slate-100 mb-4">
-          Daftar Anggaran
-        </h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="font-bold text-lg text-slate-800 dark:text-slate-100">
+            Daftar Anggaran
+          </h2>
+
+          <button
+            type="button"
+            onClick={onAdd}
+            aria-label="Tambah anggaran"
+            className="w-7 h-7 rounded-full bg-brand-purple dark:bg-brand-blue text-white flex items-center justify-center hover:opacity-90 transition-opacity"
+          >
+            <Plus size={16} />
+          </button>
+        </div>
 
         {isLoading ? (
           <p className="text-sm text-slate-400 py-8 text-center">
