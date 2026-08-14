@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { AccountForm } from '../components/accounts/AccountForm';
+import { AccountFormModal } from '../components/accounts/AccountFormModal';
 import { AccountList } from '../components/accounts/AccountList';
 import { AccountsSkeleton } from '../components/accounts/AccountsSkeleton';
 import { AccountsDonut } from '../components/accounts/AccountsDonut';
@@ -12,9 +13,11 @@ import type { JSX } from 'react';
 
 export function AccountsPage(): JSX.Element {
   const { accounts, refreshAccounts, isLoading } = useAccounts();
+
   const [warningMessage, setWarningMessage] = useState<string | null>(null);
 
-  // Ketika halaman Accounts dibuka, tampilkan skeleton
+  const [isFormModalOpen, setIsFormModalOpen] = useState<boolean>(false);
+
   useEffect(() => {
     void refreshAccounts(true);
   }, [refreshAccounts]);
@@ -27,38 +30,60 @@ export function AccountsPage(): JSX.Element {
   }): Promise<void> {
     await createAccountRequest(payload);
 
-    // Refresh tanpa delay (tidak menampilkan skeleton)
     await refreshAccounts(false);
   }
 
   async function handleDeleteAccount(id: string): Promise<void> {
     await deleteAccountRequest(id);
 
-    // Refresh tanpa delay (tidak menampilkan skeleton)
     await refreshAccounts(false);
+  }
+
+  function openFormModal(): void {
+    setIsFormModalOpen(true);
+  }
+
+  function closeFormModal(): void {
+    setIsFormModalOpen(false);
   }
 
   return (
     <DashboardLayout>
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div>
+      <div className="grid grid-cols-1 min-[1281px]:grid-cols-3 gap-6">
+        {/* Account Form */}
+        <div className="hidden min-[1281px]:block">
           <AccountForm
             onSubmit={handleCreateAccount}
             onError={setWarningMessage}
           />
         </div>
 
-        <div className="lg:col-span-2 flex flex-col gap-6">
+        {/* Account List */}
+        <div className="min-[1281px]:col-span-2 flex flex-col gap-6">
           {isLoading ? (
             <AccountsSkeleton />
           ) : (
             <>
-              <AccountList accounts={accounts} onDelete={handleDeleteAccount} />
+              <AccountList
+                accounts={accounts}
+                onDelete={handleDeleteAccount}
+                onAdd={openFormModal}
+              />
+
               <AccountsDonut accounts={accounts} isLoading={isLoading} />
             </>
           )}
         </div>
       </div>
+
+      {/* Account Form Popup */}
+      {isFormModalOpen && (
+        <AccountFormModal
+          onSubmit={handleCreateAccount}
+          onError={setWarningMessage}
+          onClose={closeFormModal}
+        />
+      )}
 
       {warningMessage && (
         <Warning
