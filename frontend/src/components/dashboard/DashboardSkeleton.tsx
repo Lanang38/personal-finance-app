@@ -16,7 +16,7 @@ export function DashboardSkeleton(): JSX.Element {
         </div>
 
         {/* TABLET */}
-        <div className="hidden sm:grid min-[1281px]:hidden grid-cols-2 gap-4">
+        <div className="grid-cols-2 gap-4 tablet-skeleton-grid">
           {Array.from({ length: 2 }).map((_, i) => (
             <div
               key={i}
@@ -30,7 +30,7 @@ export function DashboardSkeleton(): JSX.Element {
         </div>
 
         {/* DESKTOP */}
-        <div className="hidden min-[1281px]:grid grid-cols-3 gap-4">
+        <div className="grid-cols-3 gap-4 desktop-skeleton-grid">
           {Array.from({ length: 3 }).map((_, i) => (
             <div
               key={i}

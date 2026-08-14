@@ -129,3 +129,29 @@ textarea,
     display: flex;
   }
 }
+
+.tablet-skeleton-grid {
+  display: none;
+}
+
+@media (min-width: 640px) {
+  .tablet-skeleton-grid {
+    display: grid;
+  }
+}
+
+@media (min-width: 1281px) {
+  .tablet-skeleton-grid {
+    display: none;
+  }
+}
+
+.desktop-skeleton-grid {
+  display: none;
+}
+
+@media (min-width: 1281px) {
+  .desktop-skeleton-grid {
+    display: grid;
+  }
+}
