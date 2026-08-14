@@ -1,38 +1,33 @@
 import { X } from 'lucide-react';
-import { AccountForm } from './AccountForm';
 import { PopUp } from '../common/PopUp';
-import { AccountType } from '../../types';
+import { TransactionForm } from './TransactionForm';
+import { Account, Category } from '../../types';
 import type { JSX } from 'react';
 
-interface AccountFormModalProps {
+interface TransactionFormModalProps {
+  accounts: Account[];
+  categories: Category[];
   onSubmit: (payload: {
-    name: string;
-    type: AccountType;
-    currency: string;
-    initialBalance: number;
+    accountId: string;
+    categoryId: string;
+    type: 'income' | 'expense';
+    amount: number;
+    description: string;
+    date: string;
   }) => Promise<void>;
-  onError?: (message: string) => void;
   onClose: () => void;
 }
 
-export function AccountFormModal({
+export function TransactionFormModal({
+  accounts,
+  categories,
   onSubmit,
-  onError,
   onClose,
-}: AccountFormModalProps): JSX.Element {
-  async function handleSubmit(payload: {
-    name: string;
-    type: AccountType;
-    currency: string;
-    initialBalance: number;
-  }): Promise<void> {
-    await onSubmit(payload);
-    onClose();
-  }
-
+}: TransactionFormModalProps): JSX.Element {
   return (
     <PopUp onClose={onClose}>
       <div className="relative">
+        {/* Tombol X */}
         <button
           type="button"
           onClick={onClose}
@@ -42,7 +37,12 @@ export function AccountFormModal({
           <X size={18} />
         </button>
 
-        <AccountForm onSubmit={handleSubmit} onError={onError} />
+        <TransactionForm
+          accounts={accounts}
+          categories={categories}
+          isModal
+          onSubmit={onSubmit}
+        />
       </div>
     </PopUp>
   );

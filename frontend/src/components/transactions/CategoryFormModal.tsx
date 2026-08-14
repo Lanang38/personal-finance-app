@@ -1,33 +1,22 @@
 import { X } from 'lucide-react';
-import { GoalForm } from './GoalForm';
 import { PopUp } from '../common/PopUp';
+import { CategoryForm } from './CategoryForm';
+import { CategoryKind } from '../../types';
 import type { JSX } from 'react';
 
-interface GoalFormModalProps {
-  onSubmit: (payload: {
-    name: string;
-    targetAmount: number;
-    targetDate: string | null;
-  }) => Promise<void>;
+interface CategoryFormModalProps {
+  onSubmit: (payload: { name: string; kind: CategoryKind }) => Promise<void>;
   onClose: () => void;
 }
 
-export function GoalFormModal({
+export function CategoryFormModal({
   onSubmit,
   onClose,
-}: GoalFormModalProps): JSX.Element {
-  async function handleSubmit(payload: {
-    name: string;
-    targetAmount: number;
-    targetDate: string | null;
-  }): Promise<void> {
-    await onSubmit(payload);
-    onClose();
-  }
-
+}: CategoryFormModalProps): JSX.Element {
   return (
     <PopUp onClose={onClose}>
       <div className="relative">
+        {/* Close */}
         <button
           type="button"
           onClick={onClose}
@@ -37,7 +26,12 @@ export function GoalFormModal({
           <X size={18} />
         </button>
 
-        <GoalForm onSubmit={handleSubmit} />
+        <CategoryForm
+          onSubmit={async (payload) => {
+            await onSubmit(payload);
+            onClose();
+          }}
+        />
       </div>
     </PopUp>
   );

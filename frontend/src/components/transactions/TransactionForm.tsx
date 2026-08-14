@@ -11,6 +11,7 @@ import type { JSX } from 'react';
 interface TransactionFormProps {
   accounts: Account[];
   categories: Category[];
+  isModal?: boolean;
   onSubmit: (payload: {
     accountId: string;
     categoryId: string;
@@ -31,6 +32,7 @@ function getToday(): string {
 export function TransactionForm({
   accounts,
   categories,
+  isModal = false,
   onSubmit,
 }: TransactionFormProps): JSX.Element {
   const [type, setType] = useState<TransactionType>('expense');
@@ -45,7 +47,7 @@ export function TransactionForm({
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [failedMessage, setFailedMessage] = useState<string | null>(null);
 
-  // ===== Receipt Scan =====
+  // Receipt Scan
   const [isScanning, setIsScanning] = useState<boolean>(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -58,7 +60,7 @@ export function TransactionForm({
   ): Promise<void> {
     const file = event.target.files?.[0];
 
-    // reset supaya file yang sama bisa dipilih lagi
+    // Reset supaya file yang sama bisa dipilih lagi
     event.target.value = '';
 
     if (!file) return;
@@ -153,6 +155,13 @@ export function TransactionForm({
       setIsSubmitting(false);
     }
   }
+
+  function openScanner(): void {
+    if (type !== 'expense' || isScanning) return;
+
+    fileInputRef.current?.click();
+  }
+
   return (
     <>
       <form
@@ -161,32 +170,62 @@ export function TransactionForm({
       >
         {/* Header */}
         <div className="flex items-center justify-between">
-          <h2 className="font-bold text-lg text-slate-800 dark:text-slate-100">
-            Tambah Transaksi
-          </h2>
+          <div className="flex items-center gap-2">
+            <h2 className="font-bold text-lg text-slate-800 dark:text-slate-100">
+              Tambah Transaksi
+            </h2>
 
-          <>
+            {/* Scan icon - hanya pada popup */}
+            {isModal && (
+              <button
+                type="button"
+                onClick={openScanner}
+                disabled={isScanning || type !== 'expense'}
+                aria-label="Scan struk"
+                title={isScanning ? 'Memindai...' : 'Scan Struk'}
+                className={`w-8 h-8 flex items-center justify-center rounded-xl
+                  bg-brand-purple/10 dark:bg-brand-blue/10
+                  text-brand-purple dark:text-brand-blue
+                  transition
+                  hover:bg-brand-purple/20 dark:hover:bg-brand-blue/20
+                  disabled:opacity-60
+                  ${type === 'expense' ? '' : 'invisible'}`}
+              >
+                <ScanLine size={17} />
+              </button>
+            )}
+          </div>
+
+          {/* Scan button - desktop */}
+          {!isModal && (
             <button
               type="button"
-              onClick={() => fileInputRef.current?.click()}
+              onClick={openScanner}
               disabled={isScanning}
-              className={`flex items-center gap-2 rounded-xl bg-brand-purple/10 dark:bg-brand-blue/10 px-3 py-2 text-sm font-semibold text-brand-purple dark:text-brand-blue transition hover:bg-brand-purple/20 dark:hover:bg-brand-blue/20 disabled:opacity-60 ${
-                type === 'expense' ? '' : 'invisible'
-              }`}
+              className={`flex items-center gap-2 rounded-xl
+                bg-brand-purple/10 dark:bg-brand-blue/10
+                px-3 py-2 text-sm font-semibold
+                text-brand-purple dark:text-brand-blue
+                transition
+                hover:bg-brand-purple/20 dark:hover:bg-brand-blue/20
+                disabled:opacity-60
+                ${type === 'expense' ? '' : 'invisible'}`}
             >
               <ScanLine size={16} />
+
               {isScanning ? 'Memindai...' : 'Scan Struk'}
             </button>
+          )}
 
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              capture="environment"
-              onChange={handleScanReceipt}
-              className="hidden"
-            />
-          </>
+          {/* Hidden file input */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            onChange={handleScanReceipt}
+            className="hidden"
+          />
         </div>
 
         {/* Jenis transaksi */}
@@ -333,6 +372,7 @@ export function TransactionForm({
         </button>
       </form>
 
+      {/* Warning */}
       {warningMessage && (
         <Warning
           message={warningMessage}
@@ -340,6 +380,7 @@ export function TransactionForm({
         />
       )}
 
+      {/* Success */}
       {successMessage && (
         <Success
           message={successMessage}
@@ -347,6 +388,7 @@ export function TransactionForm({
         />
       )}
 
+      {/* Failed */}
       {failedMessage && (
         <Failed
           message={failedMessage}
