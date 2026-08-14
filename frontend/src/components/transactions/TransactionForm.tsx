@@ -1,5 +1,5 @@
 import { FormEvent, ChangeEvent, useRef, useState } from 'react';
-import { ChevronDown, ScanLine } from 'lucide-react';
+import { CalendarDays, ChevronDown, ScanLine } from 'lucide-react';
 import { Account, Category, TransactionType } from '../../types';
 import { getErrorMessage } from '../../api/client';
 import { scanReceiptRequest } from '../../api/receipts';
@@ -339,12 +339,18 @@ export function TransactionForm({
             Tanggal
           </label>
 
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-            className="w-full rounded-xl bg-slate-100 dark:bg-dark-background px-4 py-2.5 outline-none text-slate-700 dark:text-slate-100 scheme-light dark:scheme-dark"
-          />
+          <div className="relative">
+            <input
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="w-full rounded-xl bg-slate-100 dark:bg-dark-background px-4 py-2.5 pr-10 outline-none text-slate-700 dark:text-slate-100 scheme-light dark:scheme-dark [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-0 [&::-webkit-calendar-picker-indicator]:w-10 [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+            />
+            <CalendarDays
+              size={16}
+              className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
+            />
+          </div>
         </div>
 
         {/* Catatan */}
