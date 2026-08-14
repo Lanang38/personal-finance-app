@@ -100,7 +100,7 @@ export function GoalForm({ onSubmit }: GoalFormProps): JSX.Element {
             type="date"
             value={targetDate}
             onChange={(e) => setTargetDate(e.target.value)}
-            className="w-full rounded-xl bg-slate-100 dark:bg-dark-background px-4 py-2.5 pr-10 outline-none text-slate-700 dark:text-slate-100 scheme-light dark:scheme-dark [&::-webkit-calendar-picker-indicator]:opacity-0 [&::-webkit-calendar-picker-indicator]:absolute [&::-webkit-calendar-picker-indicator]:right-0 [&::-webkit-calendar-picker-indicator]:w-10 [&::-webkit-calendar-picker-indicator]:h-full [&::-webkit-calendar-picker-indicator]:cursor-pointer"
+            className="w-full appearance-none rounded-xl bg-slate-100 dark:bg-dark-background px-4 py-2.5 pr-10 outline-none text-slate-700 dark:text-slate-100 scheme-light dark:scheme-dark [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-inner-spin-button]:hidden [&::-webkit-clear-button]:hidden"
           />
           <CalendarDays
             size={16}
