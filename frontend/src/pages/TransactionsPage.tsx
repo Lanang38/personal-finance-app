@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { DashboardLayout } from '../components/layout/DashboardLayout';
 import { TransactionForm } from '../components/transactions/TransactionForm';
+import { TransactionFormModal } from '../components/transactions/TransactionFormModal';
 import { TransactionTable } from '../components/transactions/TransactionTable';
 import { CategoryForm } from '../components/transactions/CategoryForm';
 import { CategoryList } from '../components/transactions/CategoryList';
@@ -35,6 +36,9 @@ export function TransactionsPage(): JSX.Element {
 
   const [editingCategory, setEditingCategory] = useState<Category | null>(null);
 
+  // Modal tambah transaksi
+  const [isFormModalOpen, setIsFormModalOpen] = useState<boolean>(false);
+
   const loadData = useCallback(async (showLoading = false) => {
     if (showLoading) {
       setIsLoading(true);
@@ -42,7 +46,10 @@ export function TransactionsPage(): JSX.Element {
       const [categoryList, txResponse] = await withMinimumDelay(
         Promise.all([
           fetchCategories(),
-          fetchTransactions({ page: 1, limit: 20 }),
+          fetchTransactions({
+            page: 1,
+            limit: 20,
+          }),
         ]),
       );
 
@@ -53,7 +60,10 @@ export function TransactionsPage(): JSX.Element {
     } else {
       const [categoryList, txResponse] = await Promise.all([
         fetchCategories(),
-        fetchTransactions({ page: 1, limit: 20 }),
+        fetchTransactions({
+          page: 1,
+          limit: 20,
+        }),
       ]);
 
       setCategories(categoryList);
@@ -94,7 +104,10 @@ export function TransactionsPage(): JSX.Element {
 
   async function handleUpdateCategory(
     id: string,
-    payload: { name: string; kind: CategoryKind },
+    payload: {
+      name: string;
+      kind: CategoryKind;
+    },
   ): Promise<void> {
     await updateCategoryRequest(id, payload);
     await loadData();
@@ -109,10 +122,22 @@ export function TransactionsPage(): JSX.Element {
     }
   }
 
+  function openFormModal(): void {
+    setIsFormModalOpen(true);
+  }
+
+  function closeFormModal(): void {
+    setIsFormModalOpen(false);
+  }
+
   return (
     <DashboardLayout>
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <div>
+        {/* =====================================================
+            FORM DESKTOP
+            Hanya tampil >= 1281px
+        ====================================================== */}
+        <div className="hidden min-[1281px]:block">
           <TransactionForm
             accounts={accounts}
             categories={categories}
@@ -120,6 +145,9 @@ export function TransactionsPage(): JSX.Element {
           />
         </div>
 
+        {/* =====================================================
+            CONTENT
+        ====================================================== */}
         <div className="lg:col-span-2 space-y-6">
           {isLoading ? (
             <TransactionsTableSkeleton />
@@ -127,6 +155,7 @@ export function TransactionsPage(): JSX.Element {
             <TransactionTable
               transactions={transactions}
               onDelete={handleDeleteTransaction}
+              onAdd={openFormModal}
             />
           )}
 
@@ -150,6 +179,22 @@ export function TransactionsPage(): JSX.Element {
         </div>
       </div>
 
+      {/* =====================================================
+          POPUP TAMBAH TRANSAKSI
+          Hanya digunakan < 1281px
+      ====================================================== */}
+      {isFormModalOpen && (
+        <div className="min-[1281px]:hidden">
+          <TransactionFormModal
+            accounts={accounts}
+            categories={categories}
+            onSubmit={handleCreateTransaction}
+            onClose={closeFormModal}
+          />
+        </div>
+      )}
+
+      {/* Edit Category */}
       {editingCategory && (
         <CategoryEditModal
           category={editingCategory}
@@ -157,6 +202,8 @@ export function TransactionsPage(): JSX.Element {
           onSave={handleUpdateCategory}
         />
       )}
+
+      {/* Warning */}
       {warningMessage && (
         <Warning
           message={warningMessage}
