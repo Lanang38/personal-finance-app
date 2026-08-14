@@ -1,7 +1,7 @@
 import { FormEvent, useState } from 'react';
 import { AccountType } from '../../types';
 import { getErrorMessage } from '../../api/client';
-import { ChevronDown, X } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import type { JSX } from 'react';
 
 interface AccountFormProps {
@@ -12,7 +12,6 @@ interface AccountFormProps {
     initialBalance: number;
   }) => Promise<void>;
   onError?: (message: string) => void;
-  onClose?: () => void;
 }
 
 const accountTypes: { value: AccountType; label: string }[] = [
@@ -25,7 +24,6 @@ const accountTypes: { value: AccountType; label: string }[] = [
 export function AccountForm({
   onSubmit,
   onError,
-  onClose,
 }: AccountFormProps): JSX.Element {
   const [name, setName] = useState<string>('');
   const [type, setType] = useState<AccountType>('cash');
@@ -61,21 +59,8 @@ export function AccountForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="relative bg-white dark:bg-dark-component rounded-3xl p-6 shadow-sm space-y-4"
+      className="bg-white dark:bg-dark-component rounded-3xl p-6 shadow-sm space-y-4"
     >
-      {/* X Button */}
-      {onClose && (
-        <button
-          type="button"
-          onClick={onClose}
-          disabled={isSubmitting}
-          aria-label="Tutup"
-          className="min-[1281px]:hidden absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-colors disabled:opacity-50"
-        >
-          <X size={18} />
-        </button>
-      )}
-
       <h2 className="font-bold text-lg text-slate-800 dark:text-slate-100">
         Tambah Akun
       </h2>

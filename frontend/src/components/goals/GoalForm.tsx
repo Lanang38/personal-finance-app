@@ -1,5 +1,4 @@
 import { FormEvent, useState } from 'react';
-import { X } from 'lucide-react';
 import type { JSX } from 'react';
 
 interface GoalFormProps {
@@ -8,13 +7,9 @@ interface GoalFormProps {
     targetAmount: number;
     targetDate: string | null;
   }) => Promise<void>;
-  onClose?: () => void;
 }
 
-export function GoalForm({
-  onSubmit,
-  onClose,
-}: GoalFormProps): JSX.Element {
+export function GoalForm({ onSubmit }: GoalFormProps): JSX.Element {
   const [name, setName] = useState<string>('');
   const [targetAmount, setTargetAmount] = useState<string>('');
   const [targetDate, setTargetDate] = useState<string>('');
@@ -59,20 +54,8 @@ export function GoalForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="relative bg-white dark:bg-dark-component rounded-3xl p-6 shadow-sm space-y-4"
+      className="bg-white dark:bg-dark-component rounded-3xl p-6 shadow-sm space-y-4"
     >
-      {/* Close hanya muncul pada tablet/mobile */}
-      {onClose && (
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Tutup"
-          className="lg:hidden absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-colors"
-        >
-          <X size={18} />
-        </button>
-      )}
-
       <h2 className="font-bold text-slate-800 dark:text-slate-100">
         Tambah Target Tabungan
       </h2>
@@ -108,8 +91,7 @@ export function GoalForm({
 
       <div>
         <label className="text-xs font-semibold text-slate-500 mb-1 block">
-          Target Tanggal{' '}
-          <span className="text-slate-400">(opsional)</span>
+          Target Tanggal <span className="text-slate-400">(opsional)</span>
         </label>
 
         <input
@@ -120,11 +102,7 @@ export function GoalForm({
         />
       </div>
 
-      {error && (
-        <p className="text-sm text-brand-red">
-          {error}
-        </p>
-      )}
+      {error && <p className="text-sm text-brand-red">{error}</p>}
 
       <button
         type="submit"
