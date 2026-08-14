@@ -1,8 +1,8 @@
 import { FormEvent, useState } from 'react';
 import { AccountType } from '../../types';
 import { getErrorMessage } from '../../api/client';
+import { ChevronDown, X } from 'lucide-react';
 import type { JSX } from 'react';
-import { ChevronDown } from 'lucide-react';
 
 interface AccountFormProps {
   onSubmit: (payload: {
@@ -12,6 +12,7 @@ interface AccountFormProps {
     initialBalance: number;
   }) => Promise<void>;
   onError?: (message: string) => void;
+  onClose?: () => void;
 }
 
 const accountTypes: { value: AccountType; label: string }[] = [
@@ -24,6 +25,7 @@ const accountTypes: { value: AccountType; label: string }[] = [
 export function AccountForm({
   onSubmit,
   onError,
+  onClose,
 }: AccountFormProps): JSX.Element {
   const [name, setName] = useState<string>('');
   const [type, setType] = useState<AccountType>('cash');
@@ -34,9 +36,11 @@ export function AccountForm({
     event: FormEvent<HTMLFormElement>,
   ): Promise<void> {
     event.preventDefault();
+
     if (!name.trim()) return;
 
     setIsSubmitting(true);
+
     try {
       await onSubmit({
         name: name.trim(),
@@ -44,6 +48,7 @@ export function AccountForm({
         currency: 'IDR',
         initialBalance: Number(initialBalance) || 0,
       });
+
       setName('');
       setInitialBalance('');
     } catch (error) {
@@ -56,14 +61,30 @@ export function AccountForm({
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white dark:bg-dark-component rounded-3xl p-6 shadow-sm space-y-4"
+      className="relative bg-white dark:bg-dark-component rounded-3xl p-6 shadow-sm space-y-4"
     >
-      <h2 className="font-bold text-lg text-slate-800 dark:text-slate-100">Tambah Akun</h2>
+      {/* X Button */}
+      {onClose && (
+        <button
+          type="button"
+          onClick={onClose}
+          disabled={isSubmitting}
+          aria-label="Tutup"
+          className="min-[1281px]:hidden absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-700 dark:hover:text-slate-200 transition-colors disabled:opacity-50"
+        >
+          <X size={18} />
+        </button>
+      )}
+
+      <h2 className="font-bold text-lg text-slate-800 dark:text-slate-100">
+        Tambah Akun
+      </h2>
 
       <div>
         <label className="text-xs font-semibold text-slate-500 mb-1 block">
           Nama Akun
         </label>
+
         <input
           type="text"
           value={name}
@@ -77,6 +98,7 @@ export function AccountForm({
         <label className="text-xs font-semibold text-slate-500 mb-1 block">
           Tipe Akun
         </label>
+
         <div className="relative">
           <select
             value={type}
@@ -89,6 +111,7 @@ export function AccountForm({
               </option>
             ))}
           </select>
+
           <ChevronDown
             size={16}
             className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400"
@@ -100,6 +123,7 @@ export function AccountForm({
         <label className="text-xs font-semibold text-slate-500 mb-1 block">
           Saldo Awal (Rp)
         </label>
+
         <input
           type="number"
           value={initialBalance}
